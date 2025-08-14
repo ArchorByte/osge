@@ -1,0 +1,107 @@
+#include "logical_device.hpp"
+
+#include "../../logs/terminal.hpp"
+#include "../../tools/text_format.hpp"
+
+#include <vulkan/vulkan.h>
+#include <vector>
+#include <cstdint>
+
+///////////////////////////////////////////////////
+//////////////////// Functions ////////////////////
+///////////////////////////////////////////////////
+
+// Create a Vulkan logical device.
+VkDevice create_logical_device
+(
+    const VkPhysicalDevice &physical_device,
+    const std::vector<VkDeviceQueueCreateInfo> &queues_create_info,
+    const std::vector<const char *> &required_extensions
+)
+{
+    log("Creating a logical device..");
+
+    if (!physical_device || physical_device == VK_NULL_HANDLE)
+    {
+        fatal_error_log("Logical device creation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+    }
+
+    if (queues_create_info.size() < 1)
+    {
+        fatal_error_log("Logical device creation failed! No queues create info were provided!");
+    }
+
+    // Retrieve the physical device features.
+    VkPhysicalDeviceFeatures device_features {};
+    vkGetPhysicalDeviceFeatures(physical_device, &device_features);
+
+    VkDeviceCreateInfo device_create_info {};
+    device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    device_create_info.queueCreateInfoCount = static_cast<uint32_t>(queues_create_info.size());   // Amount of queues to create.
+    device_create_info.pQueueCreateInfos = queues_create_info.data();                             // Pass the create info of the queues.
+    device_create_info.pEnabledFeatures = &device_features;                                       // Enable all features of the physical device for simplicity and compability reasons.
+    device_create_info.enabledExtensionCount = static_cast<uint32_t>(required_extensions.size()); // Amount of extensions to enable.
+    device_create_info.ppEnabledExtensionNames = required_extensions.data();                      // Pass the required extensions.
+
+    VkDevice logical_device = VK_NULL_HANDLE;
+    VkResult device_creation = vkCreateDevice(physical_device, &device_create_info, nullptr, &logical_device); // Trying to create the logical device.
+
+    if (device_creation != VK_SUCCESS)
+    {
+        fatal_error_log("Logical device creation returned error code " + std::to_string(device_creation) + ".");
+    }
+
+    if (!logical_device || logical_device == VK_NULL_HANDLE)
+    {
+        fatal_error_log("Logical device creation output \"" + force_string(logical_device) + "\" is not valid!");
+    }
+
+    log("Logical device " + force_string(logical_device) + " created successfully!");
+    return logical_device;
+}
+
+// Destroy a Vulkan logical device.
+void destroy_logical_device
+(
+    VkDevice &logical_device
+)
+{
+    log("Destroying the " + force_string(logical_device) + " logical device..");
+
+    if (!logical_device || logical_device == VK_NULL_HANDLE)
+    {
+        error_log("Logical device destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        return;
+    }
+
+    vkDestroyDevice(logical_device, nullptr);
+    logical_device = VK_NULL_HANDLE;
+
+    log("Logical device destroyed successfully!");
+}
+
+///////////////////////////////////////////////
+//////////////////// Class ////////////////////
+///////////////////////////////////////////////
+
+// Constructor.
+Vulkan_LogicalDevice::Vulkan_LogicalDevice
+(
+    const VkPhysicalDevice &physical_device,
+    const std::vector<VkDeviceQueueCreateInfo> &queues_create_info,
+    const std::vector<const char *> &required_extensions
+)
+{
+    logical_device = create_logical_device(physical_device, queues_create_info, required_extensions);
+}
+
+// Destructor.
+Vulkan_LogicalDevice::~Vulkan_LogicalDevice()
+{
+    destroy_logical_device(logical_device);
+}
+
+VkDevice Vulkan_LogicalDevice::get() const
+{
+    return logical_device;
+}

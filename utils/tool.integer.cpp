@@ -1,0 +1,16 @@
+#include "integer.hpp"
+
+#include <string>
+#include <regex>
+
+// Check if the input could be converted to integer safely.
+bool is_an_integer
+(
+    const std::string &input
+)
+{
+    static const std::regex pattern(R"(^-?\d+$)");
+    bool is_an_integer = std::regex_match(input, pattern);
+
+    return is_an_integer;
+}
