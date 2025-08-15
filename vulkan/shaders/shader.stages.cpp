@@ -1,8 +1,8 @@
-#include "stages.hpp"
+#include "shader.stages.hpp"
 
-#include "modules.hpp"
-#include "../../logs/terminal.hpp"
-#include "../../tools/text_format.hpp"
+#include "shader.modules.hpp"
+#include "../../logs/logs.handler.hpp"
+#include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 #include <vector>

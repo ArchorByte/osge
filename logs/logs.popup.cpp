@@ -1,5 +1,7 @@
-#include "popup.hpp"
-#include "../config.hpp"
+#include "logs.popup.hpp"
+
+#include "../config/engine.config.hpp"
+#include "../config/game.config.hpp"
 
 #if defined(_WIN64)
     #include <windows.h>

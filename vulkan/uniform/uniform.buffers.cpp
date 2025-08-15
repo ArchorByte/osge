@@ -1,8 +1,8 @@
-#include "buffers.hpp"
+#include "uniform.buffers.hpp"
 
-#include "../../logs/terminal.hpp"
-#include "../buffers/manager.hpp"
-#include "../../tools/text_format.hpp"
+#include "../buffers/buffers.handler.hpp"
+#include "../../logs/logs.handler.hpp"
+#include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 #include <vector>

@@ -1,7 +1,7 @@
-#include "parser.hpp"
+#include "tool.parser.hpp"
 
-#include "text_format.hpp"
-#include "../logs/terminal.hpp"
+#include "tool.text.format.hpp"
+#include "../logs/logs.handler.hpp"
 
 #include <fstream>
 #include <string>

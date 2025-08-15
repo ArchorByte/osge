@@ -1,5 +1,6 @@
-#include "layers.hpp"
-#include "../../logs/terminal.hpp"
+#include "validation.layers.hpp"
+
+#include "../../logs/logs.handler.hpp"
 
 #include <vulkan/vulkan.h>
 #include <vector>

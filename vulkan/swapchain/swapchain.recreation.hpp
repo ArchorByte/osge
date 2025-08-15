@@ -1,7 +1,7 @@
-#include "swapchain.hpp"
-#include "images.hpp"
-#include "../render/framebuffers.hpp"
-#include "../render/sync/semaphores.hpp"
+#include "swapchain.handler.hpp"
+#include "swapchain.images.hpp"
+#include "../render/framebuffers.handler.hpp"
+#include "../render/sync/render.sync.semaphores.hpp"
 
 #include <vulkan/vulkan.h>
 #include <cstdint>

@@ -1,9 +1,9 @@
-#include "copy.hpp"
+#include "buffer.copy.hpp"
 
-#include "../command/wrapper.hpp"
-#include "../../logs/terminal.hpp"
-#include "../../tools/text_format.hpp"
-#include "../textures/loader.hpp"
+#include "../commands/command.buffer.handler.hpp"
+#include "../../logs/logs.handler.hpp"
+#include "../../utils/tool.text.format.hpp"
+#include "../textures/texture.images.loader.hpp"
 
 #include <vulkan/vulkan.h>
 

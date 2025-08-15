@@ -1,5 +1,6 @@
-#include "update.hpp"
-#include "../uniform/buffers.hpp"
+#include "uniform.buffer.update.hpp"
+
+#include "uniform.buffers.hpp"
 
 #include <vulkan/vulkan.h>
 #include <glm/glm.hpp>

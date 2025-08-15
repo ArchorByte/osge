@@ -1,18 +1,19 @@
-#include "config.hpp"
-
-#include "logs/popup.hpp"
-#include "logs/terminal.hpp"
-#include "glfw/instance.hpp"
-#include "glfw/window.hpp"
-#include "environment/console.hpp"
-#include "environment/monitors.hpp"
-#include "environment/resolutions.hpp"
-#include "environment/system.hpp"
-#include "tools/parser.hpp"
-#include "tools/integer.hpp"
-#include "tools/files.hpp"
-#include "vulkan/run_vulkan.hpp"
-#include "opengl/run_opengl.hpp"
+#include "config/engine.config.hpp"
+#include "config/game.config.hpp"
+#include "config/engine.version.hpp"
+#include "logs/logs.popup.hpp"
+#include "logs/logs.handler.hpp"
+#include "glfw/glfw.instance.hpp"
+#include "glfw/window.handler.hpp"
+#include "environment/env.console.hpp"
+#include "environment/env.monitors.hpp"
+#include "environment/env.resolutions.hpp"
+#include "environment/env.system.hpp"
+#include "utils/tool.parser.hpp"
+#include "utils/tool.integer.hpp"
+#include "utils/tool.files.hpp"
+#include "vulkan/vulkan.run.hpp"
+#include "opengl/opengl.run.hpp"
 
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
@@ -37,8 +38,8 @@ int main()
 {
     try
     {
-        if (std::filesystem::exists("osge.logs")) std::filesystem::remove("osge.logs"); // We reset the logs file by deleting it if it already exists.
-        create_new_empty_file("osge.logs");
+        if (std::filesystem::exists(LOGS_FILE_NAME)) std::filesystem::remove(LOGS_FILE_NAME); // We reset the logs file by deleting it if it already exists.
+        create_new_empty_file(LOGS_FILE_NAME);
 
         // We disable the console on Windows if we're in release mode.
         #ifndef DEBUG_MODE
@@ -49,6 +50,7 @@ int main()
             log("Warning: Running in debug mode!");
         #endif
 
+        log("Running on OSGE v" + std::to_string(ENGINE_VERSION_VARIANT) + "." + std::to_string(ENGINE_VERSION_MAJOR) + "." + std::to_string(ENGINE_VERSION_MINOR) + "." + std::to_string(ENGINE_VERSION_PATCH) + ".");
         start_glfw_instance();
         check_operating_system_support();                              // Check if we are running on a supported operating system.
         std::vector<GLFWmonitor*> monitors = get_available_monitors(); // Retrieve all available monitors on this device.

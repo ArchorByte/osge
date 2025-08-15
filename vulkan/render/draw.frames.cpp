@@ -1,10 +1,10 @@
-#include "draw.hpp"
+#include "draw.frames.hpp"
 
-#include "../command/recorder.hpp"
-#include "../../logs/terminal.hpp"
-#include "../uniform/update.hpp"
-#include "../uniform/buffers.hpp"
-#include "../../tools/text_format.hpp"
+#include "../commands/command.buffer.recorder.hpp"
+#include "../uniform/uniform.buffer.update.hpp"
+#include "../uniform/uniform.buffers.hpp"
+#include "../../logs/logs.handler.hpp"
+#include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 #include <unistd.h>

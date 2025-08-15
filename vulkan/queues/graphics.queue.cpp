@@ -1,5 +1,6 @@
-#include "graphics_queue.hpp"
-#include "../../logs/terminal.hpp"
+#include "graphics.queue.hpp"
+
+#include "../../logs/logs.handler.hpp"
 
 #include <vulkan/vulkan.h>
 #include <cstdint>

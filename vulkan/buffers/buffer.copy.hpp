@@ -1,4 +1,4 @@
-#include "../textures/loader.hpp"
+#include "../textures/texture.images.loader.hpp"
 
 #include <vulkan/vulkan.h>
 

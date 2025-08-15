@@ -28,8 +28,10 @@ C:/MinGW/bin/mingw32-make.exe
 move new_osge_project.exe ../out/
 cd ../out
 
-copy "..\..\..\game.config" "./"
+copy "..\..\..\config\game.config" "./"
 pause
+
+cls
 start new_osge_project.exe
 
 cd ../../../

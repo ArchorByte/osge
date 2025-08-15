@@ -1,7 +1,7 @@
-#include "files.hpp"
+#include "tool.files.hpp"
 
-#include "../logs/terminal.hpp"
-#include "text_format.hpp"
+#include "tool.text.format.hpp"
+#include "../logs/logs.handler.hpp"
 
 #include <fstream>
 #include <filesystem>

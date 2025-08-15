@@ -1,7 +1,7 @@
-#include "monitors.hpp"
+#include "env.monitors.hpp"
 
-#include "../logs/terminal.hpp"
-#include "../tools/text_format.hpp"
+#include "../logs/logs.handler.hpp"
+#include "../utils/tool.text.format.hpp"
 
 #include <GLFW/glfw3.h>
 #include <vector>
