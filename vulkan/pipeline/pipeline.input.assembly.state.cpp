@@ -1,7 +1,7 @@
-#include "assembly_state.hpp"
+#include "pipeline.input.assembly.state.hpp"
 
-#include "../vertex/vertex.hpp"
-#include "../../logs/terminal.hpp"
+#include "../vertex/vertex.handler.hpp"
+#include "../../logs/logs.handler.hpp"
 
 #include <vulkan/vulkan.h>
 #include <cstdint>

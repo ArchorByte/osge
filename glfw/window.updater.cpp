@@ -1,4 +1,4 @@
-#include "updater.hpp"
+#include "window.updater.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -12,5 +12,5 @@ void update_glfw_window
     GLFWmonitor* monitor
 )
 {
-    
+    // TODO: Do the script.
 }

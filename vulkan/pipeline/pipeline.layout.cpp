@@ -1,7 +1,7 @@
-#include "layout.hpp"
+#include "pipeline.layout.hpp"
 
-#include "../../logs/terminal.hpp"
-#include "../../tools/text_format.hpp"
+#include "../../logs/logs.handler.hpp"
+#include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 

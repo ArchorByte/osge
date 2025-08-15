@@ -1,8 +1,8 @@
-#include "sets.hpp"
+#include "descriptor.sets.hpp"
 
-#include "../../../logs/terminal.hpp"
-#include "../buffers.hpp"
-#include "../../../tools/text_format.hpp"
+#include "../uniform/uniform.buffers.hpp"
+#include "../../logs/logs.handler.hpp"
+#include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 #include <vector>

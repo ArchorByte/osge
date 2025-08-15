@@ -1,13 +1,13 @@
-#include "recreate.hpp"
+#include "swapchain.recreation.hpp"
 
-#include "swapchain.hpp"
-#include "images.hpp"
-#include "../render/framebuffers.hpp"
-#include "queries.hpp"
-#include "selection.hpp"
-#include "../render/sync/semaphores.hpp"
-#include "../../logs/terminal.hpp"
-#include "../../tools/text_format.hpp"
+#include "swapchain.data.queries.hpp"
+#include "swapchain.data.selection.hpp"
+#include "swapchain.handler.hpp"
+#include "swapchain.images.hpp"
+#include "../render/framebuffers.handler.hpp"
+#include "../render/sync/render.sync.semaphores.hpp"
+#include "../../logs/logs.handler.hpp"
+#include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 #include <cstdint>

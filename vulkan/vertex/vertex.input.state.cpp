@@ -1,7 +1,7 @@
-#include "input_state.hpp"
+#include "vertex.input.state.hpp"
 
-#include "vertex.hpp"
-#include "../../logs/terminal.hpp"
+#include "vertex.handler.hpp"
+#include "../../logs/logs.handler.hpp"
 
 #include <vulkan/vulkan.h>
 

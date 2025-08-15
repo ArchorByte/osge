@@ -1,5 +1,6 @@
-#include "color_attachment.hpp"
-#include "../../logs/terminal.hpp"
+#include "color.attachment.hpp"
+
+#include "../../logs/logs.handler.hpp"
 
 #include <vulkan/vulkan.h>
 

@@ -1,7 +1,7 @@
-#include "loader.hpp"
+#include "texture.images.loader.hpp"
 
-#include "../../logs/terminal.hpp"
-#include "../../tools/text_format.hpp"
+#include "../../logs/logs.handler.hpp"
+#include "../../utils/tool.text.format.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>

@@ -26,7 +26,8 @@ make
 mv new_osge_project ../out
 cd ../out
 
-cp ../../../game.config ./game.config
+cp ../../../config/game.config ./game.config
 chmod +x ./new_osge_project
 
+echo ""
 ./new_osge_project

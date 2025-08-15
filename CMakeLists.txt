@@ -37,8 +37,9 @@ endif()
 include_directories (
     ${CMAKE_SOURCE_DIR}/vulkan
     ${CMAKE_SOURCE_DIR}/vulkan/buffers
-    ${CMAKE_SOURCE_DIR}/vulkan/command
+    ${CMAKE_SOURCE_DIR}/vulkan/commands
     ${CMAKE_SOURCE_DIR}/vulkan/core
+    ${CMAKE_SOURCE_DIR}/vulkan/descriptors
     ${CMAKE_SOURCE_DIR}/vulkan/device
     ${CMAKE_SOURCE_DIR}/vulkan/pipeline
     ${CMAKE_SOURCE_DIR}/vulkan/queues
@@ -54,7 +55,7 @@ include_directories (
     ${CMAKE_SOURCE_DIR}/opengl
     ${CMAKE_SOURCE_DIR}/glfw
     ${CMAKE_SOURCE_DIR}/environment
-    ${CMAKE_SOURCE_DIR}/tools
+    ${CMAKE_SOURCE_DIR}/utils
     ${CMAKE_SOURCE_DIR}/game
     ${CMAKE_SOURCE_DIR}/game/engine
     ${CMAKE_SOURCE_DIR}/logs
@@ -64,8 +65,9 @@ include_directories (
 file(GLOB MAIN main.cpp)
 file(GLOB VULKAN vulkan/*.cpp)
 file(GLOB VULKAN_BUFFERS vulkan/buffers/*.cpp)
-file(GLOB VULKAN_COMMAND vulkan/command/*.cpp)
+file(GLOB VULKAN_COMMANDS vulkan/commands/*.cpp)
 file(GLOB VULKAN_CORE vulkan/core/*.cpp)
+file(GLOB VULKAN_DESCRIPTORS vulkan/descriptors/*.cpp)
 file(GLOB VULKAN_DEVICE vulkan/device/*.cpp)
 file(GLOB VULKAN_PIPELINE vulkan/pipeline/*.cpp)
 file(GLOB VULKAN_QUEUES vulkan/queues/*.cpp)
@@ -81,7 +83,7 @@ file(GLOB VULKAN_VERTEX vulkan/vertex/*.cpp)
 file(GLOB OPENGL opengl/*.cpp)
 file(GLOB GLFW glfw/*.cpp)
 file(GLOB ENV environment/*.cpp)
-file(GLOB TOOLS tools/*.cpp)
+file(GLOB UTILS utils/*.cpp)
 file(GLOB GAME game/*.cpp)
 file(GLOB GAME_ENGINE game/engine/*.cpp)
 file(GLOB LOGS logs/*.cpp)
@@ -91,8 +93,9 @@ set(ALL_SOURCES
     ${MAIN}
     ${VULKAN}
     ${VULKAN_BUFFERS}
-    ${VULKAN_COMMAND}
+    ${VULKAN_COMMANDS}
     ${VULKAN_CORE}
+    ${VULKAN_DESCRIPTORS}
     ${VULKAN_DEVICE}
     ${VULKAN_PIPELINE}
     ${VULKAN_QUEUES}
@@ -108,7 +111,7 @@ set(ALL_SOURCES
     ${OPENGL}
     ${GLFW}
     ${ENV}
-    ${TOOLS}
+    ${UTILS}
     ${GAME}
     ${GAME_ENGINE}
     ${LOGS}

@@ -1,5 +1,6 @@
 #include "viewport.hpp"
-#include "../../logs/terminal.hpp"
+
+#include "../../logs/logs.handler.hpp"
 
 #include <vulkan/vulkan.h>
 

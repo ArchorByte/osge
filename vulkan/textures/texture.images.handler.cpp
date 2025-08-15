@@ -1,12 +1,12 @@
-#include "images.hpp"
+#include "texture.images.handler.hpp"
 
-#include "loader.hpp"
-#include "buffers.hpp"
-#include "transitions.hpp"
-#include "../../logs/terminal.hpp"
-#include "../../tools/text_format.hpp"
-#include "../buffers/memory.hpp"
-#include "../buffers/copy.hpp"
+#include "texture.images.loader.hpp"
+#include "texture.image.buffers.hpp"
+#include "texture.image.transitions.hpp"
+#include "../buffers/buffers.memory.hpp"
+#include "../buffers/buffer.copy.hpp"
+#include "../../logs/logs.handler.hpp"
+#include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 #include <vector>

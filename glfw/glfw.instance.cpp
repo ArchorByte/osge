@@ -1,5 +1,5 @@
-#include "instance.hpp"
-#include "../logs/terminal.hpp"
+#include "glfw.instance.hpp"
+#include "../logs/logs.handler.hpp"
 
 #include <GLFW/glfw3.h>
 

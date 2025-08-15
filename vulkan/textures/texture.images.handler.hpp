@@ -1,9 +1,9 @@
+#include "texture.images.loader.hpp"
+#include "texture.image.buffers.hpp"
+
 #include <vulkan/vulkan.h>
 #include <string>
 #include <vector>
-
-#include "loader.hpp"
-#include "buffers.hpp"
 
 #ifndef VULKAN_TEXTURES_HPP
 #define VULKAN_TEXTURES_HPP

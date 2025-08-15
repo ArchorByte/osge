@@ -1,7 +1,7 @@
-#include "transitions.hpp"
+#include "texture.image.transitions.hpp"
 
-#include "../../logs/terminal.hpp"
-#include "../command/wrapper.hpp"
+#include "../commands/command.buffer.handler.hpp"
+#include "../../logs/logs.handler.hpp"
 
 #include <vulkan/vulkan.h>
 

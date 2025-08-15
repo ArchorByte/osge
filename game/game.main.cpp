@@ -1,7 +1,7 @@
-#include "game.hpp"
+#include "game.main.hpp"
 
-#include "../logs/terminal.hpp"
-#include "engine/framerate.hpp"
+#include "engine/engine.framerate.hpp"
+#include "../logs/logs.handler.hpp"
 
 void run_game_loop()
 {

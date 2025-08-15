@@ -1,11 +1,11 @@
-#include "buffer.hpp"
+#include "vertex.buffer.hpp"
 
-#include "vertex.hpp"
-#include "../../logs/terminal.hpp"
-#include "../buffers/manager.hpp"
-#include "../buffers/copy.hpp"
-#include "../buffers/index.hpp"
-#include "../../tools/text_format.hpp"
+#include "vertex.handler.hpp"
+#include "../buffers/buffers.handler.hpp"
+#include "../buffers/buffer.copy.hpp"
+#include "../buffers/buffer.index.hpp"
+#include "../../logs/logs.handler.hpp"
+#include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 #include <vector>

@@ -1,5 +1,6 @@
-#include "dynamic_state.hpp"
-#include "../../logs/terminal.hpp"
+#include "pipeline.dynamic.state.hpp"
+
+#include "../../logs/logs.handler.hpp"
 
 #include <vulkan/vulkan.h>
 #include <vector>

@@ -1,10 +1,10 @@
-#include "index.hpp"
+#include "buffer.index.hpp"
 
-#include "../../logs/terminal.hpp"
-#include "manager.hpp"
-#include "copy.hpp"
-#include "../vertex/vertex.hpp"
-#include "../../tools/text_format.hpp"
+#include "buffers.handler.hpp"
+#include "buffer.copy.hpp"
+#include "../vertex/vertex.handler.hpp"
+#include "../../logs/logs.handler.hpp"
+#include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 #include <cstring>

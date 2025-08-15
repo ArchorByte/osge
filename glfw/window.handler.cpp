@@ -1,9 +1,8 @@
-#include "window.hpp"
+#include "window.handler.hpp"
 
-#include "instance.hpp"
-#include "../logs/terminal.hpp"
-#include "../config.hpp"
-#include "../tools/text_format.hpp"
+#include "../logs/logs.handler.hpp"
+#include "../config/engine.config.hpp"
+#include "../utils/tool.text.format.hpp"
 
 #include <GLFW/glfw3.h>
 #include <string>

@@ -1,9 +1,9 @@
-#include "buffers.hpp"
+#include "texture.image.buffers.hpp"
 
-#include "loader.hpp"
-#include "../buffers/manager.hpp"
-#include "../../logs/terminal.hpp"
-#include "../../tools/text_format.hpp"
+#include "texture.images.loader.hpp"
+#include "../buffers/buffers.handler.hpp"
+#include "../../logs/logs.handler.hpp"
+#include "../../utils/tool.text.format.hpp"
 
 #include <vector>
 #include <string>
