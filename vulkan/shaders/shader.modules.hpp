@@ -26,12 +26,12 @@ VkShaderModule create_vulkan_shader_module
     std::string &file_name
 );
 
-std::vector<ShaderInfo> create_all_vulkan_shaders_modules
+std::vector<ShaderInfo> create_all_vulkan_shader_modules
 (
     const VkDevice &logical_device
 );
 
-void destroy_vulkan_shaders_modules
+void destroy_vulkan_shader_modules
 (
     const VkDevice &logical_device,
     std::vector<ShaderInfo> &shaders_modules

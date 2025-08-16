@@ -59,7 +59,7 @@ int main()
         if (!std::filesystem::exists("game.config"))
         {
             create_new_empty_file("game.config");
-            write_file("game.config", "WINDOW_WIDTH=854\nWINDOW_HEIGHT=480\nWINDOW_MODE=0\nGRAPHICS_API=0\nMONITOR=1\nGPU=1", false, true);
+            write_file("game.config", "WINDOW_WIDTH=1920\nWINDOW_HEIGHT=1080\nWINDOW_MODE=2\nGRAPHICS_API=0\nMONITOR=1\nGPU=1", false, true);
         }
 
         // Read the data in the config file and parse the data into a map.

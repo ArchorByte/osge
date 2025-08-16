@@ -34,7 +34,7 @@ VkPipelineViewportStateCreateInfo create_viewport_state()
     VkPipelineViewportStateCreateInfo info {};
     info.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
     info.viewportCount = 1;    // Amount of viewport used.
-    info.pViewports = nullptr; // We don't direcly pass the viewport here because we use a dynamic state.
+    info.pViewports = nullptr; // We don't directly pass the viewport here because we use a dynamic state.
     info.scissorCount = 1;     // Amount of scissor used.
     info.pScissors = nullptr;  // Same here.
 

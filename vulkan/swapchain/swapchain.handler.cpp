@@ -75,7 +75,7 @@ VkSwapchainKHR create_vulkan_swapchain
     info.clipped = VK_TRUE;                                      // Disallow the render of any pixel out of bounds.
     info.oldSwapchain = VK_NULL_HANDLE;                          // Not used. Simplify the swap chain recreation process.
 
-    // Set up the sharing mode depending on the queue fqmily indexes.
+    // Set up the sharing mode depending on the queue family indexes.
     if (graphics_family_index != present_family_index)
     {
         info.imageSharingMode = VK_SHARING_MODE_CONCURRENT; // Allow images sharing without ownership transfers.

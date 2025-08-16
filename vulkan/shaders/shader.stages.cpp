@@ -10,7 +10,7 @@
 
 // Create a shader stage for each shader module for a graphics pipeline.
 // Note: Every invalid shader module won't have a shader stage and so won't be loaded to the graphics pipeline!
-std::vector<VkPipelineShaderStageCreateInfo> create_vulkan_shaders_stages
+std::vector<VkPipelineShaderStageCreateInfo> create_vulkan_shader_stages
 (
     const std::vector<ShaderInfo> &shaders_modules
 )

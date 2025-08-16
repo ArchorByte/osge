@@ -20,3 +20,4 @@ The project will be publicly released once we finished everything here.
 - [ ] Write some advanced docs.
 - [ ] Implement vsync support.
 - [ ] FPS cap support.
+- [ ] Clean up and optimize the whole code base once we have completed this checklist.

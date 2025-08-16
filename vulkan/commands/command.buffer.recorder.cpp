@@ -111,7 +111,7 @@ void record_command_buffer
     render_pass_info.framebuffer = framebuffers[image_index]; // Select the right frame buffer.
     render_pass_info.renderArea.offset = { 0, 0 };            // Select the rendering area.
     render_pass_info.renderArea.extent = extent;              // Pass the swap chain extent.
-    render_pass_info.clearValueCount = 1;                     // Amount of clear valuesthat we are going to use.
+    render_pass_info.clearValueCount = 1;                     // Amount of clear values that we are going to use.
     render_pass_info.pClearValues = &clear_color;             // Pass a pointer to our clear color.
 
     VkBuffer vertex_buffers = { vertex_buffer };

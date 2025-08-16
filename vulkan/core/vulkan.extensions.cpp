@@ -66,7 +66,7 @@ void check_vulkan_extensions_support
             error_log("- Extension \"" + extension + "\" NOT supported!");
         }
 
-        fatal_error_log("The extensions compability verification has failed! " + std::to_string(required_extensions_list.size()) + " extensions aren't supported by your device!");
+        fatal_error_log("The extensions compatibility verification has failed! " + std::to_string(required_extensions_list.size()) + " extensions aren't supported by your device!");
     }
 
     log("The Vulkan extensions verification has ended successfully!");

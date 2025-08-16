@@ -63,9 +63,9 @@ VkShaderModule create_vulkan_shader_module
     return shader_module;
 }
 
-// Create all shaders modules at once in the shaders directory.
+// Create all shader modules at once in the shaders directory.
 // Note: We only trigger a crash if we started the shader module creation process. If a file is not valid, we just ignore it.
-std::vector<ShaderInfo> create_all_vulkan_shaders_modules
+std::vector<ShaderInfo> create_all_vulkan_shader_modules
 (
     const VkDevice &logical_device
 )
@@ -117,8 +117,8 @@ std::vector<ShaderInfo> create_all_vulkan_shaders_modules
     return shaders_modules;
 }
 
-// Destroy some shaders modules.
-void destroy_vulkan_shaders_modules
+// Destroy some shader modules.
+void destroy_vulkan_shader_modules
 (
     const VkDevice &logical_device,
     std::vector<ShaderInfo> &shaders_modules
@@ -178,13 +178,13 @@ Vulkan_ShadersModules::Vulkan_ShadersModules
     const VkDevice &logical_device
 ) : logical_device(logical_device)
 {
-    shaders_modules = create_all_vulkan_shaders_modules(logical_device);
+    shaders_modules = create_all_vulkan_shader_modules(logical_device);
 }
 
 // Destructor.
 Vulkan_ShadersModules::~Vulkan_ShadersModules()
 {
-    destroy_vulkan_shaders_modules(logical_device, shaders_modules);
+    destroy_vulkan_shader_modules(logical_device, shaders_modules);
 }
 
 std::vector<ShaderInfo> Vulkan_ShadersModules::get() const

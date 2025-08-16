@@ -16,7 +16,7 @@ std::vector<VkFramebuffer> create_vulkan_framebuffers
     const VkRenderPass &render_pass
 );
 
-void destroy_framebuffers
+void destroy_vulkan_framebuffers
 (
     const VkDevice &logical_device,
     std::vector<VkFramebuffer> &framebuffers

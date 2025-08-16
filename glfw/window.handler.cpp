@@ -34,6 +34,7 @@ enum GraphicsAPI
 
 // Create a window using GLFW.
 // Warning: We assume that GLFW has already been initialized! Normally, the engine already takes care of that on startup.
+// FIXME: The WINDOWS and BORDERLESS modes aren't properly moved to the selected monitor.
 GLFWwindow* create_glfw_window
 (
     int width,
@@ -99,7 +100,7 @@ GLFWwindow* create_glfw_window
         window_name += " - Debug Mode";
     #endif
 
-    GLFWwindow* window = glfwCreateWindow(width, height, window_name.c_str(), monitor, nullptr);
+    GLFWwindow* window = glfwCreateWindow(width, height, window_name.c_str(), window_mode == FULLSCREEN ? monitor : nullptr, nullptr);
 
     if (!window)
     {
@@ -113,7 +114,7 @@ GLFWwindow* create_glfw_window
 }
 
 // Destroy a GLFW window.
-void destroy_window
+void destroy_glfw_window
 (
     GLFWwindow* window
 )
@@ -151,7 +152,7 @@ GLFW_Window::GLFW_Window
 // Destructor.
 GLFW_Window::~GLFW_Window()
 {
-    destroy_window(window);
+    destroy_glfw_window(window);
 }
 
 GLFWwindow* GLFW_Window::get() const

@@ -66,7 +66,7 @@ std::vector<VkDeviceQueueCreateInfo> make_queues_create_info
     std::set<uint32_t> unique_queues_families = { required_queues_indexes.begin(), required_queues_indexes.end() }; // Avoid to duplicate the indexes.
     std::vector<VkDeviceQueueCreateInfo> queues_create_info {};
 
-    // Mahe a create info for each queue family.
+    // Make a create info for each queue family.
     for (const uint32_t queue : unique_queues_families)
     {
         // Create info for the queue.
