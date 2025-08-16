@@ -40,7 +40,7 @@ VkDescriptorPool create_vulkan_descriptor_pool
     pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     pool_info.poolSizeCount = 1;                             // Amount of pool sizes to pass.
     pool_info.pPoolSizes = &pool_size;                       // Pass the pool size.
-    pool_info.maxSets = static_cast<uint32_t>(images_count); // Maxomum amount of sets.
+    pool_info.maxSets = static_cast<uint32_t>(images_count); // Maximum amount of sets.
 
     VkDescriptorPool descriptor_pool = VK_NULL_HANDLE;
     VkResult pool_creation = vkCreateDescriptorPool(logical_device, &pool_info, nullptr, &descriptor_pool); // Try to create the pool.

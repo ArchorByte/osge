@@ -18,7 +18,7 @@ GLFWwindow* create_glfw_window
     int graphic_api
 );
 
-void destroy_window
+void destroy_glfw_window
 (
     GLFWwindow* window
 );

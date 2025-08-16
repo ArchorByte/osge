@@ -8,13 +8,13 @@
 #include <string>
 #include <cstdint>
 
-// Check if some Vulkan layers are supported by the device.
-void check_vulkan_layers_compatibility
+// Check if some Vulkan validation layers are supported by the device.
+void check_vulkan_validation_layers_compatibility
 (
     const std::vector<const char*> &layers
 )
 {
-    log("Verifying layers compatibility..");
+    log("Verifying validation layers compatibility..");
 
     // Count the amount of layers supported by this device.
     uint32_t layers_count = 0;
@@ -22,8 +22,8 @@ void check_vulkan_layers_compatibility
 
     if (layers.size() < 1)
     {
-        log("No required layer provided! There is nothing to do.");
-        log("The layers compatibility check up has ended successfully!");
+        log("No required validation layer provided! There is nothing to do.");
+        log("The validation layers compatibility check up has ended successfully!");
         return;
     }
 
@@ -50,12 +50,12 @@ void check_vulkan_layers_compatibility
 
         if (!layer_found)
         {
-            error_log("The layer " + string_layer_name + " is not supported by this device!");
-            fatal_error_log("The layers compatibility check up has failed!");
+            error_log("The validation layer " + string_layer_name + " is not supported by this device!");
+            fatal_error_log("The validation layers compatibility check up has failed!");
         }
 
-        log("- Layer \"" + string_layer_name + "\" supported!");
+        log("- Validation layer \"" + string_layer_name + "\" supported!");
     }
 
-    log("The layers compatibility check up has ended successfully!");
+    log("The validation layers compatibility check up has ended successfully!");
 }

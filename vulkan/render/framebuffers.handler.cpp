@@ -77,7 +77,7 @@ std::vector<VkFramebuffer> create_vulkan_framebuffers
 }
 
 // Destroy some frame buffers.
-void destroy_framebuffers
+void destroy_vulkan_framebuffers
 (
     const VkDevice &logical_device,
     std::vector<VkFramebuffer> &framebuffers
@@ -144,7 +144,7 @@ Vulkan_Framebuffers::Vulkan_Framebuffers
 // Destructor.
 Vulkan_Framebuffers::~Vulkan_Framebuffers()
 {
-    destroy_framebuffers(logical_device, framebuffers);
+    destroy_vulkan_framebuffers(logical_device, framebuffers);
 }
 
 std::vector<VkFramebuffer> Vulkan_Framebuffers::get() const

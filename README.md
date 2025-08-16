@@ -9,7 +9,7 @@ This Python program can run on Windows, Linux, MacOS and even Android!
 - Vulkan C++ library.
 - GLM C++ library.
 - STB C++ library.
-- GTK C++ library (**for linux builds**).
+- GTK C++ library (**for Linux builds**).
 
 # 📥 Installation
 1) Download the program. <br/>

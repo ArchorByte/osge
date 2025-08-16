@@ -14,7 +14,7 @@
 #include "device/logical.device.hpp"
 #include "pipeline/pipeline.input.assembly.state.hpp"
 #include "pipeline/color.attachment.hpp"
-#include "pipeline/pipeline.dynamic.state.hpp"
+#include "pipeline/pipeline.dynamic.states.hpp"
 #include "pipeline/graphics.pipeline.hpp"
 #include "pipeline/pipeline.multisampling.hpp"
 #include "pipeline/pipeline.layout.hpp"
@@ -67,7 +67,7 @@ void run_vulkan
     #endif
 
     // Check that this device handles our layers in the list.
-    check_vulkan_layers_compatibility(layers);
+    check_vulkan_validation_layers_compatibility(layers);
 
     // Create the Vulkan instance.
     // Entry point of Vulkan.
@@ -156,7 +156,7 @@ void run_vulkan
 
     // Create the shaders stages for each shader module.
     // Prepare the shaders info for the graphics pipeline.
-    std::vector<VkPipelineShaderStageCreateInfo> shaders_stages = create_vulkan_shaders_stages(shaders_modules.get());
+    std::vector<VkPipelineShaderStageCreateInfo> shaders_stages = create_vulkan_shader_stages(shaders_modules.get());
 
     // Create the dynamic state.
     // Allow to modify some states without having to recreate the graphics pipeline.
