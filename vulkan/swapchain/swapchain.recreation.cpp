@@ -11,7 +11,8 @@
 
 #include <vulkan/vulkan.h>
 #include <cstdint>
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_vulkan.h>
 #include <vector>
 
 // Recreate a swap chain.
@@ -29,7 +30,7 @@ void recreate_vulkan_swapchain
     const uint32_t &present_family_index,
     const VkRenderPass &render_pass,
     VkExtent2D &extent,
-    GLFWwindow* window,
+    SDL_Window* window,
     Vulkan_Semaphores &semaphores,
     std::vector<VkSemaphore> &image_available_semaphores,
     std::vector<VkSemaphore> &render_finished_semaphores
@@ -79,11 +80,16 @@ void recreate_vulkan_swapchain
     // Note: This generally happens when the window is minimized on Windows.
     while (width == 0 || height == 0)
     {
-        glfwGetFramebufferSize(window, &width, &height);
-        glfwWaitEvents();
-
+        SDL_Vulkan_GetDrawableSize(window, &width, &height);
         log("Waiting for the user to unminimize the window before recreating the swap chain..");
-        if (glfwWindowShouldClose(window)) return; // If the event received was a stop signal, we leave the swap chain recreation function and let the game close.
+
+        SDL_Event event;
+        SDL_WaitEvent(&event);  // This line blocks the code until something happens to the window.
+
+        if (event.type == SDL_QUIT || (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window)))
+        {
+            return;
+        }
     }
 
     // Wait for the logical device to be idle.

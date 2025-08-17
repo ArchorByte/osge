@@ -2,19 +2,19 @@
 
 #include "../logs/logs.handler.hpp"
 
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
 
-auto previous_time = glfwGetTime();
+auto previous_time = SDL_GetTicks();
 int frames_count = 0;
 int framerate = 0;
 
 int framerate_counter()
 {
-    auto current_time = glfwGetTime();
+    auto current_time = SDL_GetTicks();
     frames_count++;
 
     // If one second passed, we update the counter.
-    if (current_time - previous_time >= 1.0f)
+    if (current_time - previous_time >= 1000)
     {
         framerate = frames_count;      // We update the previous count to return the same frames count for the next ms.
         frames_count = 0;              // Reset the amount of frames in the counter.

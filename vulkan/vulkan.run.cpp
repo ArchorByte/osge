@@ -47,7 +47,7 @@
 #include "vertex/vertex.input.state.hpp"
 
 #include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
 #include <unistd.h>
 #include <string>
 #include <vector>
@@ -55,7 +55,7 @@
 
 void run_vulkan
 (
-    GLFWwindow* window
+    SDL_Window* window
 )
 {
     // We declare the layers that we are going to use.
@@ -292,13 +292,25 @@ void run_vulkan
         render_finished_semaphores.emplace_back(semaphore);
     }
 
-    // Targeted frame by the drawing function.
-    size_t frame = 0;
+    size_t frame = 0; // Targeted frame by the drawing function.
+    bool running = true;
+    SDL_Event event;
 
     // Main loop.
-    while (!glfwWindowShouldClose(window))
+    while (running)
     {
-        glfwPollEvents();
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
+                running = false;
+            }
+
+            if (event.window.event == SDL_WINDOWEVENT_CLOSE)
+            {
+                running = false;
+            }
+        }
 
         // Render and draw the frame to the window.
         std::string draw_output = draw_frame(logical_device.get(), fences.get(), swapchain.get(), image_available_semaphores, render_finished_semaphores, command_buffers, extent, framebuffers.get(), render_pass.get(), graphics_pipeline.get(), viewport, scissor, graphics_queue, present_queue, frame, vertex_buffer.get(), index_buffer.get(), uniform_buffers.get(), pipeline_layout.get(), descriptor_sets);

@@ -5,7 +5,7 @@
 
 #include <vulkan/vulkan.h>
 #include <cstdint>
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
 #include <vector>
 
 #ifndef VULKAN_SWAPCHAIN_RECREATE_HPP
@@ -25,7 +25,7 @@ void recreate_vulkan_swapchain
     const uint32_t &present_family_index,
     const VkRenderPass &render_pass,
     VkExtent2D &extent,
-    GLFWwindow* window,
+    SDL_Window* window,
     Vulkan_Semaphores &semaphores,
     std::vector<VkSemaphore> &image_available_semaphores,
     std::vector<VkSemaphore> &render_finished_semaphores
