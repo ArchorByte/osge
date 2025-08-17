@@ -3,71 +3,72 @@
 #include "../logs/logs.handler.hpp"
 #include "../utils/tool.text.format.hpp"
 
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
 #include <map>
 #include <vector>
 #include <string>
 #include <algorithm>
 
-// Get and return the resolution of a monitor using GLFW.
+// Get and return the resolution of a display using GLFW.
 // Warning: We assume that GLFW has already been initialized! Normally, the engine takes care of that by default on startup.
-std::pair<int, int> get_monitor_resolution
+std::pair<int, int> get_display_resolution
 (
-    GLFWmonitor* monitor
+    int display_index
 )
 {
-    if (!monitor)
+    if (display_index < 0 || display_index >= SDL_GetNumVideoDisplays())
     {
-        fatal_error_log("Monitor resolution detection failed! The monitor provided (" + force_string(monitor) + ") is not valid!");
+        fatal_error_log("Display resolution detection failed! The display provided (" + std::to_string(display_index) + ") is not valid!");
     }
 
-    log("Detecting the monitor resolution..");
+    log("Detecting the display resolution..");
     std::pair<int, int> output;
 
-    // Retrieve the video data of the monitor.
-    const GLFWvidmode* video_mode = glfwGetVideoMode(monitor);
+    // Retrieve the video data of the display.
+    SDL_DisplayMode display_mode;
+    int query_result = SDL_GetCurrentDisplayMode(display_index, &display_mode);
 
-    if (!video_mode)
+    if (query_result != 0)
     {
-        fatal_error_log("Monitor resolution detection failed! Failed to retrieve the video mode!");
+        fatal_error_log("Display resolution detection failed! Failed to retrieve the video mode with error code " + std::string(SDL_GetError()) + "!");
     }
 
-    // Get the width and height of the monitor.
-    int width = video_mode -> width;
-    int height = video_mode -> height;
+    // Get the width and height of the display.
+    int width = display_mode.w;
+    int height = display_mode.h;
 
     log("Detected resolution: " + std::to_string(width) + "x" + std::to_string(height) + "!");
     return { width, height };
 }
 
-// Get and return every "allowed" resolution for the game, depending on the monitor resolution.
+// Get and return every "allowed" resolution for the game, depending on the display resolution.
 std::vector<std::string> get_allowed_game_resolutions
 (
-    const std::pair<int, int> &monitor_resolution
+    const std::pair<int, int> &display_resolution
 )
 {
     log("Detecting allowed game resolutions..");
     std::vector<std::string> output;
 
-    int monitor_width = monitor_resolution.first;
-    int monitor_height = monitor_resolution.second;
+    int display_width = display_resolution.first;
+    int display_height = display_resolution.second;
 
-    // Calculate the monitor ratio (width/height).
-    float monitor_ratio = static_cast<float>(monitor_width) / monitor_height; 
+    // Calculate the display ratio (width/height).
+    float display_ratio = static_cast<float>(display_width) / display_height;
 
-    // We allow directly the current monitor resolution if it's already a 16/9 resolution.
-    // Otherwise, we calculate the valid height for the monitor width to obtain a 16/9 resolution.
-    if (abs(monitor_ratio - (16.0f / 9.0f)) < 0.01f) output.push_back(std::to_string(monitor_width) + "x" + std::to_string(monitor_height));
-    else output.push_back(std::to_string(monitor_width) + "x" + std::to_string(monitor_width * 9 / 16));
+    // We allow directly the current display resolution if it's already a 16/9 resolution.
+    // Otherwise, we calculate the valid height for the display width to obtain a 16/9 resolution.
+    if (abs(display_ratio - (16.0f / 9.0f)) < 0.01f) output.push_back(std::to_string(display_width) + "x" + std::to_string(display_height));
+    else output.push_back(std::to_string(display_width) + "x" + std::to_string(display_width * 9 / 16));
 
-    // Now we try to find out what common 16/9 resolutions we can use on this monitor.
-    if (monitor_width >= 640 && monitor_height >= 360) output.push_back("640x360");
-    if (monitor_width >= 854 && monitor_height >= 480) output.push_back("854x480");
-    if (monitor_width >= 1280 && monitor_height >= 720) output.push_back("1280x720");
-    if (monitor_width >= 1600 && monitor_height >= 900) output.push_back("1600x900");
-    if (monitor_width >= 1920 && monitor_height >= 1080) output.push_back("1920x1080");
-    if (monitor_width >= 2560 && monitor_height >= 1440) output.push_back("2560x1440");
-    if (monitor_width >= 3840 && monitor_height >= 2160) output.push_back("3840x2160");
+    // Now we try to find out what common 16/9 resolutions we can use on this display.
+    if (display_width >= 640 && display_height >= 360) output.push_back("640x360");
+    if (display_width >= 854 && display_height >= 480) output.push_back("854x480");
+    if (display_width >= 1280 && display_height >= 720) output.push_back("1280x720");
+    if (display_width >= 1600 && display_height >= 900) output.push_back("1600x900");
+    if (display_width >= 1920 && display_height >= 1080) output.push_back("1920x1080");
+    if (display_width >= 2560 && display_height >= 1440) output.push_back("2560x1440");
+    if (display_width >= 3840 && display_height >= 2160) output.push_back("3840x2160");
 
     log(std::to_string(output.size()) + " game resolutions are allowed!");
     return output;
@@ -77,16 +78,16 @@ std::vector<std::string> get_allowed_game_resolutions
 std::pair<int, int> select_game_resolution
 (
     std::map<std::string, std::string> config,
-    const std::pair<int, int> &monitor_resolution,
+    const std::pair<int, int> &display_resolution,
     const std::vector<std::string> &allowed_game_resolutions
 )
 {
     log("Calculating game resolution at start..");
 
-    // We make string chains with the config and monitor resolutions.
+    // We make string chains with the config and display resolutions.
     // Format: [width]x[height] (without the square brackets).
     std::string string_config_resolution = config["WINDOW_WIDTH"] + "x" + config["WINDOW_HEIGHT"];
-    std::string string_monitor_resolution = std::to_string(monitor_resolution.first) + "x" + std::to_string(monitor_resolution.second);
+    std::string string_display_resolution = std::to_string(display_resolution.first) + "x" + std::to_string(display_resolution.second);
 
     // We try to find the config file resolution in the allowed resolutions list.
     if (find(allowed_game_resolutions.begin(), allowed_game_resolutions.end(), string_config_resolution) != allowed_game_resolutions.end())
@@ -99,20 +100,20 @@ std::pair<int, int> select_game_resolution
         return { width, height };
     }
 
-    error_log("The resolution in the config file (" + string_config_resolution + ") is not a 16/9 resolution! Switching to monitor resolution..");
+    error_log("The resolution in the config file (" + string_config_resolution + ") is not a 16/9 resolution! Switching to display resolution..");
 
-    // We try to find the monitor resolution in the allowed resolutions list.
-    if (find(allowed_game_resolutions.begin(), allowed_game_resolutions.end(), string_monitor_resolution) != allowed_game_resolutions.end())
+    // We try to find the display resolution in the allowed resolutions list.
+    if (find(allowed_game_resolutions.begin(), allowed_game_resolutions.end(), string_display_resolution) != allowed_game_resolutions.end())
     {
-        // Retrieve the monitor resolution data.
-        int width = monitor_resolution.first;
-        int height = monitor_resolution.second;
+        // Retrieve the display resolution data.
+        int width = display_resolution.first;
+        int height = display_resolution.second;
 
-        log("The game resolution at start will be " + std::to_string(width) + "x" + std::to_string(height) + "! Selected from monitor resolution.");
+        log("The game resolution at start will be " + std::to_string(width) + "x" + std::to_string(height) + "! Selected from display resolution.");
         return { width, height };
     }
 
-    error_log("The monitor resolution (" + string_monitor_resolution + ") is not a 16/9 resolution! Switching to allowed game resolutions..");
+    error_log("The display resolution (" + string_display_resolution + ") is not a 16/9 resolution! Switching to allowed game resolutions..");
 
     int biggest_width = 0;
     int biggest_height = 0;

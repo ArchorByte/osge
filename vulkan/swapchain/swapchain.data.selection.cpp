@@ -4,7 +4,8 @@
 #include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_vulkan.h>
 #include <vector>
 #include <cstdint>
 #include <limits>
@@ -60,7 +61,7 @@ VkPresentModeKHR select_best_vulkan_swapchain_present_mode
 VkExtent2D select_vulkan_swapchain_extent_resolution
 (
     const VkSurfaceCapabilitiesKHR &capabilities,
-    GLFWwindow* window
+    SDL_Window* window
 )
 {
     log("Selecting swap chain extent resolution..");
@@ -74,7 +75,7 @@ VkExtent2D select_vulkan_swapchain_extent_resolution
     int height;
 
     // Get the current resolution from the window frame buffer.
-    glfwGetFramebufferSize(window, &width, &height);
+    SDL_Vulkan_GetDrawableSize(window, &width, &height);
 
     VkExtent2D extent =
     {

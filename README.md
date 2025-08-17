@@ -4,12 +4,11 @@ This Python program can run on Windows, Linux, MacOS and even Android!
 > **Warning:** VPNs can provoke some unexpected results such as download failures or major slow downs.
 
 # 📦 Requirements
-- CMake compiler (**gcc/g++ recommended**).
-- GLFW C++ library.
+- CMake compiler (**using gcc/g++ recommended**).
+- SDL2 C++ library.
 - Vulkan C++ library.
 - GLM C++ library.
 - STB C++ library.
-- GTK C++ library (**for Linux builds**).
 
 # 📥 Installation
 1) Download the program. <br/>

@@ -3,10 +3,10 @@
 #include "config/engine.version.hpp"
 #include "logs/logs.popup.hpp"
 #include "logs/logs.handler.hpp"
-#include "glfw/glfw.instance.hpp"
-#include "glfw/window.handler.hpp"
+#include "sdl/sdl.instance.hpp"
+#include "sdl/window.handler.hpp"
 #include "environment/env.console.hpp"
-#include "environment/env.monitors.hpp"
+#include "environment/env.displays.hpp"
 #include "environment/env.resolutions.hpp"
 #include "environment/env.system.hpp"
 #include "utils/tool.parser.hpp"
@@ -16,7 +16,7 @@
 #include "opengl/opengl.run.hpp"
 
 #include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
 #include <unistd.h>
 #include <string>
 #include <vector>
@@ -51,9 +51,9 @@ int main()
         #endif
 
         log("Running on OSGE v" + std::to_string(ENGINE_VERSION_VARIANT) + "." + std::to_string(ENGINE_VERSION_MAJOR) + "." + std::to_string(ENGINE_VERSION_MINOR) + "." + std::to_string(ENGINE_VERSION_PATCH) + ".");
-        start_glfw_instance();
+        start_sdl_instance();
         check_operating_system_support();                              // Check if we are running on a supported operating system.
-        std::vector<GLFWmonitor*> monitors = get_available_monitors(); // Retrieve all available monitors on this device.
+        std::vector<int> display_indexes = get_available_displays(); // Retrieve all available monitors on this device.
 
         // We create a new default game config file if its missing.
         if (!std::filesystem::exists("game.config"))
@@ -98,15 +98,16 @@ int main()
         }
 
         int int_monitor = stoi(monitor);
+        fatal_error_log("test crash");
 
-        if (int_monitor < 1 || int_monitor > monitors.size())
+        if (int_monitor < 1 || int_monitor > display_indexes.size())
         {
             error_log("Invalid monitor detected! Switched to the primary monitor by default!");
             int_monitor = 1;
         }
 
         // Retrieve the screen resolution.
-        std::pair<int, int> screen_resolution = get_monitor_resolution(monitors[int_monitor - 1]);
+        std::pair<int, int> screen_resolution = get_display_resolution(display_indexes[int_monitor - 1]);
 
         // List the "allowed" game resolutions.
         // Those resolutions are the 16/9 resolutions that can be used on this screen.
@@ -119,7 +120,7 @@ int main()
         std::pair<int, int> game_resolution = select_game_resolution(config, screen_resolution, allowed_game_resolutions);
 
         // We create the main GLFW window.
-        GLFW_Window window(game_resolution.first, game_resolution.second, stoi(window_mode), std::string(GAME_TITLE), monitors[int_monitor - 1], stoi(graphics_api));
+        SDL2_Window window(game_resolution.first, game_resolution.second, stoi(window_mode), std::string(GAME_TITLE), stoi(graphics_api));
 
         // Select the graphics API that we are going to use.
         switch (stoi(graphics_api))

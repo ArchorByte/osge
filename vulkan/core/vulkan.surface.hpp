@@ -1,5 +1,5 @@
 #include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
 
 #ifndef VULKAN_CORE_SURFACE_HPP
 #define VULKAN_CORE_SURFACE_HPP
@@ -11,7 +11,7 @@
 VkSurfaceKHR create_vulkan_surface
 (
     const VkInstance &vulkan_instance,
-    GLFWwindow* &window
+    SDL_Window* &window
 );
 
 void destroy_vulkan_surface
@@ -32,7 +32,7 @@ public:
     Vulkan_Surface
     (
         const VkInstance &vulkan_instance,
-        GLFWwindow* window
+        SDL_Window* &window
     );
 
     // Destructor.

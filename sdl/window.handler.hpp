@@ -1,59 +1,58 @@
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
 #include <string>
 
-#ifndef GLFW_WINDOW_HPP
-#define GLFW_WINDOW_HPP
+#ifndef SDL2_WINDOW_HPP
+#define SDL2_WINDOW_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
 ///////////////////////////////////////////////////
 
-GLFWwindow* create_glfw_window
+// Create a window using SDL2.
+SDL_Window* create_sdl_window
 (
     int width,
     int height,
     int window_mode,
     std::string window_name,
-    GLFWmonitor* monitor,
     int graphic_api
 );
 
-void destroy_glfw_window
+// Destroy an SDL2 window.
+void destroy_sdl_window
 (
-    GLFWwindow* window
+    SDL_Window* window
 );
 
 ///////////////////////////////////////////////
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-class GLFW_Window
+class SDL2_Window
 {
 
 public:
     // Constructor.
-    GLFW_Window
+    SDL2_Window
     (
         int width,
         int height,
         int window_mode,
         std::string window_name,
-        GLFWmonitor* monitor,
         int graphic_api
     );
 
     // Destructor.
-    ~GLFW_Window();
+    ~SDL2_Window();
 
-    GLFWwindow* get() const;
+    SDL_Window* get() const;
 
     // Prevent data duplication.
-    GLFW_Window(const GLFW_Window&) = delete;
-    GLFW_Window& operator=(const GLFW_Window&) = delete;
+    SDL2_Window(const SDL2_Window&) = delete;
+    SDL2_Window& operator=(const SDL2_Window&) = delete;
 
 private:
-    // We declare the members of the class to store.
-    GLFWwindow* window;
+    SDL_Window* window;
 
 };
 

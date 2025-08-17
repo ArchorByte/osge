@@ -7,7 +7,8 @@
 #include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_vulkan.h>
 #include <cstdint>
 #include <vector>
 
@@ -38,13 +39,20 @@ VkInstance create_vulkan_instance
     app_info.engineVersion = VK_MAKE_API_VERSION(ENGINE_VERSION_VARIANT, ENGINE_VERSION_MAJOR, ENGINE_VERSION_MINOR, ENGINE_VERSION_PATCH); // Game engine version.
     app_info.apiVersion = VK_API_VERSION_1_4;                                                                                               // Vulkan API version.
 
-    // Get the required extensions list to make our instance.
-    uint32_t extensions_count = 0;
-    const char** extensions_list = glfwGetRequiredInstanceExtensions(&extensions_count);
+    unsigned int extensions_count = 0;
+    SDL_bool sdl_result = SDL_Vulkan_GetInstanceExtensions(nullptr, &extensions_count, nullptr);
 
-    if (!extensions_list && extensions_count != 0)
+    if (!sdl_result || extensions_count == 0)
     {
-        fatal_error_log("Vulkan instance creation failed! Failed to retrieve required GLFW extensions!");
+        fatal_error_log("Failed to retrieve required SDL2 Vulkan extensions!");
+    }
+
+    std::vector<const char*> extensions_list(extensions_count);
+    sdl_result = SDL_Vulkan_GetInstanceExtensions(nullptr, &extensions_count, extensions_list.data());
+
+    if (!sdl_result)
+    {
+        fatal_error_log("Failed to retrieve SDL2 Vulkan extensions!");
     }
 
     // Making the app create info.
@@ -52,7 +60,7 @@ VkInstance create_vulkan_instance
     create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     create_info.pApplicationInfo = &app_info;                             // Info about the app (defined previously).
     create_info.enabledExtensionCount = extensions_count;                 // Amount of extensions to enable.
-    create_info.ppEnabledExtensionNames = extensions_list;                // Enable required extensions.
+    create_info.ppEnabledExtensionNames = extensions_list.data();         // Enable required extensions.
     create_info.enabledLayerCount = static_cast<uint32_t>(layers.size()); // Amount of layers to enable.
     create_info.ppEnabledLayerNames = layers.data();                      // Enable required layers.
 

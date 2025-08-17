@@ -4,7 +4,8 @@
 #include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
@@ -14,7 +15,7 @@
 VkSurfaceKHR create_vulkan_surface
 (
     const VkInstance &vulkan_instance,
-    GLFWwindow* &window
+    SDL_Window* &window
 )
 {
     log("Creating a Vulkan surface..");
@@ -30,11 +31,11 @@ VkSurfaceKHR create_vulkan_surface
     }
 
     VkSurfaceKHR vulkan_surface = VK_NULL_HANDLE;
-    VkResult surface_creation = glfwCreateWindowSurface(vulkan_instance, window, nullptr, &vulkan_surface); // Try to create the surface.
+    bool surface_creation = SDL_Vulkan_CreateSurface(window, vulkan_instance, &vulkan_surface);
 
-    if (surface_creation != VK_SUCCESS)
+    if (surface_creation != SDL_TRUE)
     {
-        fatal_error_log("Vulkan surface creation returned error code " + std::to_string(surface_creation) + ".");
+        fatal_error_log("Vulkan surface creation returned error code " + std::string(SDL_GetError()) + ".");
     }
 
     if (!vulkan_instance || vulkan_surface == VK_NULL_HANDLE)
@@ -82,7 +83,7 @@ void destroy_vulkan_surface
 Vulkan_Surface::Vulkan_Surface
 (
     const VkInstance &vulkan_instance,
-    GLFWwindow* window
+    SDL_Window* &window
 ) : vulkan_instance(vulkan_instance)
 {
     vulkan_surface = create_vulkan_surface(vulkan_instance, window);

@@ -8,7 +8,7 @@
 #endif
 
 #if defined(__linux__)
-    #include <gtk/gtk.h>
+    #include <SDL2/SDL.h>
 #endif
 
 #include "string"
@@ -45,25 +45,12 @@ void open_crash_popup
             MB_ICONERROR | MB_OK
         );
     #elif defined(__linux__)
-        if (!gtk_init_check(0, nullptr))
-        {
-            // GTK failed to run, we give up the pop-up system and directly crash.
-            return;
-        }
-
-        // Simple Linux message box using GTK.
-        GtkWidget* popup = gtk_message_dialog_new
-        (
-            nullptr,
-            GTK_DIALOG_DESTROY_WITH_PARENT,
-            GTK_MESSAGE_ERROR,
-            GTK_BUTTONS_OK,
-            "%s\n\n%s",
+        // Simple message box using SDL2.
+        SDL_ShowSimpleMessageBox(
+            SDL_MESSAGEBOX_ERROR,
             popup_title.c_str(),
-            full_message.c_str()
+            full_message.c_str(),
+            nullptr
         );
-
-        gtk_dialog_run(GTK_DIALOG(popup)); // Show the box.
-        gtk_widget_destroy(popup); // Destroy it once the "OK" button is pressed.
     #endif
 }
