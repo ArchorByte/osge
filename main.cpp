@@ -98,7 +98,6 @@ int main()
         }
 
         int int_monitor = stoi(monitor);
-        fatal_error_log("test crash");
 
         if (int_monitor < 1 || int_monitor > display_indexes.size())
         {
