@@ -8,7 +8,6 @@
 //////////////////// Functions ////////////////////
 ///////////////////////////////////////////////////
 
-// Create a window using SDL2.
 SDL_Window* create_sdl_window
 (
     int width,
@@ -18,7 +17,6 @@ SDL_Window* create_sdl_window
     int graphic_api
 );
 
-// Destroy an SDL2 window.
 void destroy_sdl_window
 (
     SDL_Window* window
@@ -52,6 +50,7 @@ public:
     SDL2_Window& operator=(const SDL2_Window&) = delete;
 
 private:
+    // We declare the members of the class to store.
     SDL_Window* window;
 
 };
