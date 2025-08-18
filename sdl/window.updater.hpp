@@ -6,9 +6,11 @@
 void update_sdl_window
 (
     SDL_Window* window,
-    int width,
-    int height,
-    int refresh_rate
+    int new_window_mode,
+    int new_width,
+    int new_height,
+    int new_refresh_rate,
+    int new_display_index
 );
 
 #endif
