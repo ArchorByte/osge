@@ -17,7 +17,7 @@ The project will be publicly released once we finished everything here.
 - [ ] Allow to add/remove objects to the scene.
 - [ ] Allow to add/remove UI components to the scene.
 - [ ] Implement OpenGL.
-- [ ] Write some advanced docs.
 - [ ] Implement vsync support.
 - [ ] FPS cap support.
 - [ ] Clean up and optimize the whole code base once we have completed this checklist.
+- [ ] Write some advanced docs.

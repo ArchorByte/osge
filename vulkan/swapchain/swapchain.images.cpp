@@ -1,5 +1,6 @@
 #include "swapchain.images.hpp"
 
+#include "../utils/image.views.handler.hpp"
 #include "../../logs/logs.handler.hpp"
 #include "../../utils/tool.text.format.hpp"
 
@@ -74,64 +75,36 @@ std::vector<VkImageView> create_vulkan_swapchain_image_views
 
     if (!logical_device || logical_device == VK_NULL_HANDLE)
     {
-        fatal_error_log("Image views creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        fatal_error_log("Swap chain image views creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
     }
 
     if (swapchain_images.size() < 1)
     {
-        fatal_error_log("Image views creation failed! No swap chain images were provided!");
+        fatal_error_log("Swap chain image views creation failed! No swap chain images were provided!");
     }
 
     std::vector<VkImageView> image_views;
 
-    // Create an image view for each swap chain image.
+    // Create a view for each swap chain image.
     for (int i = 0; i < swapchain_images.size(); i++)
     {
-        // Create info for the image view
-        VkImageViewCreateInfo info {};
-        info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-        info.image = swapchain_images[i];                             // Pass the swap chain image.
-        info.viewType = VK_IMAGE_VIEW_TYPE_2D;                        // Use 2D mode.
-        info.format = swapchain_image_format;                         // Pass the image format.
-        info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;            // Default red identity.
-        info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;            // Default green identity.
-        info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;            // Default blue identity.
-        info.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;            // Default alpha identity.
-        info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; // This image view will be for the color aspect.
-        info.subresourceRange.baseMipLevel = 0;                       // Set the starting mipmap level.
-        info.subresourceRange.levelCount = 1;                         // Amount of mipmap levels that we will use.
-        info.subresourceRange.baseArrayLayer = 0;                     // Set the starting layer.
-        info.subresourceRange.layerCount = 1;                         // Amount of layers that we will use.
-
-        VkImageView image_view = VK_NULL_HANDLE;
-        VkResult view_creation = vkCreateImageView(logical_device, &info, nullptr, &image_view); // Try to create the image view.
-
-        if (view_creation != VK_SUCCESS)
-        {
-            fatal_error_log("Image view #" + std::to_string(i + 1) + "/" + std::to_string(swapchain_images.size()) + " creation returned error code " + std::to_string(view_creation) + ".");
-        }
-
-        if (!image_view || image_view == VK_NULL_HANDLE)
-        {
-            fatal_error_log("Image view #" + std::to_string(i + 1) + "/" + std::to_string(swapchain_images.size()) + " creation output \"" + force_string(image_view) + "\" is not valid!");
-        }
-
-        image_views.emplace_back(image_view); // Register the image view.
-        log("- Image view #" + std::to_string(i + 1) + "/" + std::to_string(swapchain_images.size()) + " (" + force_string(image_view) + ") created successfully!");
+        VkImageView image_view = create_image_view(logical_device, swapchain_images[i], swapchain_image_format);
+        image_views.emplace_back(image_view); // Register the view.
+        log("- Swap chain image view #" + std::to_string(i + 1) + "/" + std::to_string(swapchain_images.size()) + " (" + force_string(image_view) + ") created successfully!");
     }
 
-    log(std::to_string(image_views.size()) + " image views created successfully!");
+    log(std::to_string(image_views.size()) + " swap chain image views created successfully!");
     return image_views;
 }
 
-// Destroy some image views.
+// Destroy some swap chain image views.
 void destroy_vulkan_swapchain_image_views
 (
     const VkDevice &logical_device,
-    std::vector<VkImageView> &images_views
+    std::vector<VkImageView> &image_views
 )
 {
-    log("Destroying " + std::to_string(images_views.size()) + " swap chain image views.. ");
+    log("Destroying " + std::to_string(image_views.size()) + " swap chain image views.. ");
 
     if (!logical_device || logical_device == VK_NULL_HANDLE)
     {
@@ -139,7 +112,7 @@ void destroy_vulkan_swapchain_image_views
         return;
     }
 
-    if (images_views.size() < 1)
+    if (image_views.size() < 1)
     {
         error_log("Swap chain image views destruction failed! No swap chain image views were provided!");
         return;
@@ -149,13 +122,13 @@ void destroy_vulkan_swapchain_image_views
     int i = 0;
 
     // Destroy each image view in the list.
-    for (VkImageView &image_view : images_views)
+    for (VkImageView &image_view : image_views)
     {
         i++;
 
         if (!image_view || image_view == VK_NULL_HANDLE)
         {
-            error_log("- Warning: Failed to destroy the image view #" + std::to_string(i) + "/" + std::to_string(images_views.size()) + "! The image view provided (" + force_string(image_view) + ") is not valid!");
+            error_log("- Warning: Failed to destroy the swap chain image view #" + std::to_string(i) + "/" + std::to_string(image_views.size()) + "! The image view provided (" + force_string(image_view) + ") is not valid!");
             failed++;
             continue;
         }
@@ -164,14 +137,14 @@ void destroy_vulkan_swapchain_image_views
         vkDestroyImageView(logical_device, image_view, nullptr);
         image_view = VK_NULL_HANDLE;
 
-        log("- Image view #" + std::to_string(i) + "/" + std::to_string(images_views.size()) + " destroyed successfully!");
+        log("- Swap chain image view #" + std::to_string(i) + "/" + std::to_string(image_views.size()) + " destroyed successfully!");
     }
 
     if (failed > 0) error_log("Warning: " + std::to_string(failed) + " swap chain image views failed to destroy! This might lead to some memory leaks or memory overload.");
-    log(std::to_string(images_views.size() - failed) + "/" + std::to_string(images_views.size()) + " swap chain image views destroyed successfully!");
+    log(std::to_string(image_views.size() - failed) + "/" + std::to_string(image_views.size()) + " swap chain image views destroyed successfully!");
 
     // Free the list.
-    images_views.clear();
+    image_views.clear();
 }
 
 ///////////////////////////////////////////////
@@ -179,23 +152,23 @@ void destroy_vulkan_swapchain_image_views
 ///////////////////////////////////////////////
 
 // Constructor.
-Vulkan_ImagesViews::Vulkan_ImagesViews
+Vulkan_SwapchainImageViews::Vulkan_SwapchainImageViews
 (
     const VkDevice &logical_device,
     const std::vector<VkImage> &swapchain_images,
     const VkFormat &swapchain_image_format
 ) : logical_device(logical_device)
 {
-    images_views = create_vulkan_swapchain_image_views(logical_device, swapchain_images, swapchain_image_format);
+    swapchain_image_views = create_vulkan_swapchain_image_views(logical_device, swapchain_images, swapchain_image_format);
 }
 
 // Destructor.
-Vulkan_ImagesViews::~Vulkan_ImagesViews()
+Vulkan_SwapchainImageViews::~Vulkan_SwapchainImageViews()
 {
-    destroy_vulkan_swapchain_image_views(logical_device, images_views);
+    destroy_vulkan_swapchain_image_views(logical_device, swapchain_image_views);
 }
 
-std::vector<VkImageView> Vulkan_ImagesViews::get() const
+std::vector<VkImageView> Vulkan_SwapchainImageViews::get() const
 {
-    return images_views;
+    return swapchain_image_views;
 }

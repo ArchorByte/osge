@@ -56,6 +56,7 @@ include_directories (
     ${CMAKE_SOURCE_DIR}/vulkan/swapchain
     ${CMAKE_SOURCE_DIR}/vulkan/textures
     ${CMAKE_SOURCE_DIR}/vulkan/uniform
+    ${CMAKE_SOURCE_DIR}/vulkan/utils
     ${CMAKE_SOURCE_DIR}/vulkan/vertex
 )
 
@@ -82,6 +83,7 @@ file(GLOB VULKAN_SHADERS vulkan/shaders/*.cpp)
 file(GLOB VULKAN_SWAPCHAIN vulkan/swapchain/*.cpp)
 file(GLOB VULKAN_TEXTURES vulkan/textures/*.cpp)
 file(GLOB VULKAN_UNIFORM vulkan/uniform/*.cpp)
+file(GLOB VULKAN_UTILS vulkan/utils/*.cpp)
 file(GLOB VULKAN_VERTEX vulkan/vertex/*.cpp)
 
 # Set a list with all of the sources we retrieved.
@@ -108,6 +110,7 @@ set(ALL_SOURCES
     ${VULKAN_SWAPCHAIN}
     ${VULKAN_TEXTURES}
     ${VULKAN_UNIFORM}
+    ${VULKAN_UTILS}
     ${VULKAN_VERTEX}
 )
 

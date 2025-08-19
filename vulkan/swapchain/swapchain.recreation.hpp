@@ -14,7 +14,7 @@
 void recreate_vulkan_swapchain
 (
     Vulkan_Swapchain &swapchain,
-    Vulkan_ImagesViews &image_views,
+    Vulkan_SwapchainImageViews &image_views,
     Vulkan_Framebuffers &framebuffers,
     const VkDevice &logical_device,
     const VkSurfaceKHR &surface,
