@@ -10,6 +10,9 @@
 #include "core/vulkan.surface.hpp"
 #include "core/validation.layers.hpp"
 #include "core/vulkan.extensions.hpp"
+#include "descriptors/descriptor.layout.hpp"
+#include "descriptors/descriptor.pool.hpp"
+#include "descriptors/descriptor.sets.hpp"
 #include "device/physical.device.hpp"
 #include "device/logical.device.hpp"
 #include "pipeline/pipeline.input.assembly.state.hpp"
@@ -37,12 +40,10 @@
 #include "swapchain/swapchain.recreation.hpp"
 #include "swapchain/swapchain.handler.hpp"
 #include "textures/texture.image.buffers.hpp"
+#include "textures/texture.image.views.hpp"
 #include "textures/texture.images.handler.hpp"
 #include "textures/texture.images.loader.hpp"
 #include "uniform/uniform.buffers.hpp"
-#include "descriptors/descriptor.layout.hpp"
-#include "descriptors/descriptor.pool.hpp"
-#include "descriptors/descriptor.sets.hpp"
 #include "vertex/vertex.buffer.hpp"
 #include "vertex/vertex.input.state.hpp"
 
@@ -149,7 +150,7 @@ void run_vulkan
 
     // Create the views for each image retrieved.
     // Allow shaders to read the images.
-    Vulkan_ImagesViews swapchain_images_views(logical_device.get(), swapchain_images, surface_format.format);
+    Vulkan_SwapchainImageViews swapchain_images_views(logical_device.get(), swapchain_images, surface_format.format);
 
     // Read the "shaders" folder and create a shader module for each valid shader available.
     Vulkan_ShadersModules shaders_modules(logical_device.get());
@@ -258,6 +259,9 @@ void run_vulkan
 
     // Create the texture images.
     Vulkan_TextureImages texture_images(logical_device.get(), physical_device, command_pool.get(), graphics_queue, loaded_texture_images.get(), texture_image_buffers);
+
+    // Create the texture image views.
+    Vulkan_TextureImageViews texture_image_textures(logical_device.get(), texture_images.get());
 
     // Check the amount of semaphores and fences.
     // There can't have more or less the double of fences of semaphores.

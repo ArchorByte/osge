@@ -19,7 +19,7 @@
 void recreate_vulkan_swapchain
 (
     Vulkan_Swapchain &swapchain,
-    Vulkan_ImagesViews &image_views,
+    Vulkan_SwapchainImageViews &image_views,
     Vulkan_Framebuffers &framebuffers,
     const VkDevice &logical_device,
     const VkSurfaceKHR &vulkan_surface,
@@ -97,7 +97,7 @@ void recreate_vulkan_swapchain
 
     // Destroy old objects.
     framebuffers.~Vulkan_Framebuffers();
-    image_views.~Vulkan_ImagesViews();
+    image_views.~Vulkan_SwapchainImageViews();
     swapchain.~Vulkan_Swapchain();
     semaphores.~Vulkan_Semaphores();
 
@@ -132,7 +132,7 @@ void recreate_vulkan_swapchain
     );
 
     std::vector<VkImage> new_images = get_vulkan_swapchain_images(logical_device, swapchain.get());  // Query the swap chain images.
-    new (&image_views) Vulkan_ImagesViews(logical_device, new_images, surface_format.format);        // Create new images views.
+    new (&image_views) Vulkan_SwapchainImageViews(logical_device, new_images, surface_format.format);        // Create new images views.
     new (&framebuffers) Vulkan_Framebuffers(logical_device, image_views.get(), extent, render_pass); // Create new framebuffers.
     new (&semaphores) Vulkan_Semaphores(logical_device, images_count * 2);                           // Create new semaphores.
 
