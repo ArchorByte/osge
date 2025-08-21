@@ -1,7 +1,7 @@
 #include <vulkan/vulkan.h>
 
-#ifndef VULKAN_COMMAND_WRAPPER_HPP
-#define VULKAN_COMMAND_WRAPPER_HPP
+#ifndef VULKAN_COMMAND_BUFFER_HANDLER_HPP
+#define VULKAN_COMMAND_BUFFER_HANDLER_HPP
 
 VkCommandBuffer begin_one_time_vulkan_command_buffer
 (

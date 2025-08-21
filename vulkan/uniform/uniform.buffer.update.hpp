@@ -1,8 +1,8 @@
 #include <vulkan/vulkan.h>
 #include <cstdint>
 
-#ifndef VULKAN_UNIFORM_UPDATE_HPP
-#define VULKAN_UNIFORM_UPDATE_HPP
+#ifndef VULKAN_UNIFORM_BUFFER_UPDATE_HPP
+#define VULKAN_UNIFORM_BUFFER_UPDATE_HPP
 
 void update_uniform_buffer
 (

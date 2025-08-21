@@ -1,8 +1,8 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 
-#ifndef VULKAN_COMMANDS_BUFFER_HPP
-#define VULKAN_COMMANDS_BUFFER_HPP
+#ifndef VULKAN_COMMAND_BUFFERS_HPP
+#define VULKAN_COMMAND_BUFFERS_HPP
 
 std::vector<VkCommandBuffer> create_vulkan_command_buffers
 (

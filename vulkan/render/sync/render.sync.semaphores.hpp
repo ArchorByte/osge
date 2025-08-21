@@ -2,8 +2,8 @@
 #include <vector>
 #include <cstdint>
 
-#ifndef VULKAN_COMMANDS_SYNC_SEMAPHORES_HPP
-#define VULKAN_COMMANDS_SYNC_SEMAPHORES_HPP
+#ifndef VULKAN_RENDER_SYNC_SEMAPHORES_HPP
+#define VULKAN_RENDER_SYNC_SEMAPHORES_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////

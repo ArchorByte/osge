@@ -1,7 +1,7 @@
 #include <vulkan/vulkan.h>
 
-#ifndef VULKAN_UNIFORM_DESCRIPTOR_LAYOUT_HPP
-#define VULKAN_UNIFORM_DESCRIPTOR_LAYOUT_HPP
+#ifndef VULKAN_DESCRIPTOR_LAYOUT_HPP
+#define VULKAN_DESCRIPTOR_LAYOUT_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////

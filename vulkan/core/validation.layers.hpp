@@ -1,7 +1,7 @@
 #include <vector>
 
-#ifndef VULKAN_CORE_LAYERS_HPP
-#define VULKAN_CORE_LAYERS_HPP
+#ifndef VULKAN_CORE_VALIDATION_LAYERS_HPP
+#define VULKAN_CORE_VALIDATION_LAYERS_HPP
 
 void check_vulkan_validation_layers_compatibility
 (

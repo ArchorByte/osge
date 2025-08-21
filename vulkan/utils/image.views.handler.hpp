@@ -1,7 +1,7 @@
 #include <vulkan/vulkan.h>
 
-#ifndef VULKAN_UTILS_IMAGES_VIEWS_HPP
-#define VULKAN_UTILS_IMAGES_VIEWS_HPP
+#ifndef VULKAN_UTILS_IMAGE_VIEWS_HPP
+#define VULKAN_UTILS_IMAGE_VIEWS_HPP
 
 VkImageView create_image_view
 (

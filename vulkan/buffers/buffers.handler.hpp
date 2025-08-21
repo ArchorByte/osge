@@ -1,7 +1,7 @@
 #include <vulkan/vulkan.h>
 
-#ifndef VULKAN_BUFFERS_MANAGER_HPP
-#define VULKAN_BUFFERS_MANAGER_HPP
+#ifndef VULKAN_BUFFERS_HANDLER_HPP
+#define VULKAN_BUFFERS_HANDLER_HPP
 
 void create_vulkan_buffer
 (

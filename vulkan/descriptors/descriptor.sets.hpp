@@ -4,8 +4,8 @@
 #include <vector>
 #include <cstdint>
 
-#ifndef VULKAN_UNIFORM_DESCRIPTOR_SETS_HPP
-#define VULKAN_UNIFORM_DESCRIPTOR_SETS_HPP
+#ifndef VULKAN_DESCRIPTOR_SETS_HPP
+#define VULKAN_DESCRIPTOR_SETS_HPP
 
 std::vector<VkDescriptorSet> create_vulkan_descriptor_sets
 (

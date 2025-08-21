@@ -1,7 +1,7 @@
 #include <vulkan/vulkan.h>
 
-#ifndef VULKAN_TEXTURES_TRANSITIONS_HPP
-#define VULKAN_TEXTURES_TRANSITIONS_HPP
+#ifndef VULKAN_TEXTURE_IMAGE_TRANSITIONS_HPP
+#define VULKAN_TEXTURE_IMAGE_TRANSITIONS_HPP
 
 void transition_image_layout
 (

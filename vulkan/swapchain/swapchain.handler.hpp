@@ -1,8 +1,8 @@
 #include <vulkan/vulkan.h>
 #include <cstdint>
 
-#ifndef VULKAN_SWAPCHAIN_HPP
-#define VULKAN_SWAPCHAIN_HPP
+#ifndef VULKAN_SWAPCHAIN_HANDLER_HPP
+#define VULKAN_SWAPCHAIN_HANDLER_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////

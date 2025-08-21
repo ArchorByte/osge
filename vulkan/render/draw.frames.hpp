@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 
-#ifndef VULKAN_RENDER_DRAW_HPP
-#define VULKAN_RENDER_DRAW_HPP
+#ifndef VULKAN_RENDER_DRAW_FRAMES_HPP
+#define VULKAN_RENDER_DRAW_FRAMES_HPP
 
 std::string draw_frame
 (

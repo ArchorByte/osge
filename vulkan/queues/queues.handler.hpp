@@ -1,8 +1,8 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-#ifndef VULKAN_QUEUES_MANAGER_HPP
-#define VULKAN_QUEUES_MANAGER_HPP
+#ifndef VULKAN_QUEUES_HANDLER_HPP
+#define VULKAN_QUEUES_HANDLER_HPP
 
 std::vector<VkQueueFamilyProperties> get_queue_families
 (

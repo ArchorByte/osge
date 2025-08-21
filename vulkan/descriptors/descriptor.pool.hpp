@@ -1,8 +1,8 @@
 #include <vulkan/vulkan.h>
 #include <cstdint>
 
-#ifndef VULKAN_UNIFORM_DESCRIPTOR_POOL_HPP
-#define VULKAN_UNIFORM_DESCRIPTOR_POOL_HPP
+#ifndef VULKAN_DESCRIPTOR_POOL_HPP
+#define VULKAN_DESCRIPTOR_POOL_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////

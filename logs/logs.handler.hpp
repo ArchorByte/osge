@@ -1,7 +1,7 @@
 #include <string>
 
-#ifndef LOGS_TERMINAL_HPP
-#define LOGS_TERMINAL_HPP
+#ifndef LOGS_HANDLER_HPP
+#define LOGS_HANDLER_HPP
 
 void log
 (

@@ -1,10 +1,10 @@
 #include <vulkan/vulkan.h>
 #include <string>
 
-#ifndef VULKAN_DEVICE_PHYSICAL_HPP
-#define VULKAN_DEVICE_PHYSICAL_HPP
+#ifndef VULKAN_PHYSICAL_DEVICE_HPP
+#define VULKAN_PHYSICAL_DEVICE_HPP
 
-bool is_valid_gpu
+bool is_valid_physical_device
 (
     const VkPhysicalDevice &physical_device
 );
