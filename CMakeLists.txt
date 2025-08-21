@@ -24,7 +24,7 @@ else()
     set(LINUX_BINARIES ${CMAKE_SOURCE_DIR}/bin/linux)
 
     # SDL2 headers and binaries.
-    set(SDL2_LIB ${LINUX_BINARIES}/libSDL2-2.0.so.0.3200.56)
+    set(SDL2_LIB ${LINUX_BINARIES}/libSDL2.so)
     include_directories(${CMAKE_SOURCE_DIR}/include/SDL2)
 
     # Vulkan headers and binaries.
@@ -140,11 +140,11 @@ if (WIN32)
 
 # Linux systems.
 else()
-    # Copy the libSDL2-2.0.so.0.3200.56 into the build folder.
+    # Copy the libSDL2.so into the build folder.
     add_custom_command (
         TARGET new_osge_project POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/bin/linux/libSDL2-2.0.so.0.3200.56"
+        "${CMAKE_SOURCE_DIR}/bin/linux/libSDL2.so"
         "${CMAKE_SOURCE_DIR}/build/linux/out/libSDL2.so"
     )
 
