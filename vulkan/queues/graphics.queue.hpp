@@ -2,8 +2,8 @@
 #include <vulkan/vulkan.h>
 #include <cstdint>
 
-#ifndef VULKAN_QUEUES_GRAPHICS_HPP
-#define VULKAN_QUEUES_GRAPHICS_HPP
+#ifndef VULKAN_GRAPHICS_QUEUE_HPP
+#define VULKAN_GRAPHICS_QUEUE_HPP
 
 uint32_t get_graphics_family_index
 (

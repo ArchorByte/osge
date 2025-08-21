@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-#ifndef VULKAN_TEXTURES_HPP
-#define VULKAN_TEXTURES_HPP
+#ifndef VULKAN_TEXTURE_IMAGES_HANDLER_HPP
+#define VULKAN_TEXTURE_IMAGES_HANDLER_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Structure ////////////////////

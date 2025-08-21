@@ -1,7 +1,7 @@
 #include <vulkan/vulkan.h>
 
-#ifndef VULKAN_PIPELINES_COLORS_HPP
-#define VULKAN_PIPELINES_COLORS_HPP
+#ifndef VULKAN_PIPELINE_COLOR_ATTACHMENT_HPP
+#define VULKAN_PIPELINE_COLOR_ATTACHMENT_HPP
 
 VkAttachmentDescription create_vulkan_color_attachment
 (

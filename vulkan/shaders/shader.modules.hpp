@@ -2,8 +2,8 @@
 #include <vector>
 #include <string>
 
-#ifndef VULKAN_SHADERS_MODULES_HPP
-#define VULKAN_SHADERS_MODULES_HPP
+#ifndef VULKAN_SHADER_MODULES_HPP
+#define VULKAN_SHADER_MODULES_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Structure ////////////////////

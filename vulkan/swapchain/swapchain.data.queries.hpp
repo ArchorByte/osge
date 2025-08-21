@@ -1,8 +1,8 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 
-#ifndef VULKAN_SWAPCHAIN_GET_HPP
-#define VULKAN_SWAPCHAIN_GET_HPP
+#ifndef VULKAN_SWAPCHAIN_DATA_QUERIES_HPP
+#define VULKAN_SWAPCHAIN_DATA_QUERIES_HPP
 
 VkSurfaceCapabilitiesKHR get_vulkan_swapchain_capabilities
 (

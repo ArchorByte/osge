@@ -1,8 +1,8 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 
-#ifndef VULKAN_COMMANDS_SYNC_FENCES_HPP
-#define VULKAN_COMMANDS_SYNC_FENCES_HPP
+#ifndef VULKAN_RENDER_SYNC_FENCES_HPP
+#define VULKAN_RENDER_SYNC_FENCES_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////

@@ -1,5 +1,5 @@
-#ifndef SDL_INSTANCE_HPP
-#define SDL_INSTANCE_HPP
+#ifndef SDL2_INSTANCE_HPP
+#define SDL2_INSTANCE_HPP
 
 void start_sdl_instance();
 

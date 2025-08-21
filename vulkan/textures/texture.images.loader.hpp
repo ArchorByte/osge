@@ -3,8 +3,8 @@
 #include <stb/stb_image.h>
 #include <vector>
 
-#ifndef VULKAN_TEXTURES_IMAGES_HPP
-#define VULKAN_TEXTURES_IMAGES_HPP
+#ifndef VULKAN_TEXTURE_IMAGES_LOADER_HPP
+#define VULKAN_TEXTURE_IMAGES_LOADER_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Structure ////////////////////

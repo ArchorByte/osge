@@ -1,8 +1,8 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 
-#ifndef VULKAN_PIPELINES_GRAPHICS_HPP
-#define VULKAN_PIPELINES_GRAPHICS_HPP
+#ifndef VULKAN_GRAPHICS_PIPELINE_HPP
+#define VULKAN_GRAPHICS_PIPELINE_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////

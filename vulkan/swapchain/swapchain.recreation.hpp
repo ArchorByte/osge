@@ -1,6 +1,6 @@
 #include "swapchain.handler.hpp"
 #include "swapchain.images.hpp"
-#include "../render/framebuffers.handler.hpp"
+#include "../render/render.framebuffers.hpp"
 #include "../render/sync/render.sync.semaphores.hpp"
 
 #include <vulkan/vulkan.h>
@@ -8,8 +8,8 @@
 #include <SDL2/SDL.h>
 #include <vector>
 
-#ifndef VULKAN_SWAPCHAIN_RECREATE_HPP
-#define VULKAN_SWAPCHAIN_RECREATE_HPP
+#ifndef VULKAN_SWAPCHAIN_RECREATION_HPP
+#define VULKAN_SWAPCHAIN_RECREATION_HPP
 
 void recreate_vulkan_swapchain
 (

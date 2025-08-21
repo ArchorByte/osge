@@ -1,7 +1,7 @@
 #include <vulkan/vulkan.h>
 
-#ifndef VULKAN_PIPELINES_LAYOUT_HPP
-#define VULKAN_PIPELINES_LAYOUT_HPP
+#ifndef VULKAN_PIPELINE_LAYOUT_HPP
+#define VULKAN_PIPELINE_LAYOUT_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////

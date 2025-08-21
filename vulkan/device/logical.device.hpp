@@ -1,8 +1,8 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 
-#ifndef VULKAN_DEVICE_LOGICAL_HPP
-#define VULKAN_DEVICE_LOGICAL_HPP
+#ifndef VULKAN_LOGICAL_DEVICE_HPP
+#define VULKAN_LOGICAL_DEVICE_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////

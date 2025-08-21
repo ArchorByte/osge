@@ -4,8 +4,8 @@
 #include <array>
 #include <cstdint>
 
-#ifndef VULKAN_VERTEX_HPP
-#define VULKAN_VERTEX_HPP
+#ifndef VULKAN_VERTEX_HANDLER_HPP
+#define VULKAN_VERTEX_HANDLER_HPP
 
 struct Vertex
 {

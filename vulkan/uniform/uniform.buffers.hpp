@@ -3,8 +3,8 @@
 #include <vector>
 #include <cstdint>
 
-#ifndef VULKAN_UNIFORM_BUFFER_HPP
-#define VULKAN_UNIFORM_BUFFER_HPP
+#ifndef VULKAN_UNIFORM_BUFFERS_HPP
+#define VULKAN_UNIFORM_BUFFERS_HPP
 
 ////////////////////////////////////////////////////
 //////////////////// Structures ////////////////////

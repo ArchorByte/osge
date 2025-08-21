@@ -2,8 +2,8 @@
 #include <vector>
 #include <cstdint>
 
-#ifndef VULKAN_QUEUES_PRESENT_HPP
-#define VULKAN_QUEUES_PRESENT_HPP
+#ifndef VULKAN_PRESENT_QUEUE_HPP
+#define VULKAN_PRESENT_QUEUE_HPP
 
 uint32_t get_present_family_index
 (

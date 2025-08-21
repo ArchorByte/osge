@@ -2,8 +2,8 @@
 #include <stdint.h>
 #include <vector>
 
-#ifndef VULKAN_COMMANDS_RECORDER_HPP
-#define VULKAN_COMMANDS_RECORDER_HPP
+#ifndef VULKAN_COMMAND_BUFFER_RECORDER_HPP
+#define VULKAN_COMMAND_BUFFER_RECORDER_HPP
 
 void record_command_buffer
 (

@@ -1,7 +1,7 @@
 #include <vulkan/vulkan.h>
 
-#ifndef VULKAN_PIPELINES_VIEWPORT_HPP
-#define VULKAN_PIPELINES_VIEWPORT_HPP
+#ifndef VULKAN_PIPELINE_VIEWPORT_HPP
+#define VULKAN_PIPELINE_VIEWPORT_HPP
 
 VkViewport create_vulkan_viewport
 (

@@ -3,8 +3,8 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 
-#ifndef VULKAN_TEXTURES_BUFFER_HPP
-#define VULKAN_TEXTURES_BUFFER_HPP
+#ifndef VULKAN_TEXTURE_IMAGE_BUFFER_HPP
+#define VULKAN_TEXTURE_IMAGE_BUFFER_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Structure ////////////////////
