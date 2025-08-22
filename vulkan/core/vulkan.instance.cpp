@@ -89,13 +89,13 @@ void destroy_vulkan_instance
 {
     log("Destroying the " + force_string(vulkan_instance) + " Vulkan instance..");
 
-    if (vulkan_instance == VK_NULL_HANDLE)
+    if (!vulkan_instance || vulkan_instance == VK_NULL_HANDLE)
     {
         error_log("Vulkan instance destruction failed! The Vulkan instance provided (" + force_string(vulkan_instance) + ") is not valid!");
         return;
     }
 
-    // Destroy the instance and dispose of the address.
+    // Destroy the instance and clear the address.
     vkDestroyInstance(vulkan_instance, nullptr);
     vulkan_instance = VK_NULL_HANDLE;
 

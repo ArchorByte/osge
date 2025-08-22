@@ -43,7 +43,6 @@ public:
     Vulkan_Instance &operator = (const Vulkan_Instance&) = delete;
 
 private:
-    // We declare the members of the class to store.
     VkInstance vulkan_instance = VK_NULL_HANDLE;
 
 };

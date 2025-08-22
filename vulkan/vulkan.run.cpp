@@ -43,6 +43,7 @@
 #include "textures/texture.image.views.hpp"
 #include "textures/texture.images.handler.hpp"
 #include "textures/texture.images.loader.hpp"
+#include "textures/texture.sampler.hpp"
 #include "uniform/uniform.buffers.hpp"
 #include "vertex/vertex.buffer.hpp"
 #include "vertex/vertex.input.state.hpp"
@@ -262,6 +263,9 @@ void run_vulkan
 
     // Create the texture image views.
     Vulkan_TextureImageViews texture_image_textures(logical_device.get(), texture_images.get());
+
+    // Create the texture sampler.
+    Vulkan_TextureSampler texture_sampler(physical_device, logical_device.get());
 
     // Check the amount of semaphores and fences.
     // There can't have more or less the double of fences of semaphores.
