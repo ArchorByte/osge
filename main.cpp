@@ -47,7 +47,7 @@ int main()
                 hide_console();
             #endif
         #else
-            log("Warning: Running in debug mode!");
+            log("WARNING: Running in debug mode!");
         #endif
 
         log("Running on OSGE v" + std::to_string(ENGINE_VERSION_VARIANT) + "." + std::to_string(ENGINE_VERSION_MAJOR) + "." + std::to_string(ENGINE_VERSION_MINOR) + "." + std::to_string(ENGINE_VERSION_PATCH) + ".");
