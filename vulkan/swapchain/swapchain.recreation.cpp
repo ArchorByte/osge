@@ -11,8 +11,8 @@
 
 #include <vulkan/vulkan.h>
 #include <cstdint>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_vulkan.h>
 #include <vector>
 
 // Recreate a swap chain.
@@ -80,13 +80,13 @@ void recreate_vulkan_swapchain
     // Note: This generally happens when the window is minimized on Windows.
     while (width == 0 || height == 0)
     {
-        SDL_Vulkan_GetDrawableSize(window, &width, &height);
+        SDL_GetWindowSizeInPixels(window, &width, &height);
         log("Waiting for the user to unminimize the window before recreating the swap chain..");
 
         SDL_Event event;
         SDL_WaitEvent(&event);  // This line blocks the code until something happens to the window.
 
-        if (event.type == SDL_QUIT || (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window)))
+        if (event.type == SDL_EVENT_QUIT || event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED)
         {
             return;
         }

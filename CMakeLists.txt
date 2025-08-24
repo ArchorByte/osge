@@ -11,9 +11,9 @@ include_directories (
 if (WIN32)
     set(WINDOWS_BINARIES ${CMAKE_SOURCE_DIR}/bin/windows)
 
-    # SDL2 headers and binaries.
-    set(SDL2_LIB ${WINDOWS_BINARIES}/SDL2.lib)
-    include_directories(${CMAKE_SOURCE_DIR}/include/SDL2)
+    # SDL3 headers and binaries.
+    set(SDL3_LIB ${WINDOWS_BINARIES}/SDL3.lib)
+    include_directories(${CMAKE_SOURCE_DIR}/include/SDL3)
 
     # Vulkan headers and binaries.
     set(VULKAN_LIB ${WINDOWS_BINARIES}/vulkan-1.lib)
@@ -23,9 +23,9 @@ if (WIN32)
 else()
     set(LINUX_BINARIES ${CMAKE_SOURCE_DIR}/bin/linux)
 
-    # SDL2 headers and binaries.
-    set(SDL2_LIB ${LINUX_BINARIES}/libSDL2.so)
-    include_directories(${CMAKE_SOURCE_DIR}/include/SDL2)
+    # SDL3 headers and binaries.
+    set(SDL3_LIB ${LINUX_BINARIES}/libSDL3.so)
+    include_directories(${CMAKE_SOURCE_DIR}/include/SDL3)
 
     # Vulkan headers and binaries.
     set(VULKAN_LIB ${LINUX_BINARIES}/libvulkan.so)
@@ -40,7 +40,7 @@ include_directories (
     ${CMAKE_SOURCE_DIR}/game/engine
     ${CMAKE_SOURCE_DIR}/logs
     ${CMAKE_SOURCE_DIR}/opengl
-    ${CMAKE_SOURCE_DIR}/sdl
+    ${CMAKE_SOURCE_DIR}/sdl3
     ${CMAKE_SOURCE_DIR}/utils
     ${CMAKE_SOURCE_DIR}/vulkan
     ${CMAKE_SOURCE_DIR}/vulkan/buffers
@@ -67,7 +67,7 @@ file(GLOB GAME game/*.cpp)
 file(GLOB GAME_ENGINE game/engine/*.cpp)
 file(GLOB LOGS logs/*.cpp)
 file(GLOB OPENGL opengl/*.cpp)
-file(GLOB SDL sdl/*.cpp)
+file(GLOB SDL3 sdl3/*.cpp)
 file(GLOB UTILS utils/*.cpp)
 file(GLOB VULKAN vulkan/*.cpp)
 file(GLOB VULKAN_BUFFERS vulkan/buffers/*.cpp)
@@ -94,7 +94,7 @@ set(ALL_SOURCES
     ${GAME_ENGINE}
     ${LOGS}
     ${OPENGL}
-    ${SDL}
+    ${SDL3}
     ${UTILS}
     ${VULKAN}
     ${VULKAN_BUFFERS}
@@ -119,11 +119,11 @@ add_executable(new_osge_project ${ALL_SOURCES})
 
 # Windows systems.
 if (WIN32)
-    # Copy the SDL2.dll file into the build folder.
+    # Copy the SDL3.dll file into the build folder.
     add_custom_command (
         TARGET new_osge_project POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/bin/windows/SDL2.dll"
+        "${CMAKE_SOURCE_DIR}/bin/windows/SDL3.dll"
         "${CMAKE_SOURCE_DIR}/build/win64/out"
     )
 
@@ -136,16 +136,16 @@ if (WIN32)
     )
 
     # Link the .lib files to the executable.
-    target_link_libraries(new_osge_project PRIVATE ${VULKAN_LIB} ${SDL2_LIB})
+    target_link_libraries(new_osge_project PRIVATE ${VULKAN_LIB} ${SDL3_LIB})
 
 # Linux systems.
 else()
-    # Copy the libSDL2.so into the build folder.
+    # Copy the libSDL3.so into the build folder.
     add_custom_command (
         TARGET new_osge_project POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/bin/linux/libSDL2.so"
-        "${CMAKE_SOURCE_DIR}/build/linux/out/libSDL2.so"
+        "${CMAKE_SOURCE_DIR}/bin/linux/libSDL3.so"
+        "${CMAKE_SOURCE_DIR}/build/linux/out/libSDL3.so"
     )
 
     # Copy the libvulkan.so file into the build folder.
@@ -157,6 +157,6 @@ else()
     )
 
     # Link the .so files to the executable.
-    target_link_libraries(new_osge_project PRIVATE ${VULKAN_LIB} ${SDL2_LIB} ${GTK3_LIB})
+    target_link_libraries(new_osge_project PRIVATE ${VULKAN_LIB} ${SDL3_LIB})
 
 endif()

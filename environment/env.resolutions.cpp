@@ -3,7 +3,7 @@
 #include "../logs/logs.handler.hpp"
 #include "../utils/tool.text.format.hpp"
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <map>
 #include <vector>
 #include <string>
@@ -16,26 +16,20 @@ std::pair<int, int> get_display_resolution
     int display_index
 )
 {
-    if (display_index < 0 || display_index >= SDL_GetNumVideoDisplays())
-    {
-        fatal_error_log("Display resolution detection failed! The display provided (" + std::to_string(display_index) + ") is not valid!");
-    }
-
     log("Detecting the display resolution..");
     std::pair<int, int> output;
 
     // Retrieve the video data of the display.
-    SDL_DisplayMode display_mode;
-    int query_result = SDL_GetCurrentDisplayMode(display_index, &display_mode);
+    const SDL_DisplayMode* display_mode = SDL_GetCurrentDisplayMode(display_index);
 
-    if (query_result != 0)
+    if (!display_mode)
     {
-        fatal_error_log("Display resolution detection failed! Failed to retrieve the video mode with error code " + std::string(SDL_GetError()) + "!");
+        fatal_error_log("Display resolution detection failed! Failed to retrieve the video mode with the error code " + std::string(SDL_GetError()) + "!");
     }
 
     // Get the width and height of the display.
-    int width = display_mode.w;
-    int height = display_mode.h;
+    int width = display_mode -> w;
+    int height = display_mode -> h;
 
     log("Detected resolution: " + std::to_string(width) + "x" + std::to_string(height) + "!");
     return { width, height };

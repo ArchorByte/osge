@@ -4,8 +4,8 @@
 #include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
@@ -31,9 +31,9 @@ VkSurfaceKHR create_vulkan_surface
     }
 
     VkSurfaceKHR vulkan_surface = VK_NULL_HANDLE;
-    bool surface_creation = SDL_Vulkan_CreateSurface(window, vulkan_instance, &vulkan_surface);
+    bool surface_creation = SDL_Vulkan_CreateSurface(window, vulkan_instance, nullptr, &vulkan_surface);
 
-    if (surface_creation != SDL_TRUE)
+    if (!surface_creation)
     {
         fatal_error_log("Vulkan surface creation returned error code " + std::string(SDL_GetError()) + ".");
     }

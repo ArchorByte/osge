@@ -8,7 +8,7 @@
 #endif
 
 #if defined(__linux__)
-    #include <SDL2/SDL.h>
+    #include <SDL3/SDL.h>
 #endif
 
 #include "string"
@@ -45,7 +45,7 @@ void open_crash_popup
             MB_ICONERROR | MB_OK
         );
     #elif defined(__linux__)
-        // Simple message box using SDL2.
+        // Simple message box using SDL3.
         SDL_ShowSimpleMessageBox(
             SDL_MESSAGEBOX_ERROR,
             popup_title.c_str(),

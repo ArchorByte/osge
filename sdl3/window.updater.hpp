@@ -1,9 +1,9 @@
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
-#ifndef SDL2_WINDOW_UPDATER_HPP
-#define SDL2_WINDOW_UPDATER_HPP
+#ifndef SDL3_WINDOW_UPDATER_HPP
+#define SDL3_WINDOW_UPDATER_HPP
 
-void update_sdl_window
+void update_sdl3_window
 (
     SDL_Window* window,
     int new_window_mode,

@@ -3,8 +3,8 @@
 #include "config/engine.version.hpp"
 #include "logs/logs.popup.hpp"
 #include "logs/logs.handler.hpp"
-#include "sdl/sdl.instance.hpp"
-#include "sdl/window.handler.hpp"
+#include "sdl3/sdl3.instance.hpp"
+#include "sdl3/window.handler.hpp"
 #include "environment/env.console.hpp"
 #include "environment/env.displays.hpp"
 #include "environment/env.resolutions.hpp"
@@ -16,7 +16,7 @@
 #include "opengl/opengl.run.hpp"
 
 #include <vulkan/vulkan.h>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <unistd.h>
 #include <string>
 #include <vector>
@@ -51,7 +51,7 @@ int main()
         #endif
 
         log("Running on OSGE v" + std::to_string(ENGINE_VERSION_VARIANT) + "." + std::to_string(ENGINE_VERSION_MAJOR) + "." + std::to_string(ENGINE_VERSION_MINOR) + "." + std::to_string(ENGINE_VERSION_PATCH) + ".");
-        start_sdl_instance();
+        start_sdl3_instance();
         check_operating_system_support();                              // Check if we are running on a supported operating system.
         std::vector<int> display_indexes = get_available_displays(); // Retrieve all available monitors on this device.
 
@@ -119,7 +119,7 @@ int main()
         std::pair<int, int> game_resolution = select_game_resolution(config, screen_resolution, allowed_game_resolutions);
 
         // We create the main GLFW window.
-        SDL2_Window window(game_resolution.first, game_resolution.second, stoi(window_mode), std::string(GAME_TITLE), stoi(graphics_api));
+        SDL3_Window window(game_resolution.first, game_resolution.second, stoi(window_mode), std::string(GAME_TITLE), stoi(graphics_api));
 
         // Select the graphics API that we are going to use.
         switch (stoi(graphics_api))
