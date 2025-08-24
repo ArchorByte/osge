@@ -11,7 +11,8 @@
 VkDescriptorPool create_vulkan_descriptor_pool
 (
     const VkDevice &logical_device,
-    const uint32_t &images_count
+    const uint32_t &images_count,
+    const uint32_t &texture_images_count
 );
 
 void destroy_vulkan_descriptor_pool
@@ -32,7 +33,8 @@ public:
     Vulkan_DescriptorPool
     (
         const VkDevice &logical_device,
-        const uint32_t &images_count
+        const uint32_t &images_count,
+        const uint32_t &texture_images_count
     );
 
     // Destructor.

@@ -16,7 +16,8 @@
 VkDescriptorPool create_vulkan_descriptor_pool
 (
     const VkDevice &logical_device,
-    const uint32_t &images_count
+    const uint32_t &images_count,
+    const uint32_t &texture_images_count
 )
 {
     log("Creating a descriptor pool..");
@@ -36,7 +37,7 @@ VkDescriptorPool create_vulkan_descriptor_pool
     pool_sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;              // Pool for a uniform buffer.
     pool_sizes[0].descriptorCount = static_cast<uint32_t>(images_count); // Amount of descriptors to create.
     pool_sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;      // Pool for an image sampler.
-    pool_sizes[1].descriptorCount = static_cast<uint32_t>(images_count);
+    pool_sizes[1].descriptorCount = static_cast<uint32_t>(images_count * texture_images_count);
 
     // Create info for the descriptor pool.
     VkDescriptorPoolCreateInfo pool_info {};
@@ -98,10 +99,11 @@ void destroy_vulkan_descriptor_pool
 Vulkan_DescriptorPool::Vulkan_DescriptorPool
 (
     const VkDevice &logical_device,
-    const uint32_t &images_count
+    const uint32_t &images_count,
+    const uint32_t &texture_images_count
 ) : logical_device(logical_device)
 {
-    descriptor_pool = create_vulkan_descriptor_pool(logical_device, images_count);
+    descriptor_pool = create_vulkan_descriptor_pool(logical_device, images_count, texture_images_count);
 }
 
 // Destructor.

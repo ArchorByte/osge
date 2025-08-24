@@ -75,12 +75,8 @@ std::vector<VkDescriptorSet> create_vulkan_descriptor_sets
         buffer_info.offset = 0;                          // Start reading at the start of the buffer.
         buffer_info.range = sizeof(UniformBufferObject); // Pass the size of the buffer.
 
-        VkDescriptorImageInfo descriptor_image_info {};
-        descriptor_image_info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        descriptor_image_info.imageView = texture_image_views[0];
-        descriptor_image_info.sampler = texture_sampler;
-
         std::vector<VkWriteDescriptorSet> write_sets(2);
+        std::vector<VkDescriptorImageInfo> descriptor_image_info(texture_image_views.size());
 
         write_sets[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         write_sets[0].dstSet = descriptor_sets[i];                        // Pass the descriptor set.
@@ -90,13 +86,20 @@ std::vector<VkDescriptorSet> create_vulkan_descriptor_sets
         write_sets[0].descriptorCount = 1;                                // Amount of descriptor to update.
         write_sets[0].pBufferInfo = &buffer_info;                         // Pass the buffer info.
 
+        for (int j = 0; j < texture_image_views.size(); j++)
+        {
+            descriptor_image_info[j].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            descriptor_image_info[j].imageView = texture_image_views[j];
+            descriptor_image_info[j].sampler = texture_sampler;
+        }
+
         write_sets[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         write_sets[1].dstSet = descriptor_sets[i];
         write_sets[1].dstBinding = 1;
         write_sets[1].dstArrayElement = 0;
         write_sets[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER; // This descriptor is for an image sampler.
-        write_sets[1].descriptorCount = 1;
-        write_sets[1].pImageInfo = &descriptor_image_info;                        // Pass the image info.
+        write_sets[1].descriptorCount = static_cast<uint32_t>(descriptor_image_info.size());
+        write_sets[1].pImageInfo = descriptor_image_info.data();
 
         vkUpdateDescriptorSets(logical_device, static_cast<uint32_t>(write_sets.size()), write_sets.data(), 0, nullptr); // Update the descriptor set using our write descriptor set.
         log("- Descriptor set #" + std::to_string(i + 1) + "/" + std::to_string(descriptor_sets.size()) + " created successfully!");
