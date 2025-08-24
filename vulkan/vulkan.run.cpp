@@ -49,7 +49,7 @@
 #include "vertex/vertex.input.state.hpp"
 
 #include <vulkan/vulkan.h>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <unistd.h>
 #include <string>
 #include <vector>
@@ -309,12 +309,12 @@ void run_vulkan
     {
         while (SDL_PollEvent(&event))
         {
-            if (event.type == SDL_QUIT)
+            if (event.type == SDL_EVENT_QUIT)
             {
                 running = false;
             }
 
-            if (event.window.event == SDL_WINDOWEVENT_CLOSE)
+            if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED)
             {
                 running = false;
             }

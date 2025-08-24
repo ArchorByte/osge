@@ -1,14 +1,14 @@
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <string>
 
-#ifndef SDL2_WINDOW_HPP
-#define SDL2_WINDOW_HPP
+#ifndef SDL3_WINDOW_HPP
+#define SDL3_WINDOW_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
 ///////////////////////////////////////////////////
 
-SDL_Window* create_sdl_window
+SDL_Window* create_sdl3_window
 (
     int width,
     int height,
@@ -17,7 +17,7 @@ SDL_Window* create_sdl_window
     int graphic_api
 );
 
-void destroy_sdl_window
+void destroy_sdl3_window
 (
     SDL_Window* window
 );
@@ -26,12 +26,12 @@ void destroy_sdl_window
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-class SDL2_Window
+class SDL3_Window
 {
 
 public:
     // Constructor.
-    SDL2_Window
+    SDL3_Window
     (
         int width,
         int height,
@@ -41,13 +41,13 @@ public:
     );
 
     // Destructor.
-    ~SDL2_Window();
+    ~SDL3_Window();
 
     SDL_Window* get() const;
 
     // Prevent data duplication.
-    SDL2_Window(const SDL2_Window&) = delete;
-    SDL2_Window& operator=(const SDL2_Window&) = delete;
+    SDL3_Window(const SDL3_Window&) = delete;
+    SDL3_Window& operator=(const SDL3_Window&) = delete;
 
 private:
     // We declare the members of the class to store.

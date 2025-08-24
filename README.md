@@ -5,7 +5,7 @@ This Python program can run on Windows, Linux, MacOS and even Android!
 
 # 📦 Requirements
 - CMake compiler (**using gcc/g++ recommended**).
-- SDL2 C++ library.
+- SDL3 C++ library.
 - Vulkan C++ library.
 - GLM C++ library.
 - STB C++ library.

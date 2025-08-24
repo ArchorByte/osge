@@ -4,8 +4,8 @@
 #include "../config/engine.config.hpp"
 #include "../utils/tool.text.format.hpp"
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_vulkan.h>
 #include <string>
 #include <iostream>
 
@@ -30,9 +30,9 @@ enum GraphicsAPI
 //////////////////// Functions ////////////////////
 ///////////////////////////////////////////////////
 
-// Create a window using SDL2.
-// Warning: We assume that SDL2 has already been initialized. Normally, the engine takes care of it on startup.
-SDL_Window* create_sdl_window
+// Create a window using SDL3.
+// Warning: We assume that SDL3 has already been initialized. Normally, the engine takes care of it on startup.
+SDL_Window* create_sdl3_window
 (
     int width,
     int height,
@@ -41,7 +41,7 @@ SDL_Window* create_sdl_window
     int graphic_api
 )
 {
-    log("Creating an SDL2 window..");
+    log("Creating an SDL3 window..");
 
     if (window_mode < WINDOWED || window_mode > FULLSCREEN)
     {
@@ -59,7 +59,7 @@ SDL_Window* create_sdl_window
 
     if (initialization < 0)
     {
-        fatal_error_log("SDL2 initialization failed: " + std::string(SDL_GetError()));
+        fatal_error_log("SDL3 initialization failed: " + std::string(SDL_GetError()));
     }
 
     // We hide the window.
@@ -85,11 +85,10 @@ SDL_Window* create_sdl_window
         window_name += " - Debug Mode";
     #endif
 
+    // Create the window itself.
     SDL_Window* window = SDL_CreateWindow
     (
         window_name.c_str(),
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
         width,
         height,
         flags
@@ -97,31 +96,31 @@ SDL_Window* create_sdl_window
 
     if (!window)
     {
-        fatal_error_log("SDL2 window creation failed with error code " + std::string(SDL_GetError()) + "!");
+        fatal_error_log("SDL3 window creation failed with error code " + std::string(SDL_GetError()) + "!");
     }
 
     SDL_ShowWindow(window); // We finally show the window.
-    log("SDL2 window " + force_string(window) + " created successfully!");
+    log("SDL3 window " + force_string(window) + " created successfully!");
 
     return window;
 }
 
-// Destroy a SDL2 window.
-void destroy_sdl_window
+// Destroy a SDL3 window.
+void destroy_sdl3_window
 (
     SDL_Window* window
 )
 {
-    log("Destroying the " + force_string(window) + " SDL2 window..");
+    log("Destroying the " + force_string(window) + " SDL3 window..");
 
     if (!window)
     {
-        error_log("SDL2 window destruction failed! The window provided (" + force_string(window) + ") is not valid!");
+        error_log("SDL3 window destruction failed! The window provided (" + force_string(window) + ") is not valid!");
         return;
     }
 
     SDL_DestroyWindow(window);
-    log("SDL2 window destroyed successfully!");
+    log("SDL3 window destroyed successfully!");
 }
 
 ///////////////////////////////////////////////
@@ -129,7 +128,7 @@ void destroy_sdl_window
 ///////////////////////////////////////////////
 
 // Constructor.
-SDL2_Window::SDL2_Window
+SDL3_Window::SDL3_Window
 (
     int width,
     int height,
@@ -138,16 +137,16 @@ SDL2_Window::SDL2_Window
     int graphic_api
 )
 {
-    window = create_sdl_window(width, height, window_mode, window_name, graphic_api);
+    window = create_sdl3_window(width, height, window_mode, window_name, graphic_api);
 }
 
 // Destructor.
-SDL2_Window::~SDL2_Window()
+SDL3_Window::~SDL3_Window()
 {
-    destroy_sdl_window(window);
+    destroy_sdl3_window(window);
 }
 
-SDL_Window* SDL2_Window::get() const
+SDL_Window* SDL3_Window::get() const
 {
     return window;
 }

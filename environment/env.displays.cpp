@@ -3,29 +3,32 @@
 #include "../logs/logs.handler.hpp"
 #include "../utils/tool.text.format.hpp"
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <vector>
 #include <string>
 
 // Retrieve and list all available displays.
-// Warning: We assume that SDL2 has already been initialized! Normally, the engine takes care of that by default on startup.
+// Warning: We assume that SDL3 has already been initialized! Normally, the engine takes care of that by default on startup.
 std::vector<int> get_available_displays()
 {
     log("Retrieving all available displays on this device..");
     std::vector<int> output;
 
-    int displays_count = SDL_GetNumVideoDisplays();
+    int displays_count = 0;
+    SDL_DisplayID *displays_list = SDL_GetDisplays(&displays_count);
 
-    if (displays_count < 1)
+    if (displays_list)
     {
-        fatal_error_log("No displays were found on this device! " + std::string(SDL_GetError()) + ".");
-        return output; // Useless as fatal_error_log exits the app, but called anyway to avoid unnecessary compiler warnings.
+        for (int i = 0; i < displays_count; ++i)
+        {
+            output.push_back(displays_list[i]);
+        }
+
+        SDL_free(displays_list);
     }
-
-    // Register all displays in the list.
-    for (int i = 0; i < displays_count; i++)
+    else
     {
-        output.emplace_back(i);
+        fatal_error_log("Failed to retrieve any displays on this device! " + std::string(SDL_GetError()) + ".");
     }
 
     log(std::to_string(output.size()) + " displays were found!");
@@ -38,12 +41,6 @@ std::string get_display_name
     int display_index
 )
 {
-    if (display_index < 0 || display_index >= SDL_GetNumVideoDisplays())
-    {
-        error_log("Invalid display index provided (" + std::to_string(display_index) + ")! Returned \"Unknown display\" by default.");
-        return "Unknown Display";
-    }
-
     const char* display_name = SDL_GetDisplayName(display_index);
 
     if (!display_name)

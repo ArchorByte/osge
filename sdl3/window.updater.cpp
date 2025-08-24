@@ -3,7 +3,7 @@
 #include "../logs/logs.handler.hpp"
 #include "../utils/tool.text.format.hpp"
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <string>
 
 enum WindowModes
@@ -13,9 +13,9 @@ enum WindowModes
     FULLSCREEN = 2
 };
 
-// Update the properties of a SDL window.
+// Update the properties of an SDL3 window.
 // Note: The refresh rate setting only affect the window in FULLSCREEN mode.
-void update_sdl_window
+void update_sdl3_window
 (
     SDL_Window* window,
     int new_window_mode,
@@ -27,7 +27,7 @@ void update_sdl_window
 {
     if (!window)
     {
-        error_log("SDL2 window update failed! The window provided (" + force_string(window) + ") is not valid!");
+        error_log("SDL3 window update failed! The window provided (" + force_string(window) + ") is not valid!");
         return;
     }
 
@@ -39,25 +39,28 @@ void update_sdl_window
 
     if (new_width < 0)
     {
-        error_log("SDL2 window update failed! The new window width provided (" + std::to_string(new_width) + ") is not valid!");
+        error_log("SDL3 window update failed! The new window width provided (" + std::to_string(new_width) + ") is not valid!");
         return;
     }
 
     if (new_height < 0)
     {
-        error_log("SDL2 window update failed! The new window height provided (" + std::to_string(new_height) + ") is not valid!");
+        error_log("SDL3 window update failed! The new window height provided (" + std::to_string(new_height) + ") is not valid!");
         return;
     }
 
     if (new_refresh_rate < 1)
     {
-        error_log("SDL2 window update failed! The new window refresh rate provided (" + std::to_string(new_refresh_rate) + ") is not valid!");
+        error_log("SDL3 window update failed! The new window refresh rate provided (" + std::to_string(new_refresh_rate) + ") is not valid!");
         return;
     }
 
-    if (new_display_index < 0 || new_display_index >= SDL_GetNumVideoDisplays())
+    // Try to retrieve the ID of the targeted display.
+    SDL_DisplayID display_id = SDL_GetDisplayForWindow(window);
+
+    if (display_id == 0)
     {
-        error_log("SDL2 window update failed! The new display index provided (" + std::to_string(new_display_index) + ") is not valid!");
+        error_log("SDL3 window update failed! Failed to get the display ID of display #" + std::to_string(new_display_index) + " with the error code " + std::string(SDL_GetError()));
         return;
     }
 
@@ -68,18 +71,19 @@ void update_sdl_window
     }
     else
     {
-        SDL_DisplayMode mode;
-        int query = SDL_GetCurrentDisplayMode(new_display_index, &mode);
+        const SDL_DisplayMode* mode = SDL_GetCurrentDisplayMode(display_id);
 
-        if (query == 0)
+        if (mode)
         {
-            mode.w = new_width;
-            mode.h = new_height;
-            mode.refresh_rate = new_refresh_rate;
+            SDL_DisplayMode new_mode;
 
-            int settings_application = SDL_SetWindowDisplayMode(window, &mode);
+            new_mode.w = new_width;
+            new_mode.h = new_height;
+            new_mode.refresh_rate = new_refresh_rate;
 
-            if (settings_application != 0)
+            int new_mode_apply = SDL_SetWindowFullscreenMode(window, &new_mode);
+
+            if (new_mode_apply != 0)
             {
                 error_log("The new FULLSCREEN settings application (" + std::to_string(new_width) + "x" + std::to_string(new_height) + "@" + std::to_string(new_refresh_rate) + ") failed with error code " + std::string(SDL_GetError()) + "!");
             }
@@ -102,7 +106,7 @@ void update_sdl_window
     switch (new_window_mode)
     {
         case BORDERLESS:
-            SDL_SetWindowBordered(window, SDL_FALSE);
+            SDL_SetWindowBordered(window, false);
             break;
 
         case FULLSCREEN:

@@ -2,7 +2,7 @@
 
 #include "../logs/logs.handler.hpp"
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 auto previous_time = SDL_GetTicks();
 int frames_count = 0;

@@ -1,6 +1,6 @@
 #include <vulkan/vulkan.h>
 #include <vector>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 #ifndef VULKAN_SWAPCHAIN_DATA_SELECTION_HPP
 #define VULKAN_SWAPCHAIN_DATA_SELECTION_HPP

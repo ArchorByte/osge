@@ -1,5 +1,5 @@
 #include <vulkan/vulkan.h>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 #ifndef VULKAN_CORE_SURFACE_HPP
 #define VULKAN_CORE_SURFACE_HPP

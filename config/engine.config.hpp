@@ -21,10 +21,6 @@
 #define ALLOW_LOGS_FILE
 #define LOGS_FILE_NAME "osge.logs"
 
-// Comment or remove that line if you want to disallow 32-bits system to run your product.
-// WARNING: Every operating system supported will be affected by this flag.
-#define HANDLE_32_BITS_SYSTEMS
-
 // Comment or remove the lines below if you want to disable support for one/some specific operating systems.
 // Note: These options don't make any distinction between 64-bits and 32-bits systems. Only the flag above does.
 #define HANDLE_LINUX

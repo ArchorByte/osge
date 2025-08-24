@@ -4,8 +4,8 @@
 #include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_vulkan.h>
 #include <vector>
 #include <cstdint>
 #include <limits>
@@ -75,7 +75,7 @@ VkExtent2D select_vulkan_swapchain_extent_resolution
     int height;
 
     // Get the current resolution from the window frame buffer.
-    SDL_Vulkan_GetDrawableSize(window, &width, &height);
+    SDL_GetWindowSizeInPixels(window, &width, &height);
 
     VkExtent2D extent =
     {

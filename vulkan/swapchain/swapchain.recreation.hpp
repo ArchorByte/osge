@@ -5,7 +5,7 @@
 
 #include <vulkan/vulkan.h>
 #include <cstdint>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <vector>
 
 #ifndef VULKAN_SWAPCHAIN_RECREATION_HPP
