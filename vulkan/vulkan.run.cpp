@@ -10,7 +10,7 @@
 #include "core/vulkan.surface.hpp"
 #include "core/validation.layers.hpp"
 #include "core/vulkan.extensions.hpp"
-#include "descriptors/descriptor.layout.hpp"
+#include "descriptors/descriptor.set.layout.hpp"
 #include "descriptors/descriptor.pool.hpp"
 #include "descriptors/descriptor.sets.hpp"
 #include "device/physical.device.hpp"
@@ -192,18 +192,6 @@ void run_vulkan
     // Select the region where we put the pixels. Any pixel outside of it won't be drawn!
     VkRect2D scissor = create_vulkan_scissor(extent);
 
-    // Create the descriptor set layout.
-    // Describes the layout of the shader resources such as uniforms or textures.
-    Vulkan_DescriptorSetLayout descriptor_set_layout(logical_device.get());
-
-    // Create the descriptor pool.
-    // Descriptor sets allocator.
-    Vulkan_DescriptorPool descriptor_pool(logical_device.get(), images_count);
-
-    // Create the pipeline layout.
-    // Layout of our graphics pipeline. Nothing much more to say about it.
-    Vulkan_PipelineLayout pipeline_layout(logical_device.get(), descriptor_set_layout.get());
-
     // Create the color attachment.
     // Description of the format of the color buffer during the rendering process.
     VkAttachmentDescription color_attachment = create_vulkan_color_attachment(surface_format.format);
@@ -211,10 +199,6 @@ void run_vulkan
     // Create the render pass.
     // The render pass defines how  we are going to use the frame buffers attachments for rendering.
     Vulkan_RenderPass render_pass(logical_device.get(), color_attachment);
-
-    // Create the graphics pipeline.
-    // Assemble all rendering, stages and states components in one single pipeline.
-    Vulkan_GraphicsPipeline graphics_pipeline(logical_device.get(), shaders_stages, vertex_input_state, assembly_input_state, viewport_state, rasterization_state, multisampling_state, pipeline_layout.get(), render_pass.get(), dynamic_states);
 
     // Create the frame buffers.
     // Store the image views that we use in the render pass.
@@ -240,10 +224,6 @@ void run_vulkan
     // Store the data that we are going to pass to the shaders.
     Vulkan_UniformBuffers uniform_buffers(logical_device.get(), physical_device, command_pool.get(), graphics_queue, images_count);
 
-    // Create the descriptor sets.
-    // Bind our uniform buffers just above to the shaders.
-    std::vector<VkDescriptorSet> descriptor_sets = create_vulkan_descriptor_sets(logical_device.get(), images_count, descriptor_set_layout.get(), descriptor_pool.get(), uniform_buffers.get());
-
     // Create the fences.
     // Force the CPU to wait for GPU work to finish.
     Vulkan_Fence fences(logical_device.get(), images_count);
@@ -262,10 +242,30 @@ void run_vulkan
     Vulkan_TextureImages texture_images(logical_device.get(), physical_device, command_pool.get(), graphics_queue, loaded_texture_images.get(), texture_image_buffers);
 
     // Create the texture image views.
-    Vulkan_TextureImageViews texture_image_textures(logical_device.get(), texture_images.get());
+    Vulkan_TextureImageViews texture_image_views(logical_device.get(), texture_images.get());
 
     // Create the texture sampler.
     Vulkan_TextureSampler texture_sampler(physical_device, logical_device.get());
+
+    // Create the descriptor set layout.
+    // Describes the layout of the shader resources such as uniforms or textures.
+    Vulkan_DescriptorSetLayout descriptor_set_layout(logical_device.get(), texture_image_views.get());
+
+    // Create the pipeline layout.
+    // Layout of our graphics pipeline. Nothing much more to say about it.
+    Vulkan_PipelineLayout pipeline_layout(logical_device.get(), descriptor_set_layout.get());
+
+    // Create the graphics pipeline.
+    // Assemble all rendering, stages and states components in one single pipeline.
+    Vulkan_GraphicsPipeline graphics_pipeline(logical_device.get(), shaders_stages, vertex_input_state, assembly_input_state, viewport_state, rasterization_state, multisampling_state, pipeline_layout.get(), render_pass.get(), dynamic_states);
+
+    // Create the descriptor pool.
+    // Descriptor sets allocator.
+    Vulkan_DescriptorPool descriptor_pool(logical_device.get(), images_count, texture_images.get().size());
+
+    // Create the descriptor sets.
+    // Bind our uniform buffers just above to the shaders.
+    std::vector<VkDescriptorSet> descriptor_sets = create_vulkan_descriptor_sets(logical_device.get(), images_count, descriptor_set_layout.get(), descriptor_pool.get(), uniform_buffers.get(), texture_image_views.get(), texture_sampler.get());
 
     // Check the amount of semaphores and fences.
     // There can't have more or less the double of fences of semaphores.

@@ -6,6 +6,7 @@
 #include <vulkan/vulkan.h>
 #include <cstdint>
 #include <string>
+#include <vector>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
@@ -15,7 +16,8 @@
 VkDescriptorPool create_vulkan_descriptor_pool
 (
     const VkDevice &logical_device,
-    const uint32_t &images_count
+    const uint32_t &images_count,
+    const uint32_t &texture_images_count
 )
 {
     log("Creating a descriptor pool..");
@@ -30,17 +32,19 @@ VkDescriptorPool create_vulkan_descriptor_pool
         fatal_error_log("Descriptor pool creation failed! The images count provided (" + std::to_string(images_count) + ") is not valid!");
     }
 
-    // Size of the pool descriptor.
-    VkDescriptorPoolSize pool_size {};
-    pool_size.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    pool_size.descriptorCount = static_cast<uint32_t>(images_count); // Amount of descriptors to create.
+    // Size of the descriptor pools.
+    std::vector<VkDescriptorPoolSize> pool_sizes(2);
+    pool_sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;              // Pool for a uniform buffer.
+    pool_sizes[0].descriptorCount = static_cast<uint32_t>(images_count); // Amount of descriptors to create.
+    pool_sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;      // Pool for an image sampler.
+    pool_sizes[1].descriptorCount = static_cast<uint32_t>(images_count * texture_images_count);
 
     // Create info for the descriptor pool.
     VkDescriptorPoolCreateInfo pool_info {};
     pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    pool_info.poolSizeCount = 1;                             // Amount of pool sizes to pass.
-    pool_info.pPoolSizes = &pool_size;                       // Pass the pool size.
-    pool_info.maxSets = static_cast<uint32_t>(images_count); // Maximum amount of sets.
+    pool_info.poolSizeCount = static_cast<uint32_t>(pool_sizes.size()); // Amount of pool sizes to pass.
+    pool_info.pPoolSizes = pool_sizes.data();                           // Pass the pool size.
+    pool_info.maxSets = static_cast<uint32_t>(images_count);            // Maximum amount of sets.
 
     VkDescriptorPool descriptor_pool = VK_NULL_HANDLE;
     VkResult pool_creation = vkCreateDescriptorPool(logical_device, &pool_info, nullptr, &descriptor_pool); // Try to create the pool.
@@ -95,10 +99,11 @@ void destroy_vulkan_descriptor_pool
 Vulkan_DescriptorPool::Vulkan_DescriptorPool
 (
     const VkDevice &logical_device,
-    const uint32_t &images_count
+    const uint32_t &images_count,
+    const uint32_t &texture_images_count
 ) : logical_device(logical_device)
 {
-    descriptor_pool = create_vulkan_descriptor_pool(logical_device, images_count);
+    descriptor_pool = create_vulkan_descriptor_pool(logical_device, images_count, texture_images_count);
 }
 
 // Destructor.
