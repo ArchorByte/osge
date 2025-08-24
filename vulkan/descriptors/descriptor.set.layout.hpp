@@ -1,7 +1,8 @@
 #include <vulkan/vulkan.h>
+#include <vector>
 
-#ifndef VULKAN_DESCRIPTOR_LAYOUT_HPP
-#define VULKAN_DESCRIPTOR_LAYOUT_HPP
+#ifndef VULKAN_DESCRIPTOR_SET_LAYOUT_HPP
+#define VULKAN_DESCRIPTOR_SET_LAYOUT_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
@@ -9,7 +10,8 @@
 
 VkDescriptorSetLayout create_vulkan_descriptor_set_layout
 (
-    const VkDevice &logical_device
+    const VkDevice &logical_device,
+    const std::vector<VkImageView> &texture_image_views
 );
 
 void destroy_vulkan_descriptor_set_layout
@@ -29,7 +31,8 @@ public:
     // Constructor.
     Vulkan_DescriptorSetLayout
     (
-        const VkDevice &logical_device
+        const VkDevice &logical_device,
+        const std::vector<VkImageView> &texture_image_views
     );
 
     // Destructor.
