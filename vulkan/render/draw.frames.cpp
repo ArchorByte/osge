@@ -33,7 +33,8 @@ std::string draw_frame
     const VkBuffer &index_buffer,
     const std::vector<UniformBufferInfo> &uniform_buffers,
     const VkPipelineLayout &pipeline_layout,
-    const std::vector<VkDescriptorSet> descriptor_sets
+    const std::vector<VkDescriptorSet> descriptor_sets,
+    const std::vector<VkImageView> texture_image_views
 )
 {
     if (!logical_device || logical_device == VK_NULL_HANDLE)
@@ -175,7 +176,7 @@ std::string draw_frame
     vkResetCommandBuffer(command_buffers[frame], 0);  // Reset the command buffer.
 
     // Record the command buffer state.
-    record_command_buffer(command_buffers[frame], image_index, extent, framebuffers, render_pass, graphics_pipeline, viewport, scissor, vertex_buffer, index_buffer, frame, pipeline_layout, descriptor_sets);
+    record_command_buffer(command_buffers[frame], image_index, extent, framebuffers, render_pass, graphics_pipeline, viewport, scissor, vertex_buffer, index_buffer, frame, pipeline_layout, descriptor_sets, texture_image_views);
     update_uniform_buffer(frame, extent, uniform_buffers[frame].data); // Update the uniform buffer data.
 
     VkSemaphore wait_semaphores[] = { image_available_semaphores[frame] };                  // Semaphores to wait on, before we start the command buffer execution.

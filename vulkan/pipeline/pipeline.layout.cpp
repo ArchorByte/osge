@@ -28,13 +28,19 @@ VkPipelineLayout create_vulkan_pipeline_layout
         fatal_error_log("Pipeline layout creation failed! The descriptor set layout provided (" + force_string(descriptor_set_layout) + ") is not valid!");
     }
 
+    // Push constant range for texture selection.
+    VkPushConstantRange push_constant_range{};
+    push_constant_range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    push_constant_range.offset = 0;
+    push_constant_range.size = sizeof(int);
+
     // Create info for the pipeline layout.
     VkPipelineLayoutCreateInfo info {};
     info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     info.setLayoutCount = 1;                   // Amount of layouts to enable.
     info.pSetLayouts = &descriptor_set_layout; // Pass the descriptor set layout.
-    info.pushConstantRangeCount = 0;           // Amount of constant range to pass.
-    info.pPushConstantRanges = nullptr;        // No constant ranges used.
+    info.pushConstantRangeCount = 1;           // Amount of constant range to pass.
+    info.pPushConstantRanges = &push_constant_range;
 
     VkPipelineLayout pipeline_layout = VK_NULL_HANDLE;
     VkResult layout_creation = vkCreatePipelineLayout(logical_device, &info, nullptr, &pipeline_layout); // Try to create the layout.

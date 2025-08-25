@@ -28,7 +28,8 @@ std::string draw_frame
     const VkBuffer &index_buffer,
     const std::vector<UniformBufferInfo> &uniform_buffers,
     const VkPipelineLayout &pipeline_layout,
-    const std::vector<VkDescriptorSet> descriptor_sets
+    const std::vector<VkDescriptorSet> descriptor_sets,
+    const std::vector<VkImageView> texture_image_views
 );
 
 #endif

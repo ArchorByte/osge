@@ -321,7 +321,7 @@ void run_vulkan
         }
 
         // Render and draw the frame to the window.
-        std::string draw_output = draw_frame(logical_device.get(), fences.get(), swapchain.get(), image_available_semaphores, render_finished_semaphores, command_buffers, extent, framebuffers.get(), render_pass.get(), graphics_pipeline.get(), viewport, scissor, graphics_queue, present_queue, frame, vertex_buffer.get(), index_buffer.get(), uniform_buffers.get(), pipeline_layout.get(), descriptor_sets);
+        std::string draw_output = draw_frame(logical_device.get(), fences.get(), swapchain.get(), image_available_semaphores, render_finished_semaphores, command_buffers, extent, framebuffers.get(), render_pass.get(), graphics_pipeline.get(), viewport, scissor, graphics_queue, present_queue, frame, vertex_buffer.get(), index_buffer.get(), uniform_buffers.get(), pipeline_layout.get(), descriptor_sets, texture_image_views.get());
 
         // Passing to the next frame.
         // Example: 0 -> 1 -> 2 -> 0 -> 1 -> 2 -> 0...

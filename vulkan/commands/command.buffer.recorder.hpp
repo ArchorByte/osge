@@ -19,7 +19,8 @@ void record_command_buffer
     const VkBuffer &index_buffer,
     const size_t &frame,
     const VkPipelineLayout &pipeline_layout,
-    const std::vector<VkDescriptorSet> descriptor_sets
+    const std::vector<VkDescriptorSet> descriptor_sets,
+    const std::vector<VkImageView> texture_image_views
 );
 
 #endif

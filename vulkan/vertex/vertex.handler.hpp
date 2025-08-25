@@ -11,17 +11,18 @@ struct Vertex
 {
     glm::vec2 position;
     glm::vec3 color;
+    glm::vec2 texture_coordinates;
 
     static VkVertexInputBindingDescription get_binding_description();
-    static std::array<VkVertexInputAttributeDescription, 2> get_attribute_descriptions();
+    static std::array<VkVertexInputAttributeDescription, 3> get_attribute_descriptions();
 };
 
 const std::vector<Vertex> vertices =
 {
-    {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-    {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-    {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-    {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+    {{ -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f }},
+    {{ 0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f }},
+    {{ 0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }},
+    {{ -0.5f, 0.5f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f }}
 };
 
 const std::vector<uint16_t> indices =
