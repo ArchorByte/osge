@@ -24,7 +24,8 @@ void record_command_buffer
     const VkBuffer &index_buffer,
     const size_t &frame,
     const VkPipelineLayout &pipeline_layout,
-    const std::vector<VkDescriptorSet> descriptor_sets
+    const std::vector<VkDescriptorSet> descriptor_sets,
+    const std::vector<VkImageView> texture_image_views
 )
 {
     if (!command_buffer || command_buffer == VK_NULL_HANDLE)
@@ -121,6 +122,26 @@ void record_command_buffer
     vkCmdBindVertexBuffers(command_buffer, 0, 1, &vertex_buffers, offsets);                // Bind the vertex buffers to the command buffer.
     vkCmdBindIndexBuffer(command_buffer, index_buffer, 0, VK_INDEX_TYPE_UINT16);           // Bind the index buffer to the command buffer.
     vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout, 0, 1, &descriptor_sets[frame], 0, nullptr); // Bind the descriptor set selected by the frame to the command buffer.
+
+    int targeted_texture = 1;
+
+    // Select the missing texture if the targeted texture index is incorrect.
+    if (targeted_texture < 0 || targeted_texture > texture_image_views.size())
+    {
+        error_log("Texture #" + std::to_string(targeted_texture) + " not found!");
+        targeted_texture = 0;
+    };
+
+    // Choose a texture #1 (normally, OSGE logo by default).
+    vkCmdPushConstants
+    (
+        command_buffer,
+        pipeline_layout,
+        VK_SHADER_STAGE_FRAGMENT_BIT,
+        0,
+        sizeof(int),
+        &targeted_texture
+    );
 
     vkCmdBeginRenderPass(command_buffer, &render_pass_info, VK_SUBPASS_CONTENTS_INLINE);   // Start the render pass for the drawing.
     vkCmdSetViewport(command_buffer, 0, 1, &viewport);                                     // Set the viewport (we do that each time because it's dynamic).

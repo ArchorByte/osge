@@ -3,8 +3,8 @@ This file contains the TODO list of the OSGE project. <br/>
 The project will be publicly released once we finished everything here.
 
 # TODO list
-- [ ] Implement Vulkan. (**TO FINISH https://vulkan-tutorial.com/**)
-- [X] Finish the logs system.
+- [ ] Implement Vulkan. (https://vulkan-tutorial.com/Depth_buffering)
+- [X] Logs system.
 - [ ] Add a "fixed update" loop (like Unity Engine).
 - [ ] Input detection (keyboard, mouse and controllers).
 - [ ] Implement OpenGL.
@@ -19,5 +19,5 @@ The project will be publicly released once we finished everything here.
 - [ ] Allow to add/remove objects to the scene.
 - [ ] Allow to add/remove UI components to the scene.
 - [ ] FPS cap support.
-- [ ] Clean up and optimize the whole code base once we have completed this checklist.
 - [ ] Write some advanced docs.
+- [ ] Clean up and optimize the whole code base once we have completed this checklist.

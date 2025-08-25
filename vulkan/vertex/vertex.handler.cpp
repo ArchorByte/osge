@@ -16,21 +16,27 @@ VkVertexInputBindingDescription Vertex::get_binding_description()
 }
 
 // Return the attribute description of the Vertex input.
-std::array<VkVertexInputAttributeDescription, 2> Vertex::get_attribute_descriptions()
+std::array<VkVertexInputAttributeDescription, 3> Vertex::get_attribute_descriptions()
 {
-    std::array<VkVertexInputAttributeDescription, 2> descriptions {};
+    std::array<VkVertexInputAttributeDescription, 3> descriptions {};
 
-    // 2D positions.
+    // Vertex position.
     descriptions[0].binding = 0;                         // Set the binding index.
     descriptions[0].location = 0;                        // Set the position.
     descriptions[0].format = VK_FORMAT_R32G32_SFLOAT;    // Set the format as two 32-bits elements.
     descriptions[0].offset = offsetof(Vertex, position); // Set the color offset.
 
-    // 3D positions.
-    descriptions[1].binding = 0;                         // Set the binding index.
-    descriptions[1].location = 1;                        // Set the position.
-    descriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT; // Set the format as three 32-bits elements.
-    descriptions[1].offset = offsetof(Vertex, color);    // Set the color offset.
+    // Vertex color.
+    descriptions[1].binding = 0;
+    descriptions[1].location = 1;
+    descriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+    descriptions[1].offset = offsetof(Vertex, color);
+
+    // Vertex texture coordinates.
+    descriptions[2].binding = 0;
+    descriptions[2].location = 2;
+    descriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+    descriptions[2].offset = offsetof(Vertex, texture_coordinates);
 
     return descriptions;
 }
