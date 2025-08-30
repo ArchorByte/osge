@@ -68,7 +68,7 @@ VkExtent2D select_vulkan_swapchain_extent_resolution
 
     if (!window)
     {
-        fatal_error_log("Swap chain resolution selection failed! The GLFW window provided (" + force_string(window) + ") is not valid!");
+        fatal_error_log("Swap chain resolution selection failed! The SDL3 window provided (" + force_string(window) + ") is not valid!");
     }
 
     int width;

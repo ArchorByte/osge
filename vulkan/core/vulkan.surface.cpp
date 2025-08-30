@@ -11,7 +11,7 @@
 //////////////////// Functions ////////////////////
 ///////////////////////////////////////////////////
 
-// Create a Vulkan surface for a GLFW window.
+// Create a Vulkan surface for a SDL3 window.
 VkSurfaceKHR create_vulkan_surface
 (
     const VkInstance &vulkan_instance,
@@ -27,7 +27,7 @@ VkSurfaceKHR create_vulkan_surface
 
     if (!window)
     {
-        fatal_error_log("Vulkan surface creation failed! The GLFW window provided (" + force_string(window) + ") is not valid!");
+        fatal_error_log("Vulkan surface creation failed! The SDL3 window provided (" + force_string(window) + ") is not valid!");
     }
 
     VkSurfaceKHR vulkan_surface = VK_NULL_HANDLE;

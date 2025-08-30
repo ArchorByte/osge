@@ -118,7 +118,7 @@ int main()
         // If it's still not a 16/9 resolution, we select the highest allowed resolution.
         std::pair<int, int> game_resolution = select_game_resolution(config, screen_resolution, allowed_game_resolutions);
 
-        // We create the main GLFW window.
+        // We create the main SDL3 window.
         SDL3_Window window(game_resolution.first, game_resolution.second, stoi(window_mode), std::string(GAME_TITLE), stoi(graphics_api));
 
         // Select the graphics API that we are going to use.

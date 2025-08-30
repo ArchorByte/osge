@@ -75,7 +75,7 @@ void run_vulkan
     // Entry point of Vulkan.
     Vulkan_Instance vulkan_instance(layers);
 
-    // Create the Vulkan surface and apply it to our GLFW window.
+    // Create the Vulkan surface and apply it to our SDL3 window.
     // Required to present frames.
     Vulkan_Surface vulkan_surface (vulkan_instance.get(), window);
 

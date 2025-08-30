@@ -9,8 +9,8 @@
 #include <string>
 #include <algorithm>
 
-// Get and return the resolution of a display using GLFW.
-// Warning: We assume that GLFW has already been initialized! Normally, the engine takes care of that by default on startup.
+// Get and return the resolution of a display using SDL3.
+// Warning: We assume that SDL3 has already been initialized! Normally, the engine takes care of that by default on startup.
 std::pair<int, int> get_display_resolution
 (
     int display_index
