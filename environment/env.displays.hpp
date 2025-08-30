@@ -1,5 +1,4 @@
 #include <vector>
-#include <GLFW/glfw3.h>
 #include <string>
 
 #ifndef ENVIRONNEMENT_DISPLAYS_HPP
