@@ -72,7 +72,7 @@ int main()
         std::string graphics_api = config["GRAPHICS_API"];
         std::string monitor = config["MONITOR"];
 
-        // Note: If the graphics API provided is not handled, we use Vulkan y default.
+        // Note: If the graphics API provided is not handled, we use Vulkan by default.
         enum GraphicsAPI
         {
             VULKAN = 0,

@@ -13,10 +13,11 @@
 #include <cstdint>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
-#include <vector>
+#include <string>
 
 // Recreate a swap chain.
-void recreate_vulkan_swapchain
+// Note: If the user requested to stop the app, we return an "exit" message.
+std::string recreate_vulkan_swapchain
 (
     Vulkan_Swapchain &swapchain,
     Vulkan_SwapchainImageViews &image_views,
@@ -73,22 +74,24 @@ void recreate_vulkan_swapchain
         fatal_error_log("Swap chain recreation failed! The present family index provided (" + std::to_string(present_family_index) + ") is not valid!");
     }
 
-    int width = 0;
-    int height = 0;
-
-    // Prevent to create a new swap chain as long as the width or the height (or both) is at 0.
-    // Note: This generally happens when the window is minimized on Windows.
-    while (width == 0 || height == 0)
+    // Check if the window is still minimized.
+    while (true)
     {
-        SDL_GetWindowSizeInPixels(window, &width, &height);
-        log("Waiting for the user to unminimize the window before recreating the swap chain..");
+        Uint32 window_flags = SDL_GetWindowFlags(window);
+        bool minimized = window_flags & SDL_WINDOW_MINIMIZED;
+
+        if (!minimized)
+        {
+            break;
+        }
+        else log("Waiting for the user to unminimize or close the window to continue..");
 
         SDL_Event event;
         SDL_WaitEvent(&event);  // This line blocks the code until something happens to the window.
 
         if (event.type == SDL_EVENT_QUIT || event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED)
         {
-            return;
+            return "exit";
         }
     }
 
@@ -154,4 +157,5 @@ void recreate_vulkan_swapchain
     }
 
     log("The swap chain recreation has ended successfully!");
+    return "success";
 }

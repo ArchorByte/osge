@@ -330,7 +330,12 @@ void run_vulkan
         // We need to recreate the swap chain because the draw function asked for it.
         if (draw_output == "recreate")
         {
-            recreate_vulkan_swapchain(swapchain, swapchain_images_views, framebuffers, logical_device.get(), vulkan_surface.get(), physical_device, surface_format, present_mode, graphics_family_index, present_family_index, render_pass.get(), extent, window, semaphores, image_available_semaphores, render_finished_semaphores);
+            std::string recreate_output = recreate_vulkan_swapchain(swapchain, swapchain_images_views, framebuffers, logical_device.get(), vulkan_surface.get(), physical_device, surface_format, present_mode, graphics_family_index, present_family_index, render_pass.get(), extent, window, semaphores, image_available_semaphores, render_finished_semaphores);
+
+            if (recreate_output == "exit")
+            {
+                running = false;
+            }
         }
 
         // Running the game code at each frame.
