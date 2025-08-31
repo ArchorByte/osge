@@ -7,11 +7,12 @@
 #include <cstdint>
 #include <SDL3/SDL.h>
 #include <vector>
+#include <string>
 
 #ifndef VULKAN_SWAPCHAIN_RECREATION_HPP
 #define VULKAN_SWAPCHAIN_RECREATION_HPP
 
-void recreate_vulkan_swapchain
+std::string recreate_vulkan_swapchain
 (
     Vulkan_Swapchain &swapchain,
     Vulkan_SwapchainImageViews &image_views,

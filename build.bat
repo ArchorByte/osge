@@ -22,8 +22,8 @@ cd ..
 if not exist "cmake" (mkdir "cmake")
 cd cmake
 
-cmake ../../../ -G "MinGW Makefiles" -DCMAKE_C_COMPILER=C:/MinGW/bin/gcc.exe -DCMAKE_CXX_COMPILER=C:/MinGW/bin/g++.exe
-C:/MinGW/bin/mingw32-make.exe
+cmake ../../../ -G "MinGW Makefiles" -DCMAKE_C_COMPILER=C:/mingw64/bin/gcc.exe -DCMAKE_CXX_COMPILER=C:/mingw64/bin/g++.exe
+C:/mingw64/bin/mingw32-make.exe
 
 move new_osge_project.exe ../out/
 cd ../out
