@@ -53,7 +53,7 @@ void destroy_vulkan_texture_image_views
     std::vector<VkImageView> &texture_image_views
 )
 {
-    log("Destroying " + std::to_string(texture_image_views.size()) + " texture image views.. ");
+    log("Destroying " + std::to_string(texture_image_views.size()) + " texture image views..");
 
     if (!logical_device || logical_device == VK_NULL_HANDLE)
     {
