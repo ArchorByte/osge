@@ -84,7 +84,7 @@ void destroy_vulkan_pipeline_layout
     vkDestroyPipelineLayout(logical_device, pipeline_layout, nullptr);
     pipeline_layout = VK_NULL_HANDLE;
 
-    log("Pipeline layout created successfully!");
+    log("Pipeline layout destroyed successfully!");
 }
 
 ///////////////////////////////////////////////

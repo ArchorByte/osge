@@ -164,8 +164,6 @@ std::vector<TextureImage> create_vulkan_texture_images
     }
 
     log(std::to_string(texture_image_info.size()) + " texture images created successfully!");
-    texture_image_buffers.~Vulkan_TextureImageBuffers(); // Free the buffers once we are done.
-
     return texture_images;
 }
 
