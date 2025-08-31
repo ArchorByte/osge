@@ -15,7 +15,7 @@ std::vector<VkCommandBuffer> create_vulkan_command_buffers
     const uint32_t &images_count
 )
 {
-    log("Creating " + std::to_string(images_count) + " command buffers.. ");
+    log("Creating " + std::to_string(images_count) + " command buffers..");
 
     if (!logical_device || logical_device == VK_NULL_HANDLE)
     {

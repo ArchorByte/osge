@@ -18,7 +18,7 @@ std::vector<VkFence> create_vulkan_fences
     const uint32_t images_count
 )
 {
-    log("Creating " + std::to_string(images_count) + " fences.. ");
+    log("Creating " + std::to_string(images_count) + " fences..");
 
     if (!logical_device || logical_device == VK_NULL_HANDLE)
     {
