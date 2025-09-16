@@ -18,7 +18,7 @@ void log
         std::cout << "[log] " << log << std::endl;
     #endif
 
-    #ifdef ALLOW_LOGS_FILE
+    #ifdef ENABLE_LOGS_FILE
         write_log_file("log", log);
     #endif
 }
@@ -34,7 +34,7 @@ void error_log
         std::cerr << "[error] " << log << std::endl;
     #endif
 
-    #ifdef ALLOW_LOGS_FILE
+    #ifdef ENABLE_LOGS_FILE
         write_log_file("error", log);
     #endif
 }
@@ -50,7 +50,7 @@ void fatal_error_log
         std::cerr << "[fatal_error] " << log << std::endl;
     #endif
 
-    #ifdef ALLOW_LOGS_FILE
+    #ifdef ENABLE_LOGS_FILE
         write_log_file("fatal_error", log);
     #endif
 
