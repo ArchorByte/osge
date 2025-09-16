@@ -115,7 +115,7 @@ int main()
         }
 
         // Get the screen resolution.
-        // Screen resolution store as <width, height>.
+        // Screen resolution stored as <width, height>.
         std::pair<int, int> screen_resolution = get_display_resolution(display_indexes[monitor_index - 1]);
 
         // List the "allowed" game resolutions.
