@@ -38,8 +38,10 @@ int main()
 {
     try
     {
-        if (std::filesystem::exists(LOGS_FILE_NAME)) std::filesystem::remove(LOGS_FILE_NAME); // We reset the logs file by deleting it if it already exists.
-        create_new_empty_file(LOGS_FILE_NAME);
+        #ifdef ENABLE_LOGS_FILE
+            if (std::filesystem::exists(LOGS_FILE_NAME)) std::filesystem::remove(LOGS_FILE_NAME); // We reset the logs file by deleting it if it already exists.
+            create_new_empty_file(LOGS_FILE_NAME);
+        #endif
 
         // We disable the console on Windows if we're in release mode.
         #ifndef DEBUG_MODE

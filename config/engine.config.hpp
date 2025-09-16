@@ -18,7 +18,7 @@
 // Comment or remove that line if you don't want the logs file.
 // Note 1: The debug mode state doesn't influence the logs file. That means this file can exist even if we are not using the debug mode.
 // Note 2: We DO NOT RECOMMEND to enable the logs file for the final users because some sensitive data such as memory addresses will be written in it!
-#define ALLOW_LOGS_FILE
+#define ENABLE_LOGS_FILE
 #define LOGS_FILE_NAME "osge.logs"
 
 // Comment or remove the lines below if you want to disable support for one/some specific operating systems.
