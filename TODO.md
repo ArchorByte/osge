@@ -8,7 +8,7 @@ The project will be publicly released once we finished everything here.
 - [ ] Add a "fixed update" loop (like Unity Engine).
 - [ ] Input detection (keyboard, mouse and controllers).
 - [ ] Implement OpenGL.
-- [ ] Implement vsync support.
+- [ ] Implement v-sync support.
 - [ ] Default empty scene.
 - Add some code prefabs for the game:
     - [X] Default framerate counter.
