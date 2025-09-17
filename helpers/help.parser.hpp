@@ -1,8 +1,8 @@
 #include <map>
 #include <string>
 
-#ifndef TOOLS_PARSER_HPP
-#define TOOLS_PARSER_HPP
+#ifndef HELPER_PARSER_HPP
+#define HELPER_PARSER_HPP
 
 std::map<std::string, std::string> parse_config_file
 (

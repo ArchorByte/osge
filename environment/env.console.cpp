@@ -6,8 +6,7 @@
     #include "windows.h"
 #endif
 
-// Disable the console for Windows systems.
-// We don't have any console problem on the other platforms.
+// Get rid of the console on Windows.
 void hide_console()
 {
     #if defined(_WIN64)

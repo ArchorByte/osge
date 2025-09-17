@@ -1,9 +1,9 @@
 #include "texture.image.views.hpp"
 
 #include "texture.images.handler.hpp"
-#include "../utils/image.views.handler.hpp"
+#include "../helpers/image.views.handler.hpp"
 #include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
+#include "../../helpers/help.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 #include <vector>

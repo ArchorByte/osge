@@ -3,7 +3,7 @@
 #include "texture.images.loader.hpp"
 #include "../buffers/buffers.handler.hpp"
 #include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
+#include "../../helpers/help.text.format.hpp"
 
 #include <vector>
 #include <string>

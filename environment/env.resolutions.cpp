@@ -1,7 +1,7 @@
 #include "env.resolutions.hpp"
 
 #include "../logs/logs.handler.hpp"
-#include "../utils/tool.text.format.hpp"
+#include "../helpers/help.text.format.hpp"
 
 #include <SDL3/SDL.h>
 #include <map>
@@ -13,10 +13,10 @@
 // Warning: We assume that SDL3 has already been initialized! Normally, the engine takes care of that by default on startup.
 std::pair<int, int> get_display_resolution
 (
-    int display_index
+    const int &display_index
 )
 {
-    log("Detecting the display resolution..");
+    log("Detecting the resolution of display #" + std::to_string(display_index) + "..");
     std::pair<int, int> output;
 
     // Retrieve the video data of the display.
@@ -24,18 +24,19 @@ std::pair<int, int> get_display_resolution
 
     if (!display_mode)
     {
-        fatal_error_log("Display resolution detection failed! Failed to retrieve the video mode with the error code " + std::string(SDL_GetError()) + "!");
+        fatal_error_log("Display resolution detection failed! Failed to retrieve the video mode with error code " + std::string(SDL_GetError()) + "!");
     }
 
     // Get the width and height of the display.
-    int width = display_mode -> w;
-    int height = display_mode -> h;
+    const int width = display_mode -> w;
+    const int height = display_mode -> h;
 
-    log("Detected resolution: " + std::to_string(width) + "x" + std::to_string(height) + "!");
+    log("Detected display resolution: " + std::to_string(width) + "x" + std::to_string(height) + "!");
     return { width, height };
 }
 
 // Get and return every "allowed" resolution for the game, depending on the display resolution.
+// TODO: Allow more resolutions ratio as valid game resolutions.
 std::vector<std::string> get_allowed_game_resolutions
 (
     const std::pair<int, int> &display_resolution
@@ -44,11 +45,9 @@ std::vector<std::string> get_allowed_game_resolutions
     log("Detecting allowed game resolutions..");
     std::vector<std::string> output;
 
-    int display_width = display_resolution.first;
-    int display_height = display_resolution.second;
-
-    // Calculate the display ratio (width/height).
-    float display_ratio = static_cast<float>(display_width) / display_height;
+    const  int display_width = display_resolution.first;
+    const int display_height = display_resolution.second;
+    const float display_ratio = static_cast<float>(display_width) / display_height;
 
     // We allow directly the current display resolution if it's already a 16/9 resolution.
     // Otherwise, we calculate the valid height for the display width to obtain a 16/9 resolution.
@@ -79,16 +78,15 @@ std::pair<int, int> select_game_resolution
     log("Calculating game resolution at start..");
 
     // We make string chains with the config and display resolutions.
-    // Format: [width]x[height] (without the square brackets).
-    std::string string_config_resolution = config["WINDOW_WIDTH"] + "x" + config["WINDOW_HEIGHT"];
-    std::string string_display_resolution = std::to_string(display_resolution.first) + "x" + std::to_string(display_resolution.second);
+    // Format: [width]x[height].
+    const std::string string_config_resolution = config["WINDOW_WIDTH"] + "x" + config["WINDOW_HEIGHT"];
+    const std::string string_display_resolution = std::to_string(display_resolution.first) + "x" + std::to_string(display_resolution.second);
 
     // We try to find the config file resolution in the allowed resolutions list.
     if (find(allowed_game_resolutions.begin(), allowed_game_resolutions.end(), string_config_resolution) != allowed_game_resolutions.end())
     {
-        // Read the values in the config map.
-        int width = stoi(config["WINDOW_WIDTH"]);
-        int height = stoi(config["WINDOW_HEIGHT"]);
+        const int width = stoi(config["WINDOW_WIDTH"]);
+        const int height = stoi(config["WINDOW_HEIGHT"]);
 
         log("The game resolution at start will be " + std::to_string(width) + "x" + std::to_string(height) + "! Selected from config file.");
         return { width, height };
@@ -99,9 +97,8 @@ std::pair<int, int> select_game_resolution
     // We try to find the display resolution in the allowed resolutions list.
     if (find(allowed_game_resolutions.begin(), allowed_game_resolutions.end(), string_display_resolution) != allowed_game_resolutions.end())
     {
-        // Retrieve the display resolution data.
-        int width = display_resolution.first;
-        int height = display_resolution.second;
+        const int width = display_resolution.first;
+        const int height = display_resolution.second;
 
         log("The game resolution at start will be " + std::to_string(width) + "x" + std::to_string(height) + "! Selected from display resolution.");
         return { width, height };
@@ -109,35 +106,36 @@ std::pair<int, int> select_game_resolution
 
     error_log("The display resolution (" + string_display_resolution + ") is not a 16/9 resolution! Switching to allowed game resolutions..");
 
-    int biggest_width = 0;
-    int biggest_height = 0;
+    int highest_width = 0;
+    int highest_height = 0;
 
     // Analyze each resolution in the allowed resolutions list.
-    // We will take the highest resolution.
+    // We will take the highest found resolution.
     for (const std::string resolution : allowed_game_resolutions)
     {
-        // Detect the x position in the resolution string.
-        size_t x_position = resolution.find("x");
+        // Detect the position of the x character in the resolution string.
+        const size_t x_position = resolution.find("x");
         if (x_position == std::string::npos) continue; // We skip the resolution if no "x" was found.
 
         // Scrape the width and height values using the x position.
-        int width = stoi(resolution.substr(0, x_position));
-        int height = stoi(resolution.substr(x_position + 1));
+        const int width = stoi(resolution.substr(0, x_position));
+        const int height = stoi(resolution.substr(x_position + 1));
 
+        // We skip the resolution if any information wasn't found.
         if (!width || !height) continue;
 
-        if (biggest_width < width)
+        if (highest_width < width)
         {
-            biggest_width = width;
-            biggest_height = height;
+            highest_width = width;
+            highest_height = height;
         }
     }
 
-    if (biggest_width == 0 || biggest_height == 0)
+    if (highest_width == 0 || highest_height == 0)
     {
-        fatal_error_log("Resolution selection failed! No 16/9 resolution is available for this device! Please verify your video settings.");
+        fatal_error_log("Resolution selection failed! No valid resolution is available for this device! Please, verify your video settings!");
     }
 
-    log("The game resolution at start will be " + std::to_string(biggest_width) + "x" + std::to_string(biggest_height) + "! Selected from the highest allowed game resolution.");
-    return { biggest_width, biggest_height };
+    log("The game resolution at start will be " + std::to_string(highest_width) + "x" + std::to_string(highest_height) + "! Selected from the highest allowed game resolution.");
+    return { highest_width, highest_height };
 }

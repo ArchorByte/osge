@@ -9,9 +9,10 @@
 #include "environment/env.displays.hpp"
 #include "environment/env.resolutions.hpp"
 #include "environment/env.system.hpp"
-#include "utils/tool.parser.hpp"
-#include "utils/tool.integer.hpp"
-#include "utils/tool.files.hpp"
+#include "helpers/help.parser.hpp"
+#include "helpers/help.integer.hpp"
+#include "helpers/help.files.hpp"
+#include "helpers/help.versioning.hpp"
 #include "vulkan/vulkan.run.hpp"
 #include "opengl/opengl.run.hpp"
 
@@ -61,16 +62,14 @@ int main()
             log("WARNING: Running in debug mode!");
         #endif
 
-        std::string engine_version_variant = std::to_string(ENGINE_VERSION_VARIANT);
-        std::string engine_version_major = std::to_string(ENGINE_VERSION_MAJOR);
-        std::string engine_version_minor = std::to_string(ENGINE_VERSION_MINOR);
-        std::string engine_version_patch = std::to_string(ENGINE_VERSION_PATCH);
+        const std::string engine_version = create_version(ENGINE_VERSION_VARIANT, ENGINE_VERSION_MAJOR, ENGINE_VERSION_MINOR, ENGINE_VERSION_PATCH);
+        log("Running on OSGE v" + engine_version + "!");
 
-        log("Running on OSGE v" + engine_version_variant + "." + engine_version_major + "." + engine_version_minor + "." + engine_version_patch + "!");
         start_sdl3_instance();
+        check_operating_system_support(); // Check if we are running on a supported operating system.
 
-        check_operating_system_support();                            // Check if we are running on a supported operating system.
-        std::vector<int> display_indexes = get_available_displays(); // Retrieve and list the index of all available monitors on this device.
+        // Retrieve and list the index of all available monitors on this device.
+        const std::vector<int> display_indexes = get_available_display_indexes();
 
         // We create a new default game config file if it's missing.
         if (!std::filesystem::exists("game.config"))
@@ -90,19 +89,19 @@ int main()
 
         if (!is_an_integer(window_mode))
         {
-            error_log("Invalid window mode configured! Switched to full screen by default!");
+            error_log("The window mode configured (" + window_mode + ") is not valid! Switched to full screen by default!");
             window_mode = "2";
         }
 
         if (!is_an_integer(graphics_api))
         {
-            error_log("Invalid graphics API configured! Switched to Vulkan by default!");
+            error_log("The graphics API configured (" + graphics_api + ") is not valid! Switched to Vulkan by default!");
             graphics_api = "0";
         }
 
         if (!is_an_integer(monitor))
         {
-            error_log("Invalid monitor configured! Switched to the primary monitor by default!");
+            error_log("The monitor configured (" + monitor + ") is not valid! Switched to the primary monitor by default!");
             monitor = "1";
         }
 
@@ -110,28 +109,28 @@ int main()
 
         if (monitor_index < 1 || monitor_index > display_indexes.size())
         {
-            error_log("Invalid monitor detected! Switched to the primary monitor by default!");
+            error_log("The monitor configured (" + monitor + ") is out of bounds! Switched to the primary monitor by default!");
             monitor_index = 1;
         }
 
         // Get the screen resolution.
         // Screen resolution stored as <width, height>.
-        std::pair<int, int> screen_resolution = get_display_resolution(display_indexes[monitor_index - 1]);
+        const std::pair<int, int> screen_resolution = get_display_resolution(display_indexes[monitor_index - 1]);
 
         // List the "allowed" game resolutions.
         // TODO: Add more screen ratio to the allowed game resolutions.
-        std::vector<std::string> allowed_game_resolutions = get_allowed_game_resolutions(screen_resolution);
+        const std::vector<std::string> allowed_game_resolutions = get_allowed_game_resolutions(screen_resolution);
 
         // Select the window resolution at start.
         // Selection priorities: game.config res, screen res and finally highest allowed res.
-        std::pair<int, int> game_resolution = select_game_resolution(config, screen_resolution, allowed_game_resolutions);
+        const std::pair<int, int> game_resolution = select_game_resolution(config, screen_resolution, allowed_game_resolutions);
 
-        int window_width = game_resolution.first;
-        int window_height = game_resolution.second;
-        std::string window_title = std::string(GAME_TITLE);
+        const int window_width = game_resolution.first;
+        const int window_height = game_resolution.second;
+        const std::string window_title = std::string(GAME_TITLE);
 
         // We create the SDL3 window of the game.
-        SDL3_Window window(window_width, window_height, stoi(window_mode), window_title, stoi(graphics_api));
+        const SDL3_Window window(window_width, window_height, stoi(window_mode), window_title, stoi(graphics_api));
 
         // Select the graphics API that we are going to use.
         switch (stoi(graphics_api))

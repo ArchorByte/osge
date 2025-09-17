@@ -1,7 +1,7 @@
 #include "window.updater.hpp"
 
 #include "../logs/logs.handler.hpp"
-#include "../utils/tool.text.format.hpp"
+#include "../helpers/help.text.format.hpp"
 
 #include <SDL3/SDL.h>
 #include <string>
