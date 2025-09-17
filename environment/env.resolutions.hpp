@@ -7,7 +7,7 @@
 
 std::pair<int, int> get_display_resolution
 (
-    int display_index
+    const int &display_index
 );
 
 std::vector<std::string> get_allowed_game_resolutions

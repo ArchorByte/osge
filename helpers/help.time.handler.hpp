@@ -2,8 +2,8 @@
 #include <vector>
 #include <string>
 
-#ifndef TOOLS_TIME_HANDLER_HPP
-#define TOOLS_TIME_HANDLER_HPP
+#ifndef HELPER_TIME_HANDLER_HPP
+#define HELPER_TIME_HANDLER_HPP
 
 time_t get_current_timestamp();
 

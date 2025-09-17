@@ -1,8 +1,8 @@
 #include <string>
 #include <sstream>
 
-#ifndef TOOLS_TEXT_FORMAT_HPP
-#define TOOLS_TEXT_FORMAT_HPP
+#ifndef HELPER_TEXT_FORMAT_HPP
+#define HELPER_TEXT_FORMAT_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////

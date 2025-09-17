@@ -1,8 +1,8 @@
 #include <vector>
 #include <string>
 
-#ifndef TOOLS_FILES_HPP
-#define TOOLS_FILES_HPP
+#ifndef HELPER_FILES_HPP
+#define HELPER_FILES_HPP
 
 std::vector<char> read_binary_file
 (
