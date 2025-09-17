@@ -10,7 +10,7 @@ int framerate = 0;
 
 int framerate_counter()
 {
-    auto current_time = SDL_GetTicks();
+    const auto current_time = SDL_GetTicks();
     frames_count++;
 
     // If one second passed, we update the counter.
