@@ -18,8 +18,7 @@ bool write_file
 (
     const std::string &file_path,
     const std::string &input,
-    const bool &append,
-    const bool &create_if_missing
+    const bool &append
 );
 
 #endif

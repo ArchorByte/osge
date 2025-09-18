@@ -8,7 +8,6 @@
 #include <map>
 
 // Return a map of the config file data.
-// Note: We already take care of the invalid lines and whitespaces.
 std::map<std::string, std::string> parse_config_file
 (
     const std::string &file_path
@@ -28,7 +27,7 @@ std::map<std::string, std::string> parse_config_file
             if (line.empty() || line[0] == '#') continue;
 
             // Find the equal sign position in the line.
-            size_t equal_sign_position = line.find("=");
+            const size_t equal_sign_position = line.find("=");
 
             if (equal_sign_position == std::string::npos)
             {
@@ -36,8 +35,8 @@ std::map<std::string, std::string> parse_config_file
                 continue;
             }
 
-            std::string key = line.substr(0, equal_sign_position); // Take everything before the equal sign.
-            std::string value = line.substr(equal_sign_position + 1); // Same but after.
+            const std::string key = line.substr(0, equal_sign_position);    // Take everything before the equal sign.
+            const std::string value = line.substr(equal_sign_position + 1); // Same but after.
 
             // Warning: If two lines declare the same value, the last one will overwrite the most recent one.
             output[trim(key)] = trim(value);
