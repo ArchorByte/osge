@@ -8,10 +8,10 @@
 #include <string>
 #include <ctime>
 
-// Write the logs in the logs file.
+// Write data into the logs file.
 void write_log_file
 (
-    const std::string &log_type, // Log, error, or fatal error by default.
+    const std::string &log_type, // Log, error, or fatal error expected.
     const std::string &log
 )
 {
