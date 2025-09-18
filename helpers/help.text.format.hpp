@@ -23,14 +23,12 @@ template <typename any_type>
 // Convert any input type into string.
 std::string force_string
 (
-    any_type* input
+    const any_type* input
 )
 {
     std::stringstream stream;
-    std::string output;
-
     stream << static_cast<const void*>(input); // Insert the input into the string stream.
-    output = stream.str(); // Get the output from the stream.
+    const std::string output = stream.str();   // Get the output from the stream.
 
     return output;
 };

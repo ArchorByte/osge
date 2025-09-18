@@ -8,8 +8,6 @@
 #include <string>
 #include <vector>
 
-namespace fs = std::filesystem;
-
 // Return the content of a binary file.
 std::vector<char> read_binary_file
 (
@@ -24,13 +22,17 @@ std::vector<char> read_binary_file
         return output;
     }
 
-    if (!fs::path(file_path).has_filename())
+    const bool has_filename = std::filesystem::path(file_path).has_filename();
+
+    if (!has_filename)
     {
         error_log("Binary file reading failed! The path provided (\"" + file_path + "\") doesn't contain any file name!");
         return output;
     }
 
-    if (!fs::exists(file_path))
+    const bool file_exists(std::filesystem::exists(file_path));
+
+    if (!file_exists)
     {
         error_log("Binary file reading failed! The file \"" + file_path + "\" doesn't exist!");
         return output;
@@ -38,14 +40,15 @@ std::vector<char> read_binary_file
 
     // Open the file in read-only binary mode.
     std::ifstream file (file_path, std::ios::ate | std::ios::binary);
+    const bool is_opened = file.is_open();
 
-    if (!file.is_open())
+    if (!is_opened)
     {
         error_log("Failed to open the following binary file for reading: \"" + file_path + "\"!");
         return output;
     }
 
-    size_t file_size = static_cast<size_t>(file.tellg());
+    const size_t file_size = static_cast<size_t>(file.tellg());
 
     if (file_size < 1)
     {
@@ -79,13 +82,17 @@ bool create_new_empty_file
         return false;
     }
 
-    if (!fs::path(file_path).has_filename())
+    const bool has_filename = std::filesystem::path(file_path).has_filename();
+
+    if (!has_filename)
     {
         error_log("Empty file creation failed! The path provided (\"" + file_path + "\") doesn't contain any file name!");
         return false;
     }
 
-    if (fs::exists(file_path))
+    const bool file_exists(std::filesystem::exists(file_path));
+
+    if (file_exists)
     {
         error_log("Empty file creation failed! The file (\"" + file_path + "\") already exists!");
         return false;
@@ -93,10 +100,11 @@ bool create_new_empty_file
 
     // Try to create the file.
     std::ofstream file(file_path);
+    const bool file_opened = file.is_open();
 
-    if (file.is_open()) // Check if the file has correctly been created.
+    if (file_opened)
     {
-        file.close(); // Free the file.
+        file.close();
         log("File \"" + file_path + "\" created successfully!");
         return true;
     }
@@ -106,14 +114,12 @@ bool create_new_empty_file
 }
 
 // Write data into a file.
-// Note: Outside append mode, if the targeted file path doesn't exist, we create the file automatically.
-// Note 2: If we are not in "append mode", the file will be overwritten.
+// Note: Outside of the append mode, the file will be completely overwritten.
 bool write_file
 (
     const std::string &file_path,
     const std::string &input,
-    const bool &append,
-    const bool &create_if_missing
+    const bool &append
 )
 {
     std::ofstream file;
@@ -124,41 +130,41 @@ bool write_file
         return false;
     }
 
-    if (!fs::path(file_path).has_filename())
+    const bool has_filename = std::filesystem::path(file_path).has_filename();
+
+    if (!has_filename)
     {
         error_log("File writing failed! The path provided (\"" + file_path + "\") doesn't contain any file name!");
         return false;
     }
 
-    if (!fs::exists(file_path) && append)
-    {
-        if (!create_if_missing)
-        {
-            error_log("File writing failed in append mode! The file \"" + file_path + "\" doesn't exist!");
-            return false;
-        }
+    const bool file_exists(std::filesystem::exists(file_path));
 
+    if (!file_exists)
+    {
         // Try to create the targeted file.
         bool file_creation = create_new_empty_file(file_path);
 
         if (!file_creation)
         {
-            error_log("File writing failed in append mode! Failed to create the file \"" + file_path + "\"!");
+            error_log("File writing data into \"" + file_path + "\" failed! Failed to create the file \"" + file_path + "\"!");
             return false;
         }
     }
 
     if (append) file.open(file_path, std::ios::out | std::ios::app); // Open the file in append mode.
-    else file.open(file_path, std::ios::out | std::ios::trunc); // Open the file in overwrite mode.
+    else file.open(file_path, std::ios::out | std::ios::trunc);      // Open the file in overwrite mode.
 
-    if (!file.is_open())
+    const bool is_opened = file.is_open();
+
+    if (!is_opened)
     {
         error_log("Failed to open the \"" + file_path + "\" file!");
         return false;
     }
 
     // Try to write the data into the file.
-    file << input << std::endl;
+    file << input;
 
     if (!file)
     {
