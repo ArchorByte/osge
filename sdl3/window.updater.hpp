@@ -7,10 +7,10 @@ void update_sdl3_window
 (
     SDL_Window* window,
     int new_window_mode,
-    int new_width,
-    int new_height,
-    int new_refresh_rate,
-    int new_display_index
+    const int &new_width,
+    const int &new_height,
+    const int &new_refresh_rate,
+    const int &new_display_index
 );
 
 #endif
