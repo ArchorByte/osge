@@ -8,7 +8,7 @@
 void start_sdl3_instance()
 {
     log("Initializing SDL3..");
-    int initialization = SDL_Init(SDL_INIT_VIDEO);
+    const int initialization = SDL_Init(SDL_INIT_VIDEO);
 
     if (initialization < 0)
     {

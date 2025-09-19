@@ -19,10 +19,10 @@ void update_sdl3_window
 (
     SDL_Window* window,
     int new_window_mode,
-    int new_width,
-    int new_height,
-    int new_refresh_rate,
-    int new_display_index
+    const int &new_width,
+    const int &new_height,
+    const int &new_refresh_rate,
+    const int &new_display_index
 )
 {
     if (!window)
@@ -56,7 +56,7 @@ void update_sdl3_window
     }
 
     // Try to retrieve the ID of the targeted display.
-    SDL_DisplayID display_id = SDL_GetDisplayForWindow(window);
+    const SDL_DisplayID display_id = SDL_GetDisplayForWindow(window);
 
     if (display_id == 0)
     {
@@ -65,10 +65,7 @@ void update_sdl3_window
     }
 
     if (new_window_mode != FULLSCREEN)
-    {
-        // Update the window width and height.
         SDL_SetWindowSize(window, new_width, new_height);
-    }
     else
     {
         const SDL_DisplayMode* mode = SDL_GetCurrentDisplayMode(display_id);
@@ -81,9 +78,9 @@ void update_sdl3_window
             new_mode.h = new_height;
             new_mode.refresh_rate = new_refresh_rate;
 
-            int new_mode_apply = SDL_SetWindowFullscreenMode(window, &new_mode);
+            const int mode_application = SDL_SetWindowFullscreenMode(window, &new_mode);
 
-            if (new_mode_apply != 0)
+            if (mode_application != 0)
             {
                 error_log("The new FULLSCREEN settings application (" + std::to_string(new_width) + "x" + std::to_string(new_height) + "@" + std::to_string(new_refresh_rate) + ") failed with error code " + std::string(SDL_GetError()) + "!");
             }
@@ -92,7 +89,7 @@ void update_sdl3_window
     }
 
     // Move the window to the center of the targeted display.
-    // The engine always place the window at the center.
+    // Note: The engine, by default, always place the window at the center.
     SDL_SetWindowPosition
     (
         window,
@@ -100,7 +97,7 @@ void update_sdl3_window
         SDL_WINDOWPOS_CENTERED_DISPLAY(new_display_index)
     );
 
-    // We let the flags to 0 for the WINDOWED mode.
+    // To select the WINDOWED mode, let this flag to 0.
     Uint32 flags = 0;
 
     switch (new_window_mode)
@@ -114,7 +111,7 @@ void update_sdl3_window
             break;
     }
 
-    int flags_application = SDL_SetWindowFullscreen(window, flags);
+    const int flags_application = SDL_SetWindowFullscreen(window, flags);
 
     if (flags_application != 0)
     {

@@ -34,8 +34,8 @@ enum GraphicsAPI
 // Warning: We assume that SDL3 has already been initialized. Normally, the engine takes care of it on startup.
 SDL_Window* create_sdl3_window
 (
-    int width,
-    int height,
+    const int &width,
+    const int &height,
     int window_mode,
     std::string window_name,
     int graphic_api
@@ -55,7 +55,7 @@ SDL_Window* create_sdl3_window
         graphic_api = VULKAN;
     }
 
-    int initialization = SDL_Init(SDL_INIT_VIDEO);
+    const int initialization = SDL_Init(SDL_INIT_VIDEO);
 
     if (initialization < 0)
     {
@@ -130,8 +130,8 @@ void destroy_sdl3_window
 // Constructor.
 SDL3_Window::SDL3_Window
 (
-    int width,
-    int height,
+    const int &width,
+    const int &height,
     int window_mode,
     std::string window_name,
     int graphic_api

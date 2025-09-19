@@ -10,8 +10,8 @@
 
 SDL_Window* create_sdl3_window
 (
-    int width,
-    int height,
+    const int &width,
+    const int &height,
     int window_mode,
     std::string window_name,
     int graphic_api
@@ -33,8 +33,8 @@ public:
     // Constructor.
     SDL3_Window
     (
-        int width,
-        int height,
+        const int &width,
+        const int &height,
         int window_mode,
         std::string window_name,
         int graphic_api
