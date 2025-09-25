@@ -12,20 +12,18 @@ void open_crash_popup
     const std::string &message
 )
 {
-    #ifndef USE_CRASH_ERROR_MESSAGE_BOXES
+    if constexpr (!EngineConfig::USE_CRASH_ERROR_MESSAGE_BOXES)
         return;
-    #endif
 
-    const std::string popup_title = std::string(GAME_TITLE) + " has crashed!";
+    const std::string popup_title = std::string(GameConfig::GAME_TITLE) + " has crashed!";
     std::string full_message;
 
     // In debug mode, we give the error that made the app crash.
     // However, in release mode, we give a basic message.
-    #ifdef DEBUG_MODE
+    if constexpr (EngineConfig::DEBUG_MODE)
         full_message = "Error message: " + message;
-    #else
+    else
         full_message = "The game had a critical error and crashed. To continue, a restart is required. Sorry for the inconvenience.";
-    #endif
 
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, popup_title.c_str(), full_message.c_str(), nullptr);
 }

@@ -37,6 +37,21 @@ VkDeviceMemory allocate_vulkan_buffer_memory
 {
     log(" > Allocating memory to the " + force_string(buffer) + " buffer..");
 
+    if (logical_device == VK_NULL_HANDLE)
+    {
+        fatal_error_log("Buffer memory allocation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+    }
+
+    if (physical_device == VK_NULL_HANDLE)
+    {
+        fatal_error_log("Buffer memory allocation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+    }
+
+    if (buffer == VK_NULL_HANDLE)
+    {
+        fatal_error_log("Buffer memory allocation failed! The buffer provided (" + force_string(buffer) + ") is not valid!");
+    }
+
     // Fetch memory requirements for the buffer.
     VkMemoryRequirements memory_requirements;
     vkGetBufferMemoryRequirements(logical_device, buffer, &memory_requirements);
@@ -45,12 +60,11 @@ VkDeviceMemory allocate_vulkan_buffer_memory
     VkPhysicalDeviceMemoryProperties memory_properties;
     vkGetPhysicalDeviceMemoryProperties(physical_device, &memory_properties);
 
-    // Memory allocation info.
     VkMemoryAllocateInfo info {};
     info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    info.allocationSize = memory_requirements.size; // Pass the required memory amount to allocate.
+    info.allocationSize = memory_requirements.size; // Pass the required amount of memory to allocate.
 
-    // Get the memory type index from our requirements.
+    // Get the memory type index with our requirements.
     info.memoryTypeIndex = find_memory_type
     (
         memory_requirements.memoryTypeBits,
@@ -59,19 +73,18 @@ VkDeviceMemory allocate_vulkan_buffer_memory
     );
 
     VkDeviceMemory memory = VK_NULL_HANDLE;
-    VkResult memory_allocation = vkAllocateMemory(logical_device, &info, nullptr, &memory); // Try to allocate the memory.
+    VkResult memory_allocation = vkAllocateMemory(logical_device, &info, nullptr, &memory);
 
     if (memory_allocation != VK_SUCCESS)
     {
         fatal_error_log("Buffer memory allocation returned error code " + std::to_string(memory_allocation) + ".");
     }
 
-    if (!memory || memory == VK_NULL_HANDLE)
+    if (memory == VK_NULL_HANDLE)
     {
         fatal_error_log("Buffer memory allocation output \"" + force_string(memory) + "\" is not valid!");
     }
 
-    // Try to bind the memory to the buffer.
     VkResult memory_binding = vkBindBufferMemory(logical_device, buffer, memory, 0);
 
     if (memory_binding != VK_SUCCESS)

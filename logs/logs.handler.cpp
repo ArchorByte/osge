@@ -14,13 +14,13 @@ void log
     const std::string &log
 )
 {
-    #ifdef DEBUG_MODE
-        std::cout << "[log] " << log << std::endl;
-    #endif
+    if constexpr (EngineConfig::DEBUG_MODE)
+    {
+        std::cout << "[log] " << log << "\n";
+    }
 
-    #ifdef ENABLE_LOGS_FILE
+    if constexpr (EngineConfig::ENABLE_LOGS_FILE)
         write_log_file("log", log);
-    #endif
 }
 
 // Sends an error log if debug mode enabled.
@@ -30,13 +30,13 @@ void error_log
     const std::string &log
 )
 {
-    #ifdef DEBUG_MODE
-        std::cerr << "[error] " << log << std::endl;
-    #endif
+    if constexpr (EngineConfig::DEBUG_MODE)
+    {
+        std::cout << "[error] " << log << "\n";
+    }
 
-    #ifdef ENABLE_LOGS_FILE
+    if constexpr (EngineConfig::ENABLE_LOGS_FILE)
         write_log_file("error", log);
-    #endif
 }
 
 // Sends a fatal info log if debug mode enabled.
@@ -46,13 +46,13 @@ void fatal_error_log
     const std::string &log
 )
 {
-    #ifdef DEBUG_MODE
-        std::cerr << "[fatal_error] " << log << std::endl;
-    #endif
+    if constexpr (EngineConfig::DEBUG_MODE)
+    {
+        std::cout << "[fatal_error] " << log << "\n";
+    }
 
-    #ifdef ENABLE_LOGS_FILE
+    if constexpr (EngineConfig::ENABLE_LOGS_FILE)
         write_log_file("fatal_error", log);
-    #endif
 
     throw std::runtime_error(log); // Trigger the crash handling process.
 }

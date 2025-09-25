@@ -47,22 +47,32 @@ int main()
 {
     try
     {
-        #ifdef ENABLE_LOGS_FILE
-            // We "reset" the logs file by deleting it if it already exists.
-            if (std::filesystem::exists(LOGS_FILE_NAME)) std::filesystem::remove(LOGS_FILE_NAME);
-            create_new_empty_file(LOGS_FILE_NAME);
-        #endif
+        // We "reset" the logs file by deleting it if it already exists.
+        if constexpr (EngineConfig::ENABLE_LOGS_FILE)
+        {
+            std::string logs_file_name = EngineConfig::LOGS_FILE_NAME;
 
-        #ifndef DEBUG_MODE
-            // We get rid of the console on Windows if we are running in release mode.
+            if (std::filesystem::exists(logs_file_name))
+                std::filesystem::remove(logs_file_name);
+
+            create_new_empty_file(logs_file_name);
+        }
+
+        // We get rid of the console on Windows if we are running in release mode.
+        if constexpr (EngineConfig::DEBUG_MODE)
+        {
             #if defined(_WIN64)
                 hide_console();
             #endif
-        #else
-            log("WARNING: Running in debug mode!");
-        #endif
+        }
+        else log("WARNING: Running in debug mode!");
 
-        const std::string engine_version = create_version(ENGINE_VERSION_VARIANT, ENGINE_VERSION_MAJOR, ENGINE_VERSION_MINOR, ENGINE_VERSION_PATCH);
+        const int engine_version_variant = EngineVersion::ENGINE_VERSION_VARIANT;
+        const int engine_version_major = EngineVersion::ENGINE_VERSION_MAJOR;
+        const int engine_version_minor = EngineVersion::ENGINE_VERSION_MINOR;
+        const int engine_version_patch = EngineVersion::ENGINE_VERSION_PATCH;
+
+        const std::string engine_version = create_version(engine_version_variant, engine_version_major, engine_version_minor, engine_version_patch);
         log("Running on OSGE v" + engine_version + "!");
 
         start_sdl3_instance();
@@ -127,7 +137,7 @@ int main()
 
         const int window_width = game_resolution.first;
         const int window_height = game_resolution.second;
-        const std::string window_title = std::string(GAME_TITLE);
+        const std::string window_title = std::string(GameConfig::GAME_TITLE);
 
         // We create the SDL3 window of the game.
         const SDL3_Window window(window_width, window_height, stoi(window_mode), window_title, stoi(graphics_api));

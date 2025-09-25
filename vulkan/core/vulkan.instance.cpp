@@ -23,20 +23,31 @@ VkInstance create_vulkan_instance
 )
 {
     log("Creating a Vulkan instance..");
-    std::string game_name = GAME_TITLE;
+    std::string game_name = GameConfig::GAME_TITLE;
 
-    #ifdef DEBUG_MODE
+    if constexpr (EngineConfig::DEBUG_MODE)
         game_name += " - Debug Mode";
-    #endif
+
+    // Game version.
+    const int game_version_variant = GameConfig::GAME_VERSION_VARIANT;
+    const int game_version_major = GameConfig::GAME_VERSION_MAJOR;
+    const int game_version_minor = GameConfig::GAME_VERSION_MINOR;
+    const int game_version_patch = GameConfig::GAME_VERSION_PATCH;
+
+    // Engine version.
+    const int engine_version_variant = EngineVersion::ENGINE_VERSION_VARIANT;
+    const int engine_version_major = EngineVersion::ENGINE_VERSION_MAJOR;
+    const int engine_version_minor = EngineVersion::ENGINE_VERSION_MINOR;
+    const int engine_version_patch = EngineVersion::ENGINE_VERSION_PATCH;
 
     // Making the app info.
     // Note: To change most of the info about your game, you can change the config.hpp file in the main folder.
     VkApplicationInfo app_info {};
     app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     app_info.pApplicationName = game_name.c_str();                                                                                          // Game name/title.
-    app_info.applicationVersion = VK_MAKE_API_VERSION(GAME_VERSION_VARIANT, GAME_VERSION_MAJOR, GAME_VERSION_MINOR, GAME_VERSION_PATCH);    // Game version.
+    app_info.applicationVersion = VK_MAKE_API_VERSION(game_version_variant, game_version_major, game_version_minor, game_version_patch);    // Game version.
     app_info.pEngineName = "OSGE";                                                                                                          // Game engine name.
-    app_info.engineVersion = VK_MAKE_API_VERSION(ENGINE_VERSION_VARIANT, ENGINE_VERSION_MAJOR, ENGINE_VERSION_MINOR, ENGINE_VERSION_PATCH); // Game engine version.
+    app_info.engineVersion = VK_MAKE_API_VERSION(engine_version_variant, engine_version_major, engine_version_minor, engine_version_patch); // Game engine version.
     app_info.apiVersion = VK_API_VERSION_1_4;                                                                                               // Vulkan API version.
 
     Uint32 extensions_count = 0;

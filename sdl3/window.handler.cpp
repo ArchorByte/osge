@@ -81,9 +81,8 @@ SDL_Window* create_sdl3_window
     }
 
     // Add a "Debug Mode" suffix to the window name if we're running in debug mode.
-    #ifdef DEBUG_MODE
+    if constexpr (EngineConfig::DEBUG_MODE)
         window_name += " - Debug Mode";
-    #endif
 
     // Create the window itself.
     SDL_Window* window = SDL_CreateWindow
