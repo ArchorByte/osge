@@ -56,11 +56,6 @@ std::pair<VkBuffer, VkDeviceMemory> create_vulkan_index_buffer
     // Map the buffer memory in the app address space.
     const bool map_memory = vkMapMemory(logical_device, staging_buffer_memory, 0, buffer_size, 0, &data);
 
-    if (!map_memory)
-    {
-        fatal_error_log("Index buffer creation failed! Memory mapping failed!");
-    }
-
     memcpy(data, indices.data(), (size_t) buffer_size);   // Copy the index data into the map memory.
     vkUnmapMemory(logical_device, staging_buffer_memory); // Unmap the memory once we finished.
 
