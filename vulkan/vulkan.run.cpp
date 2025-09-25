@@ -64,9 +64,8 @@ void run_vulkan
     std::vector<const char*> layers;
 
     // Only enable the validation layers in debug mode.
-    #ifdef DEBUG_MODE
+    if constexpr (EngineConfig::DEBUG_MODE)
         layers.push_back("VK_LAYER_KHRONOS_validation");
-    #endif
 
     // Check that this device handles our layers in the list.
     check_vulkan_validation_layers_compatibility(layers);

@@ -2,8 +2,8 @@
 
 #include <vulkan/vulkan.h>
 
-#ifndef VULKAN_BUFFERS_COPY_HPP
-#define VULKAN_BUFFERS_COPY_HPP
+#ifndef VULKAN_BUFFER_COPY_HPP
+#define VULKAN_BUFFER_COPY_HPP
 
 void copy_vulkan_buffer_data
 (
