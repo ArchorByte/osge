@@ -23,7 +23,7 @@ VkInstance create_vulkan_instance
 )
 {
     log("Creating a Vulkan instance..");
-    std::string game_name = GameConfig::GAME_TITLE;
+    std::string game_name = std::string(GameConfig::GAME_TITLE);
 
     if constexpr (EngineConfig::DEBUG_MODE)
         game_name += " - Debug Mode";
