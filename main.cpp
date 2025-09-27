@@ -50,7 +50,7 @@ int main()
         // We "reset" the logs file by deleting it if it already exists.
         if constexpr (EngineConfig::ENABLE_LOGS_FILE)
         {
-            std::string logs_file_name = EngineConfig::LOGS_FILE_NAME;
+            std::string logs_file_name = std::string(EngineConfig::LOGS_FILE_NAME);
 
             if (std::filesystem::exists(logs_file_name))
                 std::filesystem::remove(logs_file_name);
