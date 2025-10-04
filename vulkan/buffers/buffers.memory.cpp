@@ -82,7 +82,7 @@ VkDeviceMemory allocate_vulkan_buffer_memory
 
     if (memory == VK_NULL_HANDLE)
     {
-        fatal_error_log("Buffer memory allocation output \"" + force_string(memory) + "\" is not valid!");
+        fatal_error_log("Buffer memory allocation output (" + force_string(memory) + ") is not valid!");
     }
 
     VkResult memory_binding = vkBindBufferMemory(logical_device, buffer, memory, 0);

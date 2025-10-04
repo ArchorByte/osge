@@ -41,7 +41,7 @@ void create_vulkan_buffer
     VkBufferCreateInfo buffer_info {};
     buffer_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     buffer_info.size = buffer_size;                      // Size of the buffer.
-    buffer_info.usage = usage_flags;                     // Flags to indicate to Vulkan what we're going to do with that buffer.
+    buffer_info.usage = usage_flags;                     // Flags to indicate to Vulkan what we are going to do with that buffer.
     buffer_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE; // Disallow buffer sharing.
 
     buffer = VK_NULL_HANDLE;
@@ -54,7 +54,7 @@ void create_vulkan_buffer
 
     if (buffer == VK_NULL_HANDLE)
     {
-        fatal_error_log("Buffer creation output \"" + force_string(buffer) + "\" is not valid!");
+        fatal_error_log("Buffer creation output (" + force_string(buffer) + ") is not valid!");
     }
 
     buffer_memory = allocate_vulkan_buffer_memory(logical_device, physical_device, buffer); // Allocate memory to the buffer.
