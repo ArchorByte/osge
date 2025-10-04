@@ -45,6 +45,6 @@ std::map<std::string, std::string> parse_config_file
     else error_log("Failed to open the following config file for parsing: \"" + file_path + "\"!");
 
     file.close(); // Free the file.
-    log("Config file (\"" + file_path + "\") parsing finished! " + std::to_string(output.size()) + " keys have been found!");
+    log("Config file (" + file_path + ") parsing finished! " + std::to_string(output.size()) + " keys have been found!");
     return output;
 }

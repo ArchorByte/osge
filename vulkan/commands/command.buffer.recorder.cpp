@@ -28,7 +28,7 @@ void record_command_buffer
     const std::vector<VkImageView> texture_image_views
 )
 {
-    if (!command_buffer || command_buffer == VK_NULL_HANDLE)
+    if (command_buffer == VK_NULL_HANDLE)
     {
         error_log("Failed to render a frame! The command buffer provided (" + force_string(command_buffer) + ") is not valid!");
         return;
@@ -46,31 +46,31 @@ void record_command_buffer
         return;
     }
 
-    if (!render_pass || render_pass == VK_NULL_HANDLE)
+    if (render_pass == VK_NULL_HANDLE)
     {
         error_log("Failed to render a frame! The render pass provided (" + force_string(render_pass) + ") is not valid!");
         return;
     }
 
-    if (!graphics_pipeline || graphics_pipeline == VK_NULL_HANDLE)
+    if (graphics_pipeline == VK_NULL_HANDLE)
     {
         error_log("Failed to render a frame! The graphics pipeline provided (" + force_string(graphics_pipeline) + ") is not valid!");
         return;
     }
 
-    if (!vertex_buffer || vertex_buffer == VK_NULL_HANDLE)
+    if (vertex_buffer == VK_NULL_HANDLE)
     {
         error_log("Failed to render a frame! The vertex buffer provided (" + force_string(vertex_buffer) + ") is not valid!");
         return;
     }
 
-    if (!index_buffer || index_buffer == VK_NULL_HANDLE)
+    if (index_buffer == VK_NULL_HANDLE)
     {
         error_log("Failed to render a frame! The index buffer provided (" + force_string(index_buffer) + ") is not valid!");
         return;
     }
 
-    if (!pipeline_layout || pipeline_layout == VK_NULL_HANDLE)
+    if (pipeline_layout == VK_NULL_HANDLE)
     {
         error_log("Failed to render a frame! The pipeline layout provided (" + force_string(pipeline_layout) + ") is not valid!");
         return;
@@ -88,32 +88,33 @@ void record_command_buffer
         return;
     }
 
-    // Command buffer start info.
+    if (texture_image_views.size() < 1)
+    {
+        error_log("Failed to render a frame! No texture image views were provided!");
+        return;
+    }
+
     VkCommandBufferBeginInfo begin_info {};
     begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    begin_info.flags = 0;                  // We don't have any special usage flags to pass.
-    begin_info.pInheritanceInfo = nullptr; // We don't need to use it.
 
-    // Try to start the command buffer.
     VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &begin_info);
 
     if (buffer_launch != VK_SUCCESS)
     {
-        fatal_error_log("Failed to render a frame! The command buffer start returned code error " + std::to_string(buffer_launch) + ".");
+        fatal_error_log("Failed to render a frame! The command buffer start returned error code " + std::to_string(buffer_launch) + ".");
     }
 
     // Default black color.
     VkClearValue clear_color = {{{ 0.0f, 0.0f, 0.0f, 1.0f }}};
 
-    // Prepare the info for the render pass start.
-    VkRenderPassBeginInfo render_pass_info{};
-    render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    render_pass_info.renderPass = render_pass;                // Pass the render pass that we are going to use.
-    render_pass_info.framebuffer = framebuffers[image_index]; // Select the right frame buffer.
-    render_pass_info.renderArea.offset = { 0, 0 };            // Select the rendering area.
-    render_pass_info.renderArea.extent = extent;              // Pass the swap chain extent.
-    render_pass_info.clearValueCount = 1;                     // Amount of clear values that we are going to use.
-    render_pass_info.pClearValues = &clear_color;             // Pass a pointer to our clear color.
+    VkRenderPassBeginInfo render_pass_begin_info{};
+    render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    render_pass_begin_info.renderPass = render_pass;                // Pass the render pass.
+    render_pass_begin_info.framebuffer = framebuffers[image_index]; // Pass the frame buffer.
+    render_pass_begin_info.renderArea.offset = { 0, 0 };            // Select the beginning of the rendering area.
+    render_pass_begin_info.renderArea.extent = extent;              // Pass the swap chain extent.
+    render_pass_begin_info.clearValueCount = 1;                     // We are going to use only one clear color.
+    render_pass_begin_info.pClearValues = &clear_color;             // Pass the clear color.
 
     VkBuffer vertex_buffers = { vertex_buffer };
     VkDeviceSize offsets[] = { 0 };
@@ -121,35 +122,27 @@ void record_command_buffer
     vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphics_pipeline); // Bind the graphics pipeline to the command buffer.
     vkCmdBindVertexBuffers(command_buffer, 0, 1, &vertex_buffers, offsets);                // Bind the vertex buffers to the command buffer.
     vkCmdBindIndexBuffer(command_buffer, index_buffer, 0, VK_INDEX_TYPE_UINT16);           // Bind the index buffer to the command buffer.
-    vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout, 0, 1, &descriptor_sets[frame], 0, nullptr); // Bind the descriptor set selected by the frame to the command buffer.
+    vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout, 0, 1, &descriptor_sets[frame], 0, nullptr); // Bind the descriptor set to the command buffer.
 
+    // TODO: Allow the developers to select which texture is going to be used for a targeted object.
     int targeted_texture = 1;
 
-    // Select the missing texture if the targeted texture index is incorrect.
+    // Select the default texture if the targeted texture doesn't exist.
     if (targeted_texture < 0 || targeted_texture > texture_image_views.size())
     {
         error_log("Texture #" + std::to_string(targeted_texture) + " not found!");
         targeted_texture = 0;
-    };
+    }
 
-    // Choose a texture #1 (normally, OSGE logo by default).
-    vkCmdPushConstants
-    (
-        command_buffer,
-        pipeline_layout,
-        VK_SHADER_STAGE_FRAGMENT_BIT,
-        0,
-        sizeof(int),
-        &targeted_texture
-    );
+    vkCmdPushConstants(command_buffer, pipeline_layout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(int), &targeted_texture); // Apply the texture.
+    vkCmdBeginRenderPass(command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE); // Start the render pass for drawing.
+    vkCmdSetViewport(command_buffer, 0, 1, &viewport);                                         // Set the viewport.
+    vkCmdSetScissor(command_buffer, 0, 1, &scissor);                                           // Set the scissor.
+    vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphics_pipeline);     // Bind the graphics pipeline to the command buffer.
+    vkCmdDrawIndexed(command_buffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);       // Make the draw call.
+    vkCmdEndRenderPass(command_buffer);                                                        // End the render pass.
 
-    vkCmdBeginRenderPass(command_buffer, &render_pass_info, VK_SUBPASS_CONTENTS_INLINE);   // Start the render pass for the drawing.
-    vkCmdSetViewport(command_buffer, 0, 1, &viewport);                                     // Set the viewport (we do that each time because it's dynamic).
-    vkCmdSetScissor(command_buffer, 0, 1, &scissor);                                       // Set the scissor (same here).
-    vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphics_pipeline); // Bind the graphics pipeline to the command buffer.
-    vkCmdDrawIndexed(command_buffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);   // Make the draw call.
-    vkCmdEndRenderPass(command_buffer);                                                    // End the render pass.
-    VkResult buffer_end = vkEndCommandBuffer(command_buffer);                              // Try to end the command buffer.
+    VkResult buffer_end = vkEndCommandBuffer(command_buffer);
 
     if (buffer_end != VK_SUCCESS)
     {
