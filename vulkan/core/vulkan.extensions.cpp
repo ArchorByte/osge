@@ -17,7 +17,7 @@ void check_vulkan_extensions_support
 {
     log("Verifying Vulkan extensions compatibility for " + std::to_string(required_extensions.size()) + " extensions..");
 
-    if (!physical_device || physical_device == VK_NULL_HANDLE)
+    if (physical_device == VK_NULL_HANDLE)
     {
         fatal_error_log("Vulkan extensions check up failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
     }
@@ -33,7 +33,7 @@ void check_vulkan_extensions_support
     uint32_t extensions_count = 0;
     vkEnumerateDeviceExtensionProperties(physical_device, nullptr, &extensions_count, nullptr);
 
-    // Register the supported extensions into a list.
+    // List these supported extensions.
     std::vector<VkExtensionProperties> available_extensions(extensions_count);
     vkEnumerateDeviceExtensionProperties(physical_device, nullptr, &extensions_count, available_extensions.data());
 
@@ -46,10 +46,9 @@ void check_vulkan_extensions_support
         required_extensions_list.insert(std::string(extension_name));
     }
 
-    // Verify the extensions support by trying to empty the requirements list using the supported extensions list.
     for (const VkExtensionProperties &extension : available_extensions)
     {
-        bool succeeded = required_extensions_list.erase(extension.extensionName);
+        const bool succeeded = required_extensions_list.erase(extension.extensionName);
 
         if (succeeded)
         {

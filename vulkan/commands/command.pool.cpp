@@ -37,7 +37,7 @@ VkCommandPool create_vulkan_command_pool
     creation_info.queueFamilyIndex = graphics_family_index;                // Pass the index of the graphics family.
 
     VkCommandPool command_pool = VK_NULL_HANDLE;
-    VkResult pool_creation = vkCreateCommandPool(logical_device, &creation_info, nullptr, &command_pool);
+    const VkResult pool_creation = vkCreateCommandPool(logical_device, &creation_info, nullptr, &command_pool);
 
     if (pool_creation != VK_SUCCESS)
     {

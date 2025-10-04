@@ -31,7 +31,7 @@ VkCommandBuffer begin_one_time_vulkan_command_buffer
     allocation_info.commandBufferCount = 1;                  // Amount of command buffers that we are going to pass.
 
     VkCommandBuffer command_buffer = VK_NULL_HANDLE;
-    VkResult buffer_allocation = vkAllocateCommandBuffers(logical_device, &allocation_info, &command_buffer);
+    const VkResult buffer_allocation = vkAllocateCommandBuffers(logical_device, &allocation_info, &command_buffer);
 
     if (buffer_allocation != VK_SUCCESS)
     {
@@ -48,7 +48,7 @@ VkCommandBuffer begin_one_time_vulkan_command_buffer
     buffer_begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; // Indicate we are going to use this buffer one time.
 
     // Try to start to record commands into the command buffer.
-    VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &buffer_begin_info);
+    const VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &buffer_begin_info);
 
     if (buffer_launch != VK_SUCCESS)
     {
@@ -94,7 +94,7 @@ void end_command_buffer
         return;
     }
 
-    VkResult buffer_end = vkEndCommandBuffer(command_buffer);
+    const VkResult buffer_end = vkEndCommandBuffer(command_buffer);
 
     if (buffer_end != VK_SUCCESS)
     {
@@ -107,7 +107,7 @@ void end_command_buffer
     submit_info.commandBufferCount = 1;            // Number of command buffers to submit.
     submit_info.pCommandBuffers = &command_buffer; // Pass the command buffer.
 
-    VkResult queue_submit = vkQueueSubmit(graphics_queue, 1, &submit_info, VK_NULL_HANDLE);
+    const VkResult queue_submit = vkQueueSubmit(graphics_queue, 1, &submit_info, VK_NULL_HANDLE);
 
     if (queue_submit != VK_SUCCESS)
     {

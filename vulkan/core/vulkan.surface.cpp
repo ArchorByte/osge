@@ -20,7 +20,7 @@ VkSurfaceKHR create_vulkan_surface
 {
     log("Creating a Vulkan surface..");
 
-    if (!vulkan_instance || vulkan_instance == VK_NULL_HANDLE)
+    if (vulkan_instance == VK_NULL_HANDLE)
     {
         fatal_error_log("Vulkan surface creation failed! The Vulkan instance provided (" + force_string(vulkan_instance) + ") is not valid!");
     }
@@ -31,16 +31,16 @@ VkSurfaceKHR create_vulkan_surface
     }
 
     VkSurfaceKHR vulkan_surface = VK_NULL_HANDLE;
-    bool surface_creation = SDL_Vulkan_CreateSurface(window, vulkan_instance, nullptr, &vulkan_surface);
+    const bool surface_creation = SDL_Vulkan_CreateSurface(window, vulkan_instance, nullptr, &vulkan_surface);
 
     if (!surface_creation)
     {
         fatal_error_log("Vulkan surface creation returned error code " + std::string(SDL_GetError()) + ".");
     }
 
-    if (!vulkan_instance || vulkan_surface == VK_NULL_HANDLE)
+    if (vulkan_surface == VK_NULL_HANDLE)
     {
-        fatal_error_log("Vulkan surface creation output \"" + force_string(vulkan_instance) + "\" is not valid!");
+        fatal_error_log("Vulkan surface creation output (" + force_string(vulkan_instance) + ") is not valid!");
     }
 
     log("Vulkan surface " + force_string(vulkan_surface) + " created successfully!");
@@ -56,19 +56,18 @@ void destroy_vulkan_surface
 {
     log("Destroying the " + force_string(vulkan_surface) + " Vulkan surface..");
 
-    if (!vulkan_instance || vulkan_instance == VK_NULL_HANDLE)
+    if (vulkan_instance == VK_NULL_HANDLE)
     {
         error_log("Vulkan surface destruction failed! The Vulkan instance provided (" + force_string(vulkan_instance) + ") is not valid!");
         return;
     }
 
-    if (!vulkan_surface || vulkan_surface == VK_NULL_HANDLE)
+    if (vulkan_surface == VK_NULL_HANDLE)
     {
         error_log("Vulkan surface destruction failed! The Vulkan surface provided (" + force_string(vulkan_surface) + ") is not valid!");
         return;
     }
 
-    // Destroy the surface and dispose of the address.
     vkDestroySurfaceKHR(vulkan_instance, vulkan_surface, nullptr);
     vulkan_surface = VK_NULL_HANDLE;
 
