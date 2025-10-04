@@ -73,7 +73,7 @@ VkDeviceMemory allocate_vulkan_buffer_memory
     );
 
     VkDeviceMemory memory = VK_NULL_HANDLE;
-    VkResult memory_allocation = vkAllocateMemory(logical_device, &info, nullptr, &memory);
+    const VkResult memory_allocation = vkAllocateMemory(logical_device, &info, nullptr, &memory);
 
     if (memory_allocation != VK_SUCCESS)
     {
@@ -85,7 +85,7 @@ VkDeviceMemory allocate_vulkan_buffer_memory
         fatal_error_log("Buffer memory allocation output (" + force_string(memory) + ") is not valid!");
     }
 
-    VkResult memory_binding = vkBindBufferMemory(logical_device, buffer, memory, 0);
+    const VkResult memory_binding = vkBindBufferMemory(logical_device, buffer, memory, 0);
 
     if (memory_binding != VK_SUCCESS)
     {

@@ -32,8 +32,7 @@ std::vector<VkCommandBuffer> create_vulkan_command_buffers
         fatal_error_log("Command buffers creation failed! The amount of images provided (" + std::to_string(images_count) + ") is not valid!");
     }
 
-    std::vector<VkCommandBuffer> command_buffers;
-    command_buffers.resize(images_count);
+    std::vector<VkCommandBuffer> command_buffers(images_count);
 
     VkCommandBufferAllocateInfo allocation_info {};
     allocation_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -41,7 +40,7 @@ std::vector<VkCommandBuffer> create_vulkan_command_buffers
     allocation_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY; // Set the level of the buffer to primary.
     allocation_info.commandBufferCount = images_count;       // Amount of command buffers to allocate.
 
-    VkResult buffer_allocation = vkAllocateCommandBuffers(logical_device, &allocation_info, command_buffers.data());
+    const VkResult buffer_allocation = vkAllocateCommandBuffers(logical_device, &allocation_info, command_buffers.data());
 
     if (buffer_allocation != VK_SUCCESS)
     {

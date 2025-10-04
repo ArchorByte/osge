@@ -48,7 +48,7 @@ std::vector<VkDescriptorSet> create_vulkan_descriptor_sets
         fatal_error_log("Descriptor sets creation failed! No uniform buffers were provided!");
     }
 
-    std::vector<VkDescriptorSet> descriptor_sets;
+    std::vector<VkDescriptorSet> descriptor_sets(images_count);
     std::vector<VkDescriptorSetLayout> layouts(images_count, descriptor_set_layout); // Duplicate 'images count' times the descriptor set layout.
 
     // Allocation info for the descriptor set.
@@ -58,7 +58,6 @@ std::vector<VkDescriptorSet> create_vulkan_descriptor_sets
     allocation_info.descriptorSetCount = static_cast<uint32_t>(images_count); // Pass the amount of descriptor sets.
     allocation_info.pSetLayouts = layouts.data();                             // Pass the descriptor set layouts.
 
-    descriptor_sets.resize(images_count);
     VkResult sets_allocation = vkAllocateDescriptorSets(logical_device, &allocation_info, descriptor_sets.data()); // Try to allocate the sets.
 
     if (sets_allocation != VK_SUCCESS)

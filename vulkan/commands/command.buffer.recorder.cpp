@@ -97,7 +97,7 @@ void record_command_buffer
     VkCommandBufferBeginInfo begin_info {};
     begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-    VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &begin_info);
+    const VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &begin_info);
 
     if (buffer_launch != VK_SUCCESS)
     {
@@ -105,7 +105,7 @@ void record_command_buffer
     }
 
     // Default black color.
-    VkClearValue clear_color = {{{ 0.0f, 0.0f, 0.0f, 1.0f }}};
+    const VkClearValue clear_color = {{{ 0.0f, 0.0f, 0.0f, 1.0f }}};
 
     VkRenderPassBeginInfo render_pass_begin_info{};
     render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -116,8 +116,8 @@ void record_command_buffer
     render_pass_begin_info.clearValueCount = 1;                     // We are going to use only one clear color.
     render_pass_begin_info.pClearValues = &clear_color;             // Pass the clear color.
 
-    VkBuffer vertex_buffers = { vertex_buffer };
-    VkDeviceSize offsets[] = { 0 };
+    const VkBuffer vertex_buffers = { vertex_buffer };
+    const VkDeviceSize offsets[] = { 0 };
 
     vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphics_pipeline); // Bind the graphics pipeline to the command buffer.
     vkCmdBindVertexBuffers(command_buffer, 0, 1, &vertex_buffers, offsets);                // Bind the vertex buffers to the command buffer.
@@ -142,7 +142,7 @@ void record_command_buffer
     vkCmdDrawIndexed(command_buffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);       // Make the draw call.
     vkCmdEndRenderPass(command_buffer);                                                        // End the render pass.
 
-    VkResult buffer_end = vkEndCommandBuffer(command_buffer);
+    const VkResult buffer_end = vkEndCommandBuffer(command_buffer);
 
     if (buffer_end != VK_SUCCESS)
     {
