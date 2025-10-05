@@ -6,7 +6,7 @@
 VkImageView create_image_view
 (
     const VkDevice &logical_device,
-    const VkImage &image,
+    const VkImage &swapchain_image,
     const VkFormat &format
 );
 
