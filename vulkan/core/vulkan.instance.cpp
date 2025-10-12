@@ -41,13 +41,15 @@ VkInstance create_vulkan_instance
     const int engine_version_patch = EngineVersion::ENGINE_VERSION_PATCH;
 
     // Note: To change most of your game's info, you can change the config.hpp file in the main folder.
-    VkApplicationInfo app_info {};
-    app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    app_info.pApplicationName = game_name.c_str();
-    app_info.applicationVersion = VK_MAKE_API_VERSION(game_version_variant, game_version_major, game_version_minor, game_version_patch);
-    app_info.pEngineName = "OSGE - Open Source Game Engine";
-    app_info.engineVersion = VK_MAKE_API_VERSION(engine_version_variant, engine_version_major, engine_version_minor, engine_version_patch);
-    app_info.apiVersion = VK_API_VERSION_1_4; // API version that we are using.
+    VkApplicationInfo app_info
+    {
+        .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+        .pApplicationName = game_name.c_str(),
+        .applicationVersion = VK_MAKE_API_VERSION(game_version_variant, game_version_major, game_version_minor, game_version_patch),
+        .pEngineName = "OSGE - Open Source Game Engine",
+        .engineVersion = VK_MAKE_API_VERSION(engine_version_variant, engine_version_major, engine_version_minor, engine_version_patch),
+        .apiVersion = VK_API_VERSION_1_4 // Version of the API that we are using.
+    };
 
     Uint32 extensions_count = 0;
     const char* const* extensions_list = SDL_Vulkan_GetInstanceExtensions(&extensions_count);
@@ -57,13 +59,15 @@ VkInstance create_vulkan_instance
         fatal_error_log("Vulkan instance creation failed! Failed to retrieve the required SDL3 extensions!");
     }
 
-    VkInstanceCreateInfo create_info {};
-    create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-    create_info.pApplicationInfo = &app_info;                             // Pass the app info.
-    create_info.enabledExtensionCount = extensions_count;                 // Amount of extensions to enable.
-    create_info.ppEnabledExtensionNames = extensions_list;                // List of the required extensions.
-    create_info.enabledLayerCount = static_cast<uint32_t>(layers.size()); // Amount of layers to enable.
-    create_info.ppEnabledLayerNames = layers.data();                      // Pass the layers list.
+    VkInstanceCreateInfo create_info
+    {
+        .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+        .pApplicationInfo = &app_info,
+        .enabledLayerCount = static_cast<uint32_t>(layers.size()), // Amount of layers to enable.
+        .ppEnabledLayerNames = layers.data(),                      // Pass the layers list.
+        .enabledExtensionCount = extensions_count,                 // Amount of extensions to enable.
+        .ppEnabledExtensionNames = extensions_list                 // List of the required extensions.
+    };
 
     VkInstance vulkan_instance = VK_NULL_HANDLE;
     const VkResult instance_creation = vkCreateInstance(&create_info, nullptr, &vulkan_instance);

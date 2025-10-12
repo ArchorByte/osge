@@ -34,11 +34,13 @@ std::vector<VkCommandBuffer> create_vulkan_command_buffers
 
     std::vector<VkCommandBuffer> command_buffers(images_count);
 
-    VkCommandBufferAllocateInfo allocation_info {};
-    allocation_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocation_info.commandPool = command_pool;              // Pass the command pool.
-    allocation_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY; // Set the level of the buffer to primary.
-    allocation_info.commandBufferCount = images_count;       // Amount of command buffers to allocate.
+    VkCommandBufferAllocateInfo allocation_info
+    {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        .commandPool = command_pool,
+        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, // Set the level of the buffer to primary.
+        .commandBufferCount = images_count        // Amount of command buffers to allocate.
+    };
 
     const VkResult buffer_allocation = vkAllocateCommandBuffers(logical_device, &allocation_info, command_buffers.data());
 

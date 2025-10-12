@@ -61,7 +61,7 @@ VkPhysicalDevice select_physical_device
 
     // Count the amount of physical devices available.
     uint32_t devices_count = 0;
-    VkResult first_devices_query = vkEnumeratePhysicalDevices(vulkan_instance, &devices_count, nullptr);
+    const VkResult first_devices_query = vkEnumeratePhysicalDevices(vulkan_instance, &devices_count, nullptr);
 
     if (first_devices_query != VK_SUCCESS)
     {
@@ -75,7 +75,7 @@ VkPhysicalDevice select_physical_device
 
     // Register the physical devices available into a list.
     std::vector<VkPhysicalDevice> devices_list(devices_count);
-    VkResult second_devices_query = vkEnumeratePhysicalDevices(vulkan_instance, &devices_count, devices_list.data());
+    const VkResult second_devices_query = vkEnumeratePhysicalDevices(vulkan_instance, &devices_count, devices_list.data());
 
     if (second_devices_query != VK_SUCCESS)
     {

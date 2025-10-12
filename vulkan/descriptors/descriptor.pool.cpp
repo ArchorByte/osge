@@ -43,14 +43,16 @@ VkDescriptorPool create_vulkan_descriptor_pool
     pool_sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;      // Pool for an image sampler.
     pool_sizes[1].descriptorCount = static_cast<uint32_t>(images_count * texture_images_count);
 
-    VkDescriptorPoolCreateInfo pool_create_info {};
-    pool_create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    pool_create_info.poolSizeCount = static_cast<uint32_t>(pool_sizes.size()); // Amount of pool sizes to pass.
-    pool_create_info.pPoolSizes = pool_sizes.data();                           // Pass the pool sizes.
-    pool_create_info.maxSets = static_cast<uint32_t>(images_count);            // Maximum amount of sets to make.
+    VkDescriptorPoolCreateInfo pool_create_info
+    {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+        .maxSets = static_cast<uint32_t>(images_count),            // Maximum amount of sets to make.
+        .poolSizeCount = static_cast<uint32_t>(pool_sizes.size()), // Amount of pool sizes to pass.
+        .pPoolSizes = pool_sizes.data()                            // Pass the pool sizes.
+    };
 
     VkDescriptorPool descriptor_pool = VK_NULL_HANDLE;
-    VkResult pool_creation = vkCreateDescriptorPool(logical_device, &pool_create_info, nullptr, &descriptor_pool);
+    const VkResult pool_creation = vkCreateDescriptorPool(logical_device, &pool_create_info, nullptr, &descriptor_pool);
 
     if (pool_creation != VK_SUCCESS)
     {

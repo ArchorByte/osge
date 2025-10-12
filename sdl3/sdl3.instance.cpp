@@ -10,7 +10,7 @@ void start_sdl3_instance()
     log("Initializing SDL3..");
     const int initialization = SDL_Init(SDL_INIT_VIDEO);
 
-    if (initialization < 0)
+    if (initialization == 0)
     {
         fatal_error_log("Failed to initialize SDL3! Error: " + std::string(SDL_GetError()));
     }

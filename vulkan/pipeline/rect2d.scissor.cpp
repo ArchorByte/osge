@@ -12,9 +12,11 @@ VkRect2D create_vulkan_scissor
 {
     log("Creating a scissor..");
 
-    VkRect2D scissor {};
-    scissor.offset = { 0, 0 }; // Select the start position of the scissor.
-    scissor.extent = extent;   // Pass the swap chain extent.
+    VkRect2D scissor
+    {
+        .offset = { 0, 0 }, // Select the starting position.
+        .extent = extent
+    };
 
     log("Scissor created successfully!");
     return scissor;

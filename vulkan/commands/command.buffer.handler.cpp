@@ -24,11 +24,13 @@ VkCommandBuffer begin_one_time_vulkan_command_buffer
         fatal_error_log("One time command buffer beginning failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
     }
 
-    VkCommandBufferAllocateInfo allocation_info {};
-    allocation_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocation_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY; // Set the level of the buffer to primary.
-    allocation_info.commandPool = command_pool;              // Command pool to use.
-    allocation_info.commandBufferCount = 1;                  // Amount of command buffers that we are going to pass.
+    VkCommandBufferAllocateInfo allocation_info
+    {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        .commandPool = command_pool,
+        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, // Set the level of the buffer to primary.
+        .commandBufferCount = 1
+    };
 
     VkCommandBuffer command_buffer = VK_NULL_HANDLE;
     const VkResult buffer_allocation = vkAllocateCommandBuffers(logical_device, &allocation_info, &command_buffer);
@@ -43,9 +45,11 @@ VkCommandBuffer begin_one_time_vulkan_command_buffer
         fatal_error_log("One time command buffer beginning failed! Command buffer allocation output (" + force_string(command_buffer) + ") is not valid!");
     }
 
-    VkCommandBufferBeginInfo buffer_begin_info {};
-    buffer_begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    buffer_begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; // Indicate we are going to use this buffer one time.
+    VkCommandBufferBeginInfo buffer_begin_info
+    {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT // Indicate we are going to use this buffer one time.
+    };
 
     // Try to start to record commands into the command buffer.
     const VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &buffer_begin_info);
@@ -102,10 +106,12 @@ void end_command_buffer
         return;
     }
 
-    VkSubmitInfo submit_info {};
-    submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    submit_info.commandBufferCount = 1;            // Number of command buffers to submit.
-    submit_info.pCommandBuffers = &command_buffer; // Pass the command buffer.
+    VkSubmitInfo submit_info
+    {
+        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        .commandBufferCount = 1,
+        .pCommandBuffers = &command_buffer
+    };
 
     const VkResult queue_submit = vkQueueSubmit(graphics_queue, 1, &submit_info, VK_NULL_HANDLE);
 

@@ -30,28 +30,34 @@ VkDescriptorSetLayout create_vulkan_descriptor_set_layout
         fatal_error_log("Descriptor set layout creation failed! No texture image views were provided!");
     }
 
-    VkDescriptorSetLayoutBinding uniform_buffer_binding {};
-    uniform_buffer_binding.binding = 0;                                        // Binding index in the shader.
-    uniform_buffer_binding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER; // Use this binding for a uniform buffer.
-    uniform_buffer_binding.descriptorCount = 1;                                // Amount of descriptors in the binding.
-    uniform_buffer_binding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;            // Allow vertex shader stages to access to this binding.
+    VkDescriptorSetLayoutBinding uniform_buffer_binding
+    {
+        .binding = 0,                                        // Binding index in the shader.
+        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, // Use this binding for a uniform buffer.
+        .descriptorCount = 1,                                // Amount of descriptors in the binding.
+        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT             // Allow vertex shader stages to access to this binding.
+    };
 
-    VkDescriptorSetLayoutBinding sampler_binding {};
-    sampler_binding.binding = 1;
-    sampler_binding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER; // Use this binding for an image sampler.
-    sampler_binding.descriptorCount = static_cast<uint32_t>(texture_image_views.size());
-    sampler_binding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;                  // Allow stage fragment shader stages to access to this binding.
+    VkDescriptorSetLayoutBinding sampler_binding
+    {
+        .binding = 1,
+        .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, // Use this binding for an image sampler.
+        .descriptorCount = static_cast<uint32_t>(texture_image_views.size()),
+        .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT // Allow stage fragment shader stages to access to this binding.
+    };
 
     // Merge the two bindings into one vector list.
     std::vector<VkDescriptorSetLayoutBinding> bindings = { uniform_buffer_binding, sampler_binding };
 
-    VkDescriptorSetLayoutCreateInfo create_info {};
-    create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    create_info.bindingCount = static_cast<uint32_t>(bindings.size()); // Amount of bindings to pass.
-    create_info.pBindings = bindings.data();                           // Pass the bindings.
+    VkDescriptorSetLayoutCreateInfo create_info
+    {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+        .bindingCount = static_cast<uint32_t>(bindings.size()), // Amount of bindings to pass.
+        .pBindings = bindings.data()                            // Pass the bindings.
+    };
 
     VkDescriptorSetLayout descriptor_set_layout = VK_NULL_HANDLE;
-    VkResult layout_creation = vkCreateDescriptorSetLayout(logical_device, &create_info, nullptr, &descriptor_set_layout);
+    const VkResult layout_creation = vkCreateDescriptorSetLayout(logical_device, &create_info, nullptr, &descriptor_set_layout);
 
     if (layout_creation != VK_SUCCESS)
     {
