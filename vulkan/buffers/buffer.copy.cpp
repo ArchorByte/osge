@@ -53,10 +53,12 @@ void copy_vulkan_buffer_data
     VkCommandBuffer command_buffer = begin_one_time_vulkan_command_buffer(logical_device, command_pool);
 
     // Region of the command buffer to copy.
-    VkBufferCopy copy_region {};
-    copy_region.srcOffset = 0;      // Start to read data from the beginning of the source buffer.
-    copy_region.dstOffset = 0;      // Start to write the same data from the beginning of the destination buffer.
-    copy_region.size = buffer_size; // Amount of bytes to copy.
+    VkBufferCopy copy_region
+    {
+        .srcOffset = 0,     // Start to read data from the beginning of the source buffer.
+        .dstOffset = 0,     // Start to write the same data from the beginning of the destination buffer.
+        .size = buffer_size // Amount of bytes to copy.
+    };
 
     // Make the copy of the buffer.
     vkCmdCopyBuffer(command_buffer, source_buffer, destination_buffer, 1, &copy_region);
@@ -119,16 +121,21 @@ void copy_vulkan_buffer_to_texture_image
     const uint32_t height = static_cast<uint32_t>(image_info.height);
 
     // Region of the image command buffer to copy.
-    VkBufferImageCopy copy_region {};
-    copy_region.bufferOffset = 0;                                        // Offset for the copy. Buffer side.
-    copy_region.bufferRowLength = 0;                                     // Row length of the buffer.
-    copy_region.bufferImageHeight = 0;                                   // Height of the buffer image.
-    copy_region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; // This copy is for the color aspect of our texture image.
-    copy_region.imageSubresource.mipLevel = 0;                           // Mipmap level to copy.
-    copy_region.imageSubresource.baseArrayLayer = 0;                     // Select the first layer of the image to copy.
-    copy_region.imageSubresource.layerCount = 1;                         // Amount of layers to copy.
-    copy_region.imageOffset = { 0, 0, 0 };                               // Offset for the copy. Texture image side.
-    copy_region.imageExtent = { width, height, 1 };                      // Pass the image size: width, height and depth.
+    VkBufferImageCopy copy_region
+    {
+        .bufferOffset = 0,      // Offset for the copy. Buffer side.
+        .bufferRowLength = 0,   // Row length of the buffer.
+        .bufferImageHeight = 0, // Height of the buffer image.
+        .imageSubresource =
+        {
+            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, // This copy is for the color aspect of our texture image.
+            .mipLevel = 0,       // Mipmap level to copy.
+            .baseArrayLayer = 0, // Select the first layer of the image to copy.
+            .layerCount = 1      // Amount of layers to copy.
+        },
+        .imageOffset = { 0, 0, 0 },         // Offset for the copy. Texture image side.
+        .imageExtent = { width, height, 1 } // Pass the image size: width, height and depth.
+    };
 
     vkCmdCopyBufferToImage(command_buffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copy_region); // Make the copy.
     end_command_buffer(logical_device, command_pool, graphics_queue, command_buffer);

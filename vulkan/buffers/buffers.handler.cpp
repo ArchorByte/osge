@@ -38,11 +38,13 @@ void create_vulkan_buffer
     }
 
     // Info for the buffer creation.
-    VkBufferCreateInfo buffer_info {};
-    buffer_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    buffer_info.size = buffer_size;                      // Size of the buffer.
-    buffer_info.usage = usage_flags;                     // Flags to indicate to Vulkan what we are going to do with that buffer.
-    buffer_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE; // Disallow buffer sharing.
+    VkBufferCreateInfo buffer_info
+    {
+        .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+        .size = buffer_size,
+        .usage = usage_flags,                    // Flags to indicate to Vulkan what we are going to do with that buffer.
+        .sharingMode = VK_SHARING_MODE_EXCLUSIVE // Disallow buffer sharing.
+    };
 
     buffer = VK_NULL_HANDLE;
     const VkResult buffer_creation = vkCreateBuffer(logical_device, &buffer_info, nullptr, &buffer);

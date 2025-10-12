@@ -17,7 +17,8 @@ std::vector<int> get_available_display_indexes()
     SDL_DisplayID *displays_list = SDL_GetDisplays(&displays_count);
 
     // Prepare the output vector list.
-    std::vector<int> output(displays_count);
+    std::vector<int> output;
+    output.reserve(displays_count);
 
     if (displays_list)
     {

@@ -94,8 +94,10 @@ void record_command_buffer
         return;
     }
 
-    VkCommandBufferBeginInfo begin_info {};
-    begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    VkCommandBufferBeginInfo begin_info
+    {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO
+    };
 
     const VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &begin_info);
 
@@ -107,14 +109,19 @@ void record_command_buffer
     // Default black color.
     const VkClearValue clear_color = {{{ 0.0f, 0.0f, 0.0f, 1.0f }}};
 
-    VkRenderPassBeginInfo render_pass_begin_info{};
-    render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    render_pass_begin_info.renderPass = render_pass;                // Pass the render pass.
-    render_pass_begin_info.framebuffer = framebuffers[image_index]; // Pass the frame buffer.
-    render_pass_begin_info.renderArea.offset = { 0, 0 };            // Select the beginning of the rendering area.
-    render_pass_begin_info.renderArea.extent = extent;              // Pass the swap chain extent.
-    render_pass_begin_info.clearValueCount = 1;                     // We are going to use only one clear color.
-    render_pass_begin_info.pClearValues = &clear_color;             // Pass the clear color.
+    VkRenderPassBeginInfo render_pass_begin_info
+    {
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+        .renderPass = render_pass,
+        .framebuffer = framebuffers[image_index],
+        .renderArea =
+        {
+            .offset = { 0, 0 }, // Select the beginning of the rendering area.
+            .extent = extent    // Pass the swap chain extent.
+        },
+        .clearValueCount = 1,        // We are going to use only one clear color.
+        .pClearValues = &clear_color // Pass the clear color.
+    };
 
     const VkBuffer vertex_buffers = { vertex_buffer };
     const VkDeviceSize offsets[] = { 0 };

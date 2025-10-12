@@ -17,7 +17,6 @@ std::pair<int, int> get_display_resolution
 )
 {
     log("Detecting the resolution of display #" + std::to_string(display_index) + "..");
-    std::pair<int, int> output;
 
     // Retrieve the video data of the display.
     const SDL_DisplayMode* display_mode = SDL_GetCurrentDisplayMode(display_index);

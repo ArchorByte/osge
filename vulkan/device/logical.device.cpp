@@ -34,16 +34,18 @@ VkDevice create_logical_device
     VkPhysicalDeviceFeatures device_features {};
     vkGetPhysicalDeviceFeatures(physical_device, &device_features);
 
-    VkDeviceCreateInfo device_create_info {};
-    device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    device_create_info.queueCreateInfoCount = static_cast<uint32_t>(queues_create_info.size());   // Amount of queues to create.
-    device_create_info.pQueueCreateInfos = queues_create_info.data();                             // Pass the queues create info.
-    device_create_info.pEnabledFeatures = &device_features;                                       // Enable all features of the physical device for simplicity and compatibility reasons.
-    device_create_info.enabledExtensionCount = static_cast<uint32_t>(required_extensions.size()); // Amount of extensions to enable.
-    device_create_info.ppEnabledExtensionNames = required_extensions.data();                      // Pass the required extensions list.
+    VkDeviceCreateInfo device_create_info
+    {
+        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+        .queueCreateInfoCount = static_cast<uint32_t>(queues_create_info.size()),   // Amount of queues to create.
+        .pQueueCreateInfos = queues_create_info.data(),                             // Pass the queues create info.
+        .enabledExtensionCount = static_cast<uint32_t>(required_extensions.size()), // Amount of extensions to enable.
+        .ppEnabledExtensionNames = required_extensions.data(),                      // Pass the required extensions list.
+        .pEnabledFeatures = &device_features                                        // Enable all features of the physical device for simplicity and compatibility reasons.
+    };
 
     VkDevice logical_device = VK_NULL_HANDLE;
-    VkResult device_creation = vkCreateDevice(physical_device, &device_create_info, nullptr, &logical_device);
+    const VkResult device_creation = vkCreateDevice(physical_device, &device_create_info, nullptr, &logical_device);
 
     if (device_creation != VK_SUCCESS)
     {
