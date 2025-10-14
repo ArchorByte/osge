@@ -16,7 +16,7 @@ std::vector<VkQueueFamilyProperties> get_queue_families
 {
     log("Fetching the queue families list..");
 
-    if (!physical_device || physical_device == VK_NULL_HANDLE)
+    if (physical_device == VK_NULL_HANDLE)
     {
         fatal_error_log("Queue families query failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
     }
@@ -53,7 +53,7 @@ std::vector<VkDeviceQueueCreateInfo> make_queues_create_info
 {
     log("Making queue families create info..");
 
-    if (!physical_device || physical_device == VK_NULL_HANDLE)
+    if (physical_device == VK_NULL_HANDLE)
     {
         fatal_error_log("Queue families create info failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
     }
@@ -63,21 +63,20 @@ std::vector<VkDeviceQueueCreateInfo> make_queues_create_info
         fatal_error_log("Queue families create info failed! No required queues families indexes were provided!");
     }
 
-    std::set<uint32_t> unique_queues_families = { required_queues_indexes.begin(), required_queues_indexes.end() }; // Avoid to duplicate the indexes.
+    std::set<uint32_t> unique_queues_families = { required_queues_indexes.begin(), required_queues_indexes.end() }; // Prevent indexes duplication.
     std::vector<VkDeviceQueueCreateInfo> queues_create_info {};
 
-    // Make a create info for each queue family.
     for (const uint32_t queue : unique_queues_families)
     {
-        // Create info for the queue.
-        VkDeviceQueueCreateInfo info {};
-        info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        info.queueFamilyIndex = queue;           // Index of the targeted queue.
-        info.queueCount = 1;                     // Amount of queues to pass.
-        info.pQueuePriorities = &queue_priority; // Set the custom priority to the queue.
+        VkDeviceQueueCreateInfo queue_create_info
+        {
+            .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+            .queueFamilyIndex = queue,          // Index of the queue.
+            .queueCount = 1,
+            .pQueuePriorities = &queue_priority // Set the custom priority.
+        };
 
-        // Register the create info.
-        queues_create_info.push_back(info);
+        queues_create_info.push_back(queue_create_info);
     }
 
     log(std::to_string(unique_queues_families.size()) + " queue families create info created successfully!");

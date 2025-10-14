@@ -22,7 +22,6 @@ uint32_t get_graphics_family_index
     uint32_t output = -1;
     int i = 0;
 
-    // Analyze each queue family registered.
     for (const VkQueueFamilyProperties &queue : queue_families)
     {
         // The graphics family is identified by the flag "VK_QUEUE_GRAPHICS_BIT".
