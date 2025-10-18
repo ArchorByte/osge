@@ -16,18 +16,18 @@ VkSurfaceCapabilitiesKHR get_vulkan_swapchain_capabilities
 {
     log("Fetching the swap chain capabilities..");
 
-    if (!physical_device || physical_device == VK_NULL_HANDLE)
+    if (physical_device == VK_NULL_HANDLE)
     {
         fatal_error_log("Swap chain capabilities query failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
     }
 
-    if (!vulkan_surface || vulkan_surface == VK_NULL_HANDLE)
+    if (vulkan_surface == VK_NULL_HANDLE)
     {
         fatal_error_log("Swap chain capabilities query failed! The Vulkan surface provided (" + force_string(vulkan_surface) + ") is not valid!");
     }
 
     VkSurfaceCapabilitiesKHR swapchain_capabilities;
-    VkResult query_result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical_device, vulkan_surface, &swapchain_capabilities); // Try to get the capabilities.
+    const VkResult query_result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical_device, vulkan_surface, &swapchain_capabilities);
 
     if (query_result != VK_SUCCESS)
     {
@@ -47,19 +47,18 @@ std::vector<VkSurfaceFormatKHR> get_vulkan_swapchain_surface_formats
 {
     log("Fetching the swap chain surface formats available..");
 
-    if (!physical_device || physical_device == VK_NULL_HANDLE)
+    if (physical_device == VK_NULL_HANDLE)
     {
         fatal_error_log("Swap chain surface formats query failed! The physical provided (" + force_string(physical_device) + ") is not valid!");
     }
 
-    if (!vulkan_surface || vulkan_surface == VK_NULL_HANDLE)
+    if (vulkan_surface == VK_NULL_HANDLE)
     {
         fatal_error_log("Swap chain surface formats query failed! The Vulkan surface provided (" + force_string(vulkan_surface) + ") is not valid!");
     }
 
-    // Count the amount of surface formats available.
     uint32_t formats_count = 0;
-    VkResult first_query = vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device, vulkan_surface, &formats_count, nullptr);
+    const VkResult first_query = vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device, vulkan_surface, &formats_count, nullptr);
 
     if (first_query != VK_SUCCESS)
     {
@@ -68,12 +67,11 @@ std::vector<VkSurfaceFormatKHR> get_vulkan_swapchain_surface_formats
 
     if (formats_count < 1)
     {
-        fatal_error_log("Swap chain surface formats query failed! No surface formats available found!");
+        fatal_error_log("Swap chain surface formats query failed! No available surface formats found!");
     }
 
-    // Register the surface formats into a list.
     std::vector<VkSurfaceFormatKHR> surface_formats(formats_count);
-    VkResult second_query = vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device, vulkan_surface, &formats_count, surface_formats.data());
+    const VkResult second_query = vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device, vulkan_surface, &formats_count, surface_formats.data());
 
     if (second_query != VK_SUCCESS)
     {
@@ -93,19 +91,18 @@ std::vector<VkPresentModeKHR> get_vulkan_swapchain_present_modes
 {
     log("Fetching the swap chain present modes available..");
 
-    if (!physical_device || physical_device == VK_NULL_HANDLE)
+    if (physical_device == VK_NULL_HANDLE)
     {
         fatal_error_log("Swap chain present modes query failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
     }
 
-    if (!vulkan_surface || vulkan_surface == VK_NULL_HANDLE)
+    if (vulkan_surface == VK_NULL_HANDLE)
     {
         fatal_error_log("Swap chain present modes query failed! The Vulkan surface provided (" + force_string(vulkan_surface) + ") is not valid!");
     }
 
-    // Count the amount of present modes available.
     uint32_t modes_count = 0;
-    VkResult first_query = vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device, vulkan_surface, &modes_count, nullptr); // Try to count the modes available.
+    const VkResult first_query = vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device, vulkan_surface, &modes_count, nullptr);
 
     if (first_query != VK_SUCCESS)
     {
@@ -114,12 +111,11 @@ std::vector<VkPresentModeKHR> get_vulkan_swapchain_present_modes
 
     if (modes_count < 1)
     {
-        fatal_error_log("Swap chain present modes query failed! No present modes were found!");
+        fatal_error_log("Swap chain present modes query failed! No available present modes were found!");
     }
 
-    // Register the present modes into a list.
     std::vector<VkPresentModeKHR> present_modes(modes_count);
-    VkResult second_query = vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device, vulkan_surface, &modes_count, present_modes.data()); // Try to list the modes available
+    const VkResult second_query = vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device, vulkan_surface, &modes_count, present_modes.data());
 
     if (second_query != VK_SUCCESS)
     {
