@@ -23,7 +23,7 @@ VkShaderModule create_vulkan_shader_module
 (
     const VkDevice &logical_device,
     const std::vector<char> &binaries,
-    std::string &file_name
+    const std::string &file_name
 );
 
 std::vector<ShaderInfo> create_all_vulkan_shader_modules

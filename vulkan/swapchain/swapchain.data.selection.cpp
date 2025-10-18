@@ -19,7 +19,6 @@ VkSurfaceFormatKHR select_best_vulkan_swapchain_surface_format
 {
     log("Selecting the best swap chain surface format..");
 
-    // Analyze each surface format available.
     for (const VkSurfaceFormatKHR &format : available_formats)
     {
         // Try to find a format meeting our requirements.
@@ -42,7 +41,6 @@ VkPresentModeKHR select_best_vulkan_swapchain_present_mode
 {
     log("Selecting the best swap chain present mode..");
 
-    // Analyze each present mode available.
     for (const VkPresentModeKHR present_mode : available_present_modes)
     {
         // Try to find a mode with the "VK_PRESENT_MODE_MAILBOX_KHR" or "VK_PRESENT_MODE_IMMEDIATE_KHR" flag.
@@ -73,8 +71,6 @@ VkExtent2D select_vulkan_swapchain_extent_resolution
 
     int width;
     int height;
-
-    // Get the current resolution from the window frame buffer.
     SDL_GetWindowSizeInPixels(window, &width, &height);
 
     VkExtent2D extent =
@@ -83,7 +79,7 @@ VkExtent2D select_vulkan_swapchain_extent_resolution
         static_cast<uint32_t>(height)
     };
 
-    // Ensure that the extent resolution is within the swap chain capabilities.
+    // Ensure that the extent resolution is within the swap chain capabilities bounds.
     extent.width = std::clamp(extent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
     extent.height = std::clamp(extent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
