@@ -23,10 +23,10 @@ VkShaderModule create_vulkan_shader_module
 (
     const VkDevice &logical_device,
     const std::vector<char> &binaries,
-    std::string &file_name
+    const std::string &file_name
 )
 {
-    if (!logical_device || logical_device == VK_NULL_HANDLE)
+    if (logical_device == VK_NULL_HANDLE)
     {
         fatal_error_log("Shader module \"" + file_name + "\" creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
     }
@@ -41,23 +41,24 @@ VkShaderModule create_vulkan_shader_module
         fatal_error_log("Shader module \"" + file_name + "\" creation failed! The file name provided is not valid!");
     }
 
-    // Create info for the shader module.
-    VkShaderModuleCreateInfo info {};
-    info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    info.codeSize = binaries.size();                                 // Size of the data we are going to pass as binaries.
-    info.pCode = reinterpret_cast<const uint32_t*>(binaries.data()); // We pass the binaries.
+    VkShaderModuleCreateInfo create_info
+    {
+        .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
+        .codeSize = binaries.size(),
+        .pCode = reinterpret_cast<const uint32_t*>(binaries.data()) // We pass the shader's binaries.
+    };
 
     VkShaderModule shader_module = VK_NULL_HANDLE;
-    VkResult module_creation = vkCreateShaderModule(logical_device, &info, nullptr, &shader_module); // Try to create the module.
+    const VkResult module_creation = vkCreateShaderModule(logical_device, &create_info, nullptr, &shader_module);
 
     if (module_creation != VK_SUCCESS)
     {
         fatal_error_log("- Shader module \"" + file_name + "\" creation returned error code " + std::to_string(module_creation) + ".");
     }
 
-    if (!shader_module || shader_module == VK_NULL_HANDLE)
+    if (shader_module == VK_NULL_HANDLE)
     {
-        fatal_error_log("- Shader module \"" + file_name + "\" creation output \"" + force_string(shader_module) + "\" is not valid!");
+        fatal_error_log("- Shader module \"" + file_name + "\" creation output (" + force_string(shader_module) + ") is not valid!");
     }
 
     return shader_module;
@@ -71,9 +72,8 @@ std::vector<ShaderInfo> create_all_vulkan_shader_modules
 )
 {
     log("Creating the shaders modules..");
-    std::vector<ShaderInfo> shaders_modules;
 
-    if (!logical_device || logical_device == VK_NULL_HANDLE)
+    if (logical_device == VK_NULL_HANDLE)
     {
         fatal_error_log("Shaders modules creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
     }
@@ -81,36 +81,44 @@ std::vector<ShaderInfo> create_all_vulkan_shader_modules
     int total = 0;
     int failed = 0;
 
-    // Read each file in the shaders folder.
+    std::vector<ShaderInfo> shaders_modules;
+
     for (const auto &file : fs::directory_iterator("./shaders"))
     {
         total++;
-        std::string file_name = file.path().filename().string();
+
+        const std::string file_name = file.path().filename().string();
+        const std::string file_extension = file.path().extension();
 
         if (!fs::is_regular_file(file.status()))
         {
-            error_log("- Warning: The creation of the shader module \"" + file_name + "\" failed! It's not a valid file!");
+            error_log("- The creation of the shader module \"" + file_name + "\" failed! It's not a valid file!");
             continue;
         }
 
-        if (file.path().extension() != ".frag" && file.path().extension() != ".vert")
+        if (file_extension != ".frag" && file_extension != ".vert")
         {
-            error_log("- Warning: The creation of the shader module \"" + file_name + "\" failed! It's not a Vertex or a Fragment shader!");
+            error_log("- The creation of the shader module \"" + file_name + "\" failed! It's neither a vertex nor a fragment shader!");
             continue;
         }
 
-        std::string type = file.path().extension() == ".vert" ? "vert" : "frag";                                // Determine if it's a Vertex or a Fragment shader.
-        std::vector<char> shader_binaries = read_binary_file("./shaders/" + file_name);                         // Read the shader file binaries.
-        VkShaderModule shader_module = create_vulkan_shader_module(logical_device, shader_binaries, file_name); // Create the shader module.
+        const std::string type = file_extension == ".vert" ? "vert" : "frag";
+        const std::vector<char> shader_binaries = read_binary_file("./shaders/" + file_name);
+        const VkShaderModule shader_module = create_vulkan_shader_module(logical_device, shader_binaries, file_name);
 
-        ShaderInfo shader_info
+        const ShaderInfo shader_info
         {
-            type,         // Vertex ("vert") or Fragment ("frag") shader.
-            shader_module // The actual shader module.
+            type,
+            shader_module
         };
 
-        shaders_modules.emplace_back(shader_info); // Register the shader module in the list.
+        shaders_modules.emplace_back(shader_info);
         log("- Shader module \"" + file_name + "\" (" + force_string(shader_module) + ") created successfully!");
+    }
+
+    if (failed != 0)
+    {
+        error_log("Warning: " + std::to_string(failed) + " shader modules creation failed!");
     }
 
     log(std::to_string(shaders_modules.size()) + "/" + std::to_string(total) + " shaders modules created successfully!");
@@ -126,45 +134,45 @@ void destroy_vulkan_shader_modules
 {
     log("Destroying " + std::to_string(shaders_modules.size()) + " shaders modules..");
 
-    if (!logical_device || logical_device == VK_NULL_HANDLE)
+    if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Shaders modules destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        error_log("Shader modules destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
         return;
     }
 
     if (shaders_modules.size() < 1)
     {
-        error_log("Shaders modules destruction failed! No shaders modules were provided!");
+        error_log("Shader modules destruction failed! No shader modules were provided!");
         return;
     }
 
     int failed = 0;
     int i = 0;
 
-    // Destroy each shader module in the list.
     for (ShaderInfo &data : shaders_modules)
     {
         i++;
-        VkShaderModule shader_module = data.shader_module; // Get the shader module in the ShaderInfo structure.
+        VkShaderModule shader_module = data.shader_module;
 
-        if (!shader_module || shader_module == VK_NULL_HANDLE)
+        if (shader_module == VK_NULL_HANDLE)
         {
-            error_log("- Warning: Failed to destroy the shader module #" + std::to_string(i) + "/" + std::to_string(shaders_modules.size()) + " destruction failed! The shader module provided (" + force_string(shader_module) + ") is not valid!");
+            error_log("- Failed to destroy the shader module #" + std::to_string(i) + "/" + std::to_string(shaders_modules.size()) + "! The shader module provided (" + force_string(shader_module) + ") is not valid!");
             failed++;
             continue;
         }
 
-        // Destroy the shader module and dispose of the address.
         vkDestroyShaderModule(logical_device, shader_module, nullptr);
         shader_module = VK_NULL_HANDLE;
 
         log("- Shader module #" + std::to_string(i) + "/" + std::to_string(shaders_modules.size()) + " destroyed successfully!");
     }
 
-    if (failed > 0) error_log("Warning: " + std::to_string(failed) + " shaders modules failed to destroy! This might lead to some memory leaks!");
-    log(std::to_string(shaders_modules.size() - failed) + "/" + std::to_string(shaders_modules.size()) + " shaders modules destroyed successfully!");
+    if (failed != 0)
+    {
+        error_log("Warning: " + std::to_string(failed) + " shader modules failed to destroy! This might lead to some memory leaks!");
+    }
 
-    // Free the list.
+    log(std::to_string(shaders_modules.size() - failed) + "/" + std::to_string(shaders_modules.size()) + " shader modules destroyed successfully!");
     shaders_modules.clear();
 }
 
