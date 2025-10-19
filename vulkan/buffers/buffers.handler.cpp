@@ -38,7 +38,7 @@ void create_vulkan_buffer
     }
 
     // Info for the buffer creation.
-    VkBufferCreateInfo buffer_info
+    const VkBufferCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
         .size = buffer_size,
@@ -47,7 +47,7 @@ void create_vulkan_buffer
     };
 
     buffer = VK_NULL_HANDLE;
-    const VkResult buffer_creation = vkCreateBuffer(logical_device, &buffer_info, nullptr, &buffer);
+    const VkResult buffer_creation = vkCreateBuffer(logical_device, &create_info, nullptr, &buffer);
 
     if (buffer_creation != VK_SUCCESS)
     {

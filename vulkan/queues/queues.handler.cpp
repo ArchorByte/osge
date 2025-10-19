@@ -68,7 +68,7 @@ std::vector<VkDeviceQueueCreateInfo> make_queues_create_info
 
     for (const uint32_t queue : unique_queues_families)
     {
-        VkDeviceQueueCreateInfo queue_create_info
+        const VkDeviceQueueCreateInfo create_info
         {
             .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
             .queueFamilyIndex = queue,          // Index of the queue.
@@ -76,7 +76,7 @@ std::vector<VkDeviceQueueCreateInfo> make_queues_create_info
             .pQueuePriorities = &queue_priority // Set the custom priority.
         };
 
-        queues_create_info.push_back(queue_create_info);
+        queues_create_info.push_back(create_info);
     }
 
     log(std::to_string(unique_queues_families.size()) + " queue families create info created successfully!");

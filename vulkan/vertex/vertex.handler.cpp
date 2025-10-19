@@ -7,7 +7,7 @@
 // Return the binding description of the Vertex input.
 VkVertexInputBindingDescription Vertex::get_binding_description()
 {
-    VkVertexInputBindingDescription description
+    const VkVertexInputBindingDescription description
     {
         .binding = 0,             // Set the binding index.
         .stride = sizeof(Vertex), // Size of each vertex.

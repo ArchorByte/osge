@@ -35,14 +35,14 @@ std::vector<VkFence> create_vulkan_fences
 
     for (int i = 0; i < images_count; i++)
     {
-        VkFenceCreateInfo info
+        const VkFenceCreateInfo create_info
         {
             .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
             .flags = VK_FENCE_CREATE_SIGNALED_BIT
         };
 
         VkFence fence = VK_NULL_HANDLE;
-        const VkResult fence_creation = vkCreateFence(logical_device, &info, nullptr, &fence);
+        const VkResult fence_creation = vkCreateFence(logical_device, &create_info, nullptr, &fence);
 
         if (fence_creation != VK_SUCCESS)
         {

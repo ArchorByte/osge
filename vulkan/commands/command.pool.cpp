@@ -31,7 +31,7 @@ VkCommandPool create_vulkan_command_pool
         fatal_error_log("Command pool creation failed! The graphics family index provided (" + std::to_string(graphics_family_index) + ") is not valid!");
     }
 
-    VkCommandPoolCreateInfo creation_info
+    const VkCommandPoolCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
         .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, // Allow the command buffers to reset.
@@ -39,7 +39,7 @@ VkCommandPool create_vulkan_command_pool
     };
 
     VkCommandPool command_pool = VK_NULL_HANDLE;
-    const VkResult pool_creation = vkCreateCommandPool(logical_device, &creation_info, nullptr, &command_pool);
+    const VkResult pool_creation = vkCreateCommandPool(logical_device, &create_info, nullptr, &command_pool);
 
     if (pool_creation != VK_SUCCESS)
     {

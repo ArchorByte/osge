@@ -35,13 +35,13 @@ std::vector<VkSemaphore> create_vulkan_semaphores
 
     for (int i = 0; i < images_count; i++)
     {
-        VkSemaphoreCreateInfo info
+        const VkSemaphoreCreateInfo create_info
         {
             .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
         };
 
         VkSemaphore semaphore = VK_NULL_HANDLE;
-        const VkResult semaphore_creation = vkCreateSemaphore(logical_device, &info, nullptr, &semaphore);
+        const VkResult semaphore_creation = vkCreateSemaphore(logical_device, &create_info, nullptr, &semaphore);
 
         if (semaphore_creation != VK_SUCCESS)
         {

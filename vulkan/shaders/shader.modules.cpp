@@ -41,7 +41,7 @@ VkShaderModule create_vulkan_shader_module
         fatal_error_log("Shader module \"" + file_name + "\" creation failed! The file name provided is not valid!");
     }
 
-    VkShaderModuleCreateInfo create_info
+    const VkShaderModuleCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
         .codeSize = binaries.size(),

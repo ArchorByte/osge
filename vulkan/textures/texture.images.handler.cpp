@@ -86,7 +86,7 @@ std::vector<TextureImage> create_vulkan_texture_images
             fatal_error_log("Texture image #" + std::to_string(i) + "/" + std::to_string(texture_image_info.size()) + " creation failed! The image height provided (" + std::to_string(image_height) + ") is not valid!");
         }
 
-        VkImageCreateInfo create_info
+        const VkImageCreateInfo create_info
         {
             .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
             .imageType = VK_IMAGE_TYPE_2D,
@@ -127,7 +127,7 @@ std::vector<TextureImage> create_vulkan_texture_images
         VkMemoryRequirements memory_requirements;
         vkGetImageMemoryRequirements(logical_device, texture_image, &memory_requirements);
 
-        VkMemoryAllocateInfo allocation_info
+        const VkMemoryAllocateInfo allocation_info
         {
             .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
             .allocationSize = memory_requirements.size,

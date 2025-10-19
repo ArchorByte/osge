@@ -39,7 +39,7 @@ std::vector<VkPipelineShaderStageCreateInfo> create_vulkan_shader_stages
             continue;
         }
 
-        VkPipelineShaderStageCreateInfo create_info
+        const VkPipelineShaderStageCreateInfo create_info
         {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
             .stage = shader_type == "vert" ? VK_SHADER_STAGE_VERTEX_BIT : VK_SHADER_STAGE_FRAGMENT_BIT, // Select between Vertex or Fragment shader.

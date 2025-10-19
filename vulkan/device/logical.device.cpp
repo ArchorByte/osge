@@ -34,7 +34,7 @@ VkDevice create_logical_device
     VkPhysicalDeviceFeatures device_features {};
     vkGetPhysicalDeviceFeatures(physical_device, &device_features);
 
-    VkDeviceCreateInfo device_create_info
+    const VkDeviceCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
         .queueCreateInfoCount = static_cast<uint32_t>(queues_create_info.size()),   // Amount of queues to create.
@@ -45,7 +45,7 @@ VkDevice create_logical_device
     };
 
     VkDevice logical_device = VK_NULL_HANDLE;
-    const VkResult device_creation = vkCreateDevice(physical_device, &device_create_info, nullptr, &logical_device);
+    const VkResult device_creation = vkCreateDevice(physical_device, &create_info, nullptr, &logical_device);
 
     if (device_creation != VK_SUCCESS)
     {

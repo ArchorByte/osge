@@ -37,7 +37,7 @@ VkSampler create_vulkan_texture_sampler
     VkPhysicalDeviceProperties device_properties {};
     vkGetPhysicalDeviceProperties(physical_device, &device_properties);
 
-    VkSamplerCreateInfo sampler_create_info
+    VkSamplerCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
         .magFilter = VK_FILTER_LINEAR, // Set the magnification filter.
@@ -58,17 +58,17 @@ VkSampler create_vulkan_texture_sampler
     if (device_features.samplerAnisotropy)
     {
         log("Enabled anisotropy sampling features!");
-        sampler_create_info.anisotropyEnable = VK_TRUE;
-        sampler_create_info.maxAnisotropy = device_properties.limits.maxSamplerAnisotropy;
+        create_info.anisotropyEnable = VK_TRUE;
+        create_info.maxAnisotropy = device_properties.limits.maxSamplerAnisotropy;
     }
     else // Disable anisotropy features if it's not supported by the physical device.
     {
-        sampler_create_info.anisotropyEnable = VK_FALSE;
-        sampler_create_info.maxAnisotropy = 1.0f;
+        create_info.anisotropyEnable = VK_FALSE;
+        create_info.maxAnisotropy = 1.0f;
     }
 
     VkSampler texture_sampler = VK_NULL_HANDLE;
-    const VkResult sampler_creation = vkCreateSampler(logical_device, &sampler_create_info, nullptr, &texture_sampler);
+    const VkResult sampler_creation = vkCreateSampler(logical_device, &create_info, nullptr, &texture_sampler);
 
     if (sampler_creation != VK_SUCCESS)
     {

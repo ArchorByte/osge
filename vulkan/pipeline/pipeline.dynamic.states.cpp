@@ -17,8 +17,7 @@ VkPipelineDynamicStateCreateInfo create_vulkan_dynamic_states()
         VK_DYNAMIC_STATE_SCISSOR
     };
 
-    // Create info for the dynamic state.
-    VkPipelineDynamicStateCreateInfo dynamic_state_create_info
+    const VkPipelineDynamicStateCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
         .dynamicStateCount = static_cast<uint32_t>(dynamic_states.size()), // Amount of dynamic states to use.
@@ -26,5 +25,5 @@ VkPipelineDynamicStateCreateInfo create_vulkan_dynamic_states()
     };
 
     log("Pipeline dynamic state created successfully!");
-    return dynamic_state_create_info;
+    return create_info;
 }
