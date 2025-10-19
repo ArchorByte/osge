@@ -7,15 +7,17 @@
 // Return the binding description of the Vertex input.
 VkVertexInputBindingDescription Vertex::get_binding_description()
 {
-    VkVertexInputBindingDescription description {};
-    description.binding = 0;                             // Set the binding index.
-    description.stride = sizeof(Vertex);                 // Pass the size of the shader data.
-    description.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; // Set the input rate as "per-vertex" and not "per-instance".
+    VkVertexInputBindingDescription description
+    {
+        .binding = 0,             // Set the binding index.
+        .stride = sizeof(Vertex), // Size of each vertex.
+        .inputRate = VK_VERTEX_INPUT_RATE_VERTEX
+    };
 
     return description;
 }
 
-// Return the attribute description of the Vertex input.
+// Return the attribute description of the vertex input.
 std::array<VkVertexInputAttributeDescription, 3> Vertex::get_attribute_descriptions()
 {
     std::array<VkVertexInputAttributeDescription, 3> descriptions {};
@@ -23,7 +25,7 @@ std::array<VkVertexInputAttributeDescription, 3> Vertex::get_attribute_descripti
     // Vertex position.
     descriptions[0].binding = 0;                         // Set the binding index.
     descriptions[0].location = 0;                        // Set the position.
-    descriptions[0].format = VK_FORMAT_R32G32_SFLOAT;    // Set the format as two 32-bits elements.
+    descriptions[0].format = VK_FORMAT_R32G32_SFLOAT;    // Set the color format.
     descriptions[0].offset = offsetof(Vertex, position); // Set the color offset.
 
     // Vertex color.
