@@ -9,8 +9,7 @@ VkPipelineMultisampleStateCreateInfo create_vulkan_multisampling_state()
 {
     log("Creating a multisampling state..");
 
-    // Create info for the multisampling state.
-    VkPipelineMultisampleStateCreateInfo multisample_state_info
+    const VkPipelineMultisampleStateCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
         .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT, // Disable multisampling.
@@ -20,5 +19,5 @@ VkPipelineMultisampleStateCreateInfo create_vulkan_multisampling_state()
     };
 
     log("Multisampling state created successfully!");
-    return multisample_state_info;
+    return create_info;
 }

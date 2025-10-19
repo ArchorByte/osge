@@ -44,7 +44,7 @@ std::vector<VkFramebuffer> create_vulkan_framebuffers
     {
         VkImageView image_view = image_views[i];
 
-        VkFramebufferCreateInfo create_info
+        const VkFramebufferCreateInfo create_info
         {
             .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
             .renderPass = render_pass,   // Pass the render pass.

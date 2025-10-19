@@ -13,7 +13,7 @@ VkPipelineVertexInputStateCreateInfo create_vulkan_vertex_input_state()
     const static auto binding_description = Vertex::get_binding_description();
     const static auto attribute_descriptions = Vertex::get_attribute_descriptions();
 
-    VkPipelineVertexInputStateCreateInfo create_info
+    const VkPipelineVertexInputStateCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
         .vertexBindingDescriptionCount = 1,

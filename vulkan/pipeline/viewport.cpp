@@ -13,7 +13,7 @@ VkViewport create_vulkan_viewport
     log("Creating a viewport..");
 
     // Create the viewport for rendering.
-    VkViewport viewport
+    const VkViewport viewport
     {
         .x = 0.0f, // Starting x position of the viewport.
         .y = 0.0f, // Starting y position.
@@ -32,8 +32,7 @@ VkPipelineViewportStateCreateInfo create_viewport_state()
 {
     log("Creating a viewport state..");
 
-    // Create info for the viewport state.
-    VkPipelineViewportStateCreateInfo viewport_state_create_info
+    const VkPipelineViewportStateCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
         .viewportCount = 1,
@@ -43,5 +42,5 @@ VkPipelineViewportStateCreateInfo create_viewport_state()
     };
 
     log("Viewport state created successfully!");
-    return viewport_state_create_info;
+    return create_info;
 }

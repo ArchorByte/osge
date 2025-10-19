@@ -23,20 +23,20 @@ VkRenderPass create_vulkan_render_pass
         fatal_error_log("Render pass creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
     }
 
-    VkAttachmentReference attachment_reference
+    const VkAttachmentReference attachment_reference
     {
         .attachment = 0,
         .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL // Select the reference layout.
     };
 
-    VkSubpassDescription subpass
+    const VkSubpassDescription subpass
     {
         .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS, // This subpass will be used for a graphics pipeline.
         .colorAttachmentCount = 1,
         .pColorAttachments = &attachment_reference
     };
 
-    VkRenderPassCreateInfo pass_create_info
+    const VkRenderPassCreateInfo pass_create_info
     {
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
         .attachmentCount = 1,

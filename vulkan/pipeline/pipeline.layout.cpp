@@ -29,15 +29,14 @@ VkPipelineLayout create_vulkan_pipeline_layout
     }
 
     // Push constant range for texture selection.
-    VkPushConstantRange push_constant_range
+    const VkPushConstantRange push_constant_range
     {
         .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
         .offset = 0,
         .size = sizeof(int)
     };
 
-    // Create info for the pipeline layout.
-    VkPipelineLayoutCreateInfo create_info
+    const VkPipelineLayoutCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
         .setLayoutCount = 1,         // Amount of layouts to enable.

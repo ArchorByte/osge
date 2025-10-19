@@ -58,7 +58,7 @@ VkSwapchainKHR create_vulkan_swapchain
         present_family_index
     };
 
-    VkSwapchainCreateInfoKHR info
+    VkSwapchainCreateInfoKHR create_info
     {
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
         .surface = vulkan_surface,                         // Pass the Vulkan surface.
@@ -77,19 +77,19 @@ VkSwapchainKHR create_vulkan_swapchain
     // Set up the sharing mode depending on the queue family indexes.
     if (graphics_family_index != present_family_index)
     {
-        info.imageSharingMode = VK_SHARING_MODE_CONCURRENT; // Allow images sharing without ownership transfers.
-        info.queueFamilyIndexCount = 2;                     // Amount of queue families that will be allowed to share images.
-        info.pQueueFamilyIndices = queue_family_indices;    // Pass the queue family indexes.
+        create_info.imageSharingMode = VK_SHARING_MODE_CONCURRENT; // Allow images sharing without ownership transfers.
+        create_info.queueFamilyIndexCount = 2;                     // Amount of queue families that will be allowed to share images.
+        create_info.pQueueFamilyIndices = queue_family_indices;    // Pass the queue family indexes.
     }
     else
     {
-        info.imageSharingMode =  VK_SHARING_MODE_EXCLUSIVE; // Disallow images sharing without ownership transfers.
-        info.queueFamilyIndexCount = 0;
-        info.pQueueFamilyIndices = nullptr;
+        create_info.imageSharingMode =  VK_SHARING_MODE_EXCLUSIVE; // Disallow images sharing without ownership transfers.
+        create_info.queueFamilyIndexCount = 0;
+        create_info.pQueueFamilyIndices = nullptr;
     }
 
     VkSwapchainKHR swapchain = VK_NULL_HANDLE;
-    const VkResult swapchain_creation = vkCreateSwapchainKHR(logical_device, &info, nullptr, &swapchain);
+    const VkResult swapchain_creation = vkCreateSwapchainKHR(logical_device, &create_info, nullptr, &swapchain);
 
     if (swapchain_creation != VK_SUCCESS)
     {

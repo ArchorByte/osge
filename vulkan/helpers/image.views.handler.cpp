@@ -28,7 +28,7 @@ VkImageView create_image_view
         fatal_error_log("Image view creation failed! The format provided (" + std::to_string(format) + ") is not valid!");
     }
 
-    VkImageViewCreateInfo info
+    const VkImageViewCreateInfo info
     {
         .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
         .image = swapchain_image,

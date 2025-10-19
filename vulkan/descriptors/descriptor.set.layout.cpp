@@ -30,7 +30,7 @@ VkDescriptorSetLayout create_vulkan_descriptor_set_layout
         fatal_error_log("Descriptor set layout creation failed! No texture image views were provided!");
     }
 
-    VkDescriptorSetLayoutBinding uniform_buffer_binding
+    const VkDescriptorSetLayoutBinding uniform_buffer_binding
     {
         .binding = 0,                                        // Binding index in the shader.
         .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, // Use this binding for a uniform buffer.
@@ -38,7 +38,7 @@ VkDescriptorSetLayout create_vulkan_descriptor_set_layout
         .stageFlags = VK_SHADER_STAGE_VERTEX_BIT             // Allow vertex shader stages to access to this binding.
     };
 
-    VkDescriptorSetLayoutBinding sampler_binding
+    const VkDescriptorSetLayoutBinding sampler_binding
     {
         .binding = 1,
         .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, // Use this binding for an image sampler.
@@ -49,7 +49,7 @@ VkDescriptorSetLayout create_vulkan_descriptor_set_layout
     // Merge the two bindings into one vector list.
     std::vector<VkDescriptorSetLayoutBinding> bindings = { uniform_buffer_binding, sampler_binding };
 
-    VkDescriptorSetLayoutCreateInfo create_info
+    const VkDescriptorSetLayoutCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
         .bindingCount = static_cast<uint32_t>(bindings.size()), // Amount of bindings to pass.

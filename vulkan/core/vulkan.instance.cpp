@@ -41,7 +41,7 @@ VkInstance create_vulkan_instance
     const int engine_version_patch = EngineVersion::ENGINE_VERSION_PATCH;
 
     // Note: To change most of your game's info, you can change the config.hpp file in the main folder.
-    VkApplicationInfo app_info
+    const VkApplicationInfo app_info
     {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
         .pApplicationName = game_name.c_str(),
@@ -59,7 +59,7 @@ VkInstance create_vulkan_instance
         fatal_error_log("Vulkan instance creation failed! Failed to retrieve the required SDL3 extensions!");
     }
 
-    VkInstanceCreateInfo create_info
+    const VkInstanceCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
         .pApplicationInfo = &app_info,

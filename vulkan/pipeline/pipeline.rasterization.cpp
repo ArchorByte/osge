@@ -9,8 +9,7 @@ VkPipelineRasterizationStateCreateInfo create_vulkan_rasterization_state()
 {
     log("Creating a rasterization state..");
 
-    // Create info for the rasterization state
-    VkPipelineRasterizationStateCreateInfo rasterization_create_info
+    const VkPipelineRasterizationStateCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
         .depthClampEnable = VK_FALSE,                 // Disable depth clamp.
@@ -22,5 +21,5 @@ VkPipelineRasterizationStateCreateInfo create_vulkan_rasterization_state()
     };
 
     log("Rasterization state created successfully!");
-    return rasterization_create_info;
+    return create_info;
 }

@@ -55,7 +55,7 @@ VkPipeline create_vulkan_graphics_pipeline
     };
 
     // Create info for the color blend state.
-    VkPipelineColorBlendStateCreateInfo color_blend_create_info
+    const VkPipelineColorBlendStateCreateInfo color_blend_create_info
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
         .logicOpEnable = VK_FALSE, // Disable logical operations.
@@ -64,7 +64,7 @@ VkPipeline create_vulkan_graphics_pipeline
     };
 
     // Create info for the graphics pipeline.
-    VkGraphicsPipelineCreateInfo pipeline_create_info
+    const VkGraphicsPipelineCreateInfo pipeline_create_info
     {
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
         .stageCount = static_cast<uint32_t>(pipeline_shaders_stages.size()), // Amount of shader stages to pass.

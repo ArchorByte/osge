@@ -11,8 +11,7 @@ VkPipelineInputAssemblyStateCreateInfo create_vulkan_assembly_input_state()
 {
     log("Creating an assembly input state..");
 
-    // Info for the assembly state.
-    VkPipelineInputAssemblyStateCreateInfo pipeline_input_assembly_state_create_info
+    const VkPipelineInputAssemblyStateCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
@@ -20,5 +19,5 @@ VkPipelineInputAssemblyStateCreateInfo create_vulkan_assembly_input_state()
     };
 
     log("Assembly input state created successfully!");
-    return pipeline_input_assembly_state_create_info;
+    return create_info;
 }
