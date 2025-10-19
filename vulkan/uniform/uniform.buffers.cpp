@@ -26,22 +26,22 @@ std::vector<UniformBufferInfo> create_vulkan_uniform_buffers
 {
     log("Creating " + std::to_string(images_count) + " uniform buffers..");
 
-    if (!logical_device || logical_device == VK_NULL_HANDLE)
+    if (logical_device == VK_NULL_HANDLE)
     {
         fatal_error_log("Uniform buffers creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
     }
 
-    if (!physical_device || physical_device == VK_NULL_HANDLE)
+    if (physical_device == VK_NULL_HANDLE)
     {
         fatal_error_log("Uniform buffers creation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
     }
 
-    if (!command_pool || command_pool == VK_NULL_HANDLE)
+    if (command_pool == VK_NULL_HANDLE)
     {
         fatal_error_log("Uniform buffers creation failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
     }
 
-    if (!graphics_queue || graphics_queue == VK_NULL_HANDLE)
+    if (graphics_queue == VK_NULL_HANDLE)
     {
         fatal_error_log("Uniform buffers creation failed! The graphics queue provided (" + force_string(graphics_queue) + ") is not valid!");
     }
@@ -52,9 +52,9 @@ std::vector<UniformBufferInfo> create_vulkan_uniform_buffers
     }
 
     std::vector<UniformBufferInfo> output;
-    VkDeviceSize buffer_size = sizeof(UniformBufferObject); // Calculate the size needed for the buffer.
+    output.reserve(images_count);
+    const VkDeviceSize buffer_size = sizeof(UniformBufferObject); // Calculate the size needed for the buffer.
 
-    // Create a uniform buffer for each image.
     for (int i = 0; i < images_count; i++)
     {
         VkBuffer buffer = VK_NULL_HANDLE;
@@ -64,14 +64,14 @@ std::vector<UniformBufferInfo> create_vulkan_uniform_buffers
         create_vulkan_buffer(logical_device, physical_device, buffer_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer, buffer_memory);
         vkMapMemory(logical_device, buffer_memory, 0, buffer_size, 0, &data); // Map the buffer memory in the app address space.
 
-        UniformBufferInfo info =
+        const UniformBufferInfo info =
         {
             buffer,
             buffer_memory,
             data
         };
 
-        output.emplace_back(info); // Register the buffer.
+        output.emplace_back(info);
         log("- Uniform buffer #" + std::to_string(i + 1) + "/" + std::to_string(images_count) + " (" + force_string(buffer) + ") created successfully!");
     }
 
@@ -88,7 +88,7 @@ void destroy_vulkan_uniform_buffers
 {
     log("Destroying " + std::to_string(uniform_buffers.size()) + " uniform buffers..");
 
-    if (!logical_device || logical_device == VK_NULL_HANDLE)
+    if (logical_device == VK_NULL_HANDLE)
     {
         error_log("Uniform buffers destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
         return;
@@ -103,49 +103,49 @@ void destroy_vulkan_uniform_buffers
     int failed = 0;
     int i = 0;
 
-    // Destroy each uniform buffer in the list.
     for (UniformBufferInfo &uniform_buffer : uniform_buffers)
     {
         i++;
 
-        VkBuffer buffer = uniform_buffer.buffer;                     // Retrieve the buffer.
-        VkDeviceMemory buffer_memory = uniform_buffer.buffer_memory; // Retrieve the buffer memory.
-        void* data = uniform_buffer.data;                            // Retrieve the buffer data.
+        VkBuffer buffer = uniform_buffer.buffer;
+        VkDeviceMemory buffer_memory = uniform_buffer.buffer_memory;
+        void* buffer_data = uniform_buffer.data;
 
-        if (!buffer || buffer == VK_NULL_HANDLE)
+        if (buffer == VK_NULL_HANDLE)
         {
-            error_log("- Warning: Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer provided (" + force_string(buffer) + ") is not valid!");
+            error_log("- Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer provided (" + force_string(buffer) + ") is not valid!");
             failed++;
             continue;
         }
 
-        if (!buffer_memory || buffer_memory == VK_NULL_HANDLE)
+        if (buffer_memory == VK_NULL_HANDLE)
         {
-            error_log("- Warning: Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer memory provided (" + force_string(buffer_memory) + ") is not valid!");
+            error_log("- Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer memory provided (" + force_string(buffer_memory) + ") is not valid!");
             failed++;
             continue;
         }
 
-        if (!data)
+        if (!buffer_data)
         {
-            error_log("- Warning: Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer data provided (" + force_string(data) + ") is not valid!");
+            error_log("- Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer data provided (" + force_string(buffer_data) + ") is not valid!");
         }
 
-        // Destroy the buffer and dispose of the address.
         vkDestroyBuffer(logical_device, buffer, nullptr);
-        buffer = VK_NULL_HANDLE;
-
-        // Free the memory occupied by the former buffer and dispose of the address as well.
         vkFreeMemory(logical_device, buffer_memory, nullptr);
+
+        buffer = VK_NULL_HANDLE;
         buffer_memory = VK_NULL_HANDLE;
+        buffer_data = nullptr;
 
         log("- Uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + " destroyed successfully!");
     }
 
-    if (failed > 0) error_log("Warning: " + std::to_string(failed) + " uniform buffers failed to destroy! This might lead to some memory leaks or memory overload.");
-    log(std::to_string(uniform_buffers.size() - failed) + "/" + std::to_string(uniform_buffers.size()) + " uniform buffers destroyed successfully!");
+    if (failed > 0)
+    {
+        error_log("Warning: " + std::to_string(failed) + " uniform buffers failed to destroy! This might lead to some memory leaks or memory overload.");
+    }
 
-    // Free the list.
+    log(std::to_string(uniform_buffers.size() - failed) + "/" + std::to_string(uniform_buffers.size()) + " uniform buffers destroyed successfully!");
     uniform_buffers.clear();
 }
 

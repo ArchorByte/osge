@@ -8,6 +8,7 @@
 #include <chrono>
 #include <cstring>
 
+// Update the data of a uniform buffer.
 void update_uniform_buffer
 (
     const uint32_t &frame,
@@ -15,10 +16,10 @@ void update_uniform_buffer
     const void* buffer_data
 )
 {
-    static auto start_time = std::chrono::high_resolution_clock::now();
+    const static auto start_time = std::chrono::high_resolution_clock::now();
 
-    auto current_time = std::chrono::high_resolution_clock::now();
-    float time = std::chrono::duration<float, std::chrono::seconds::period>(current_time - start_time).count();
+    const auto current_time = std::chrono::high_resolution_clock::now();
+    const float time = std::chrono::duration<float, std::chrono::seconds::period>(current_time - start_time).count();
 
     UniformBufferObject object {};
     object.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
