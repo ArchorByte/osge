@@ -22,7 +22,7 @@ std::vector<VkImageView> create_vulkan_texture_image_views
 {
     log("Creating " + std::to_string(texture_images.size()) + " texture image views..");
 
-    if (!logical_device || logical_device == VK_NULL_HANDLE)
+    if (logical_device == VK_NULL_HANDLE)
     {
         fatal_error_log("Texture image views creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
     }
@@ -33,12 +33,12 @@ std::vector<VkImageView> create_vulkan_texture_image_views
     }
 
     std::vector<VkImageView> image_views;
+    image_views.reserve(texture_images.size());
 
-    // Create a view for each texture image.
     for (int i = 0; i < texture_images.size(); i++)
     {
-        VkImageView image_view = create_image_view(logical_device, texture_images[i].texture_image, VK_FORMAT_R8G8B8A8_SRGB);
-        image_views.emplace_back(image_view); // Register the view.
+        const VkImageView image_view = create_image_view(logical_device, texture_images[i].texture_image, VK_FORMAT_R8G8B8A8_SRGB);
+        image_views.emplace_back(image_view);
         log("- Texture image view #" + std::to_string(i + 1) + "/" + std::to_string(texture_images.size()) + " (" + force_string(image_view) + ") created successfully!");
     }
 
@@ -55,7 +55,7 @@ void destroy_vulkan_texture_image_views
 {
     log("Destroying " + std::to_string(texture_image_views.size()) + " texture image views..");
 
-    if (!logical_device || logical_device == VK_NULL_HANDLE)
+    if (logical_device == VK_NULL_HANDLE)
     {
         error_log("Texture image views destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
         return;
@@ -70,29 +70,29 @@ void destroy_vulkan_texture_image_views
     int failed = 0;
     int i = 0;
 
-    // Destroy each image view in the list.
     for (VkImageView &texture_image_view : texture_image_views)
     {
         i++;
 
-        if (!texture_image_view || texture_image_view == VK_NULL_HANDLE)
+        if (texture_image_view == VK_NULL_HANDLE)
         {
-            error_log("- Warning: Failed to destroy the texture image view #" + std::to_string(i) + "/" + std::to_string(texture_image_views.size()) + "! The image view provided (" + force_string(texture_image_view) + ") is not valid!");
+            error_log("- Failed to destroy the texture image view #" + std::to_string(i) + "/" + std::to_string(texture_image_views.size()) + "! The image view provided (" + force_string(texture_image_view) + ") is not valid!");
             failed++;
             continue;
         }
 
-        // Destroy the image view and dispose of the address.
         vkDestroyImageView(logical_device, texture_image_view, nullptr);
         texture_image_view = VK_NULL_HANDLE;
 
         log("- Texture image view #" + std::to_string(i) + "/" + std::to_string(texture_image_views.size()) + " destroyed successfully!");
     }
 
-    if (failed > 0) error_log("Warning: " + std::to_string(failed) + " texture image views failed to destroy! This might lead to some memory leaks or memory overload.");
-    log(std::to_string(texture_image_views.size() - failed) + "/" + std::to_string(texture_image_views.size()) + " texture image views destroyed successfully!");
+    if (failed > 0)
+    {
+        error_log("Warning: " + std::to_string(failed) + " texture image views failed to destroy! This might lead to some memory leaks or memory overload.");
+    }
 
-    // Free the list.
+    log(std::to_string(texture_image_views.size() - failed) + "/" + std::to_string(texture_image_views.size()) + " texture image views destroyed successfully!");
     texture_image_views.clear();
 }
 

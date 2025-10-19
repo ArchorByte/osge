@@ -9,7 +9,6 @@ void transition_image_layout
     const VkCommandPool &command_pool,
     const VkQueue &graphics_queue,
     const VkImage &image,
-    const VkFormat &format,
     const VkImageLayout &old_layout,
     const VkImageLayout &new_layout
 );
