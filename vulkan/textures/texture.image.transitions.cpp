@@ -2,6 +2,7 @@
 
 #include "../commands/command.buffer.handler.hpp"
 #include "../../logs/logs.handler.hpp"
+#include "../../helpers/help.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -12,29 +13,48 @@ void transition_image_layout
     const VkCommandPool &command_pool,
     const VkQueue &graphics_queue,
     const VkImage &image,
-    const VkFormat &format,
     const VkImageLayout &old_layout,
     const VkImageLayout &new_layout
 )
 {
     log(" > Transitioning a texture image layout from " + std::to_string(old_layout) + " to " + std::to_string(new_layout) + "..");
 
+    if (logical_device == VK_NULL_HANDLE)
+    {
+        fatal_error_log("Texture image layout transition failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+    }
+
+    if (command_pool == VK_NULL_HANDLE)
+    {
+        fatal_error_log("Texture image layout transition failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
+    }
+
+    if (graphics_queue == VK_NULL_HANDLE)
+    {
+        fatal_error_log("Texture image layout transition failed! The graphics queue provided (" + force_string(graphics_queue) + ") is not valid!");
+    }
+
     VkCommandBuffer command_buffer = begin_one_time_vulkan_command_buffer(logical_device, command_pool);
     VkPipelineStageFlags source_stage;
     VkPipelineStageFlags destination_stage;
 
-    VkImageMemoryBarrier barrier {};
-    barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    barrier.oldLayout = old_layout;
-    barrier.newLayout = new_layout;
-    barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    barrier.image = image;
-    barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    barrier.subresourceRange.baseMipLevel = 0;
-    barrier.subresourceRange.levelCount = 1;
-    barrier.subresourceRange.baseArrayLayer = 0;
-    barrier.subresourceRange.layerCount = 1;
+    VkImageMemoryBarrier barrier
+    {
+        .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+        .oldLayout = old_layout,
+        .newLayout = new_layout,
+        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .image = image,
+        .subresourceRange =
+        {
+            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, // Aspect of the image to transfer.
+            .baseMipLevel = 0,
+            .levelCount = 1,
+            .baseArrayLayer = 0,
+            .layerCount = 1
+        }
+    };
 
     if (old_layout == VK_IMAGE_LAYOUT_UNDEFINED && new_layout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
     {
@@ -50,10 +70,7 @@ void transition_image_layout
         source_stage = VK_PIPELINE_STAGE_TRANSFER_BIT;
         destination_stage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
     }
-    else
-    {
-        fatal_error_log("Image layout transition failed! The layout transition requested is not supported!");
-    }
+    else fatal_error_log("Image layout transition failed! The layout transition requested is not supported!");
 
     vkCmdPipelineBarrier(command_buffer, source_stage, destination_stage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     end_command_buffer(logical_device, command_pool, graphics_queue, command_buffer);
