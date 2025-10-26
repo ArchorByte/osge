@@ -5,6 +5,8 @@ The project will be publicly released once we finished everything here.
 # TODO list
 - [ ] Implement Vulkan. (https://vulkan-tutorial.com/Depth_buffering)
 - [X] Logs system.
+- [X] Add cryptography tools.
+- [ ] Build a custom compiling process.
 - [ ] Add a "fixed update" loop (like Unity Engine).
 - [ ] Input detection (keyboard, mouse and controllers).
 - [ ] Implement OpenGL.

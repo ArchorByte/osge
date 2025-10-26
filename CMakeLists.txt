@@ -19,6 +19,11 @@ if (WIN32)
     set(VULKAN_LIB ${WINDOWS_BINARIES}/vulkan-1.lib)
     include_directories(${CMAKE_SOURCE_DIR}/include/vulkan)
 
+    # OpenSSL headers and binaries.
+    set(OPENSSL_CRYPTO_LIB ${WINDOWS_BINARIES}/libcrypto.lib)
+    set(OPENSSL_SSL_LIB ${WINDOWS_BINARIES}/libssl.lib)
+    include_directories(${CMAKE_SOURCE_DIR}/include/openssl)
+
 # Linux systems.
 else()
     set(LINUX_BINARIES ${CMAKE_SOURCE_DIR}/bin/linux)
@@ -31,10 +36,16 @@ else()
     set(VULKAN_LIB ${LINUX_BINARIES}/libvulkan.so)
     include_directories(${CMAKE_SOURCE_DIR}/include/vulkan)
 
+    # OpenSSL headers and binaries.
+    set(OPENSSL_CRYPTO_LIB ${LINUX_BINARIES}/libcrypto.so)
+    set(OPENSSL_SSL_LIB ${LINUX_BINARIES}/libssl.so)
+    include_directories(${CMAKE_SOURCE_DIR}/include/openssl)
+
 endif()
 
 # Include folders for compilation.
 include_directories (
+    ${CMAKE_SOURCE_DIR}/crypto
     ${CMAKE_SOURCE_DIR}/environment
     ${CMAKE_SOURCE_DIR}/game
     ${CMAKE_SOURCE_DIR}/game/engine
@@ -62,6 +73,7 @@ include_directories (
 
 # Select all C++ scripts contained in the previously included folder.
 file(GLOB MAIN main.cpp)
+file(GLOB CRYPTO crypto/*.cpp)
 file(GLOB ENV environment/*.cpp)
 file(GLOB GAME game/*.cpp)
 file(GLOB GAME_ENGINE game/engine/*.cpp)
@@ -89,6 +101,7 @@ file(GLOB VULKAN_VERTEX vulkan/vertex/*.cpp)
 # Set a list with all of the sources we retrieved.
 set(ALL_SOURCES
     ${MAIN}
+    ${CRYPTO}
     ${ENV}
     ${GAME}
     ${GAME_ENGINE}
@@ -135,8 +148,24 @@ if (WIN32)
         "${CMAKE_SOURCE_DIR}/build/win64/out"
     )
 
+    # Copy the libcrypto-3-x64.dll file into the build folder.
+    add_custom_command (
+        TARGET new_osge_project POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/bin/windows/libcrypto-3-x64.dll"
+        "${CMAKE_SOURCE_DIR}/build/win64/out"
+    )
+
+    # Copy the libssl-3-x64.dll file into the build folder.
+    add_custom_command (
+        TARGET new_osge_project POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/bin/windows/libssl-3-x64.dll"
+        "${CMAKE_SOURCE_DIR}/build/win64/out"
+    )
+
     # Link the .lib files to the executable.
-    target_link_libraries(new_osge_project PRIVATE ${VULKAN_LIB} ${SDL3_LIB})
+    target_link_libraries(new_osge_project PRIVATE ${VULKAN_LIB} ${SDL3_LIB} ${OPENSSL_CRYPTO_LIB} ${OPENSSL_SSL_LIB})
 
 # Linux systems.
 else()
@@ -156,7 +185,23 @@ else()
         "${CMAKE_SOURCE_DIR}/build/linux/out/libvulkan.so"
     )
 
+    # Copy the libcrypto.so file into the build folder.
+    add_custom_command (
+        TARGET new_osge_project POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/bin/linux/libcrypto.so"
+        "${CMAKE_SOURCE_DIR}/build/linux/out/libcrypto.so"
+    )
+
+    # Copy the libssl.so file into the build folder.
+    add_custom_command (
+        TARGET new_osge_project POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/bin/linux/libssl.so"
+        "${CMAKE_SOURCE_DIR}/build/linux/out/libssl.so"
+    )
+
     # Link the .so files to the executable.
-    target_link_libraries(new_osge_project PRIVATE ${VULKAN_LIB} ${SDL3_LIB})
+    target_link_libraries(new_osge_project PRIVATE ${VULKAN_LIB} ${SDL3_LIB} ${OPENSSL_CRYPTO_LIB} ${OPENSSL_SSL_LIB})
 
 endif()

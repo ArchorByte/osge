@@ -11,7 +11,8 @@ In the `./docs` folder, you will find courses to guide you through the making of
 - Vulkan C++ library **v1.4.321 recommended**.
 - GLM C++ library **v1.0.1 recommended**.
 - STB C++ library.
-> Dependencies can be installed in a `./include` folder that you can create.
+- OpenSSL library **v3.2.6 recommended**.
+> Dependencies may be installed in a `./include` folder that you can create.
 
 # 📥 Installation
 1) Download the program. <br/>
