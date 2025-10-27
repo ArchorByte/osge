@@ -9,7 +9,7 @@
 VkImageView create_image_view
 (
     const VkDevice &logical_device,
-    const VkImage &swapchain_image,
+    const VkImage &image,
     const VkFormat &format
 )
 {
@@ -18,9 +18,9 @@ VkImageView create_image_view
         fatal_error_log("Image view creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
     }
 
-    if (swapchain_image == VK_NULL_HANDLE)
+    if (image == VK_NULL_HANDLE)
     {
-        fatal_error_log("Image view creation failed! The swap chain image provided (" + force_string(swapchain_image) + ") is not valid!");
+        fatal_error_log("Image view creation failed! The image provided (" + force_string(image) + ") is not valid!");
     }
 
     if (!format)
@@ -31,7 +31,7 @@ VkImageView create_image_view
     const VkImageViewCreateInfo info
     {
         .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-        .image = swapchain_image,
+        .image = image,
         .viewType = VK_IMAGE_VIEW_TYPE_2D, // Use 2D mode.
         .format = format,
         .components =
