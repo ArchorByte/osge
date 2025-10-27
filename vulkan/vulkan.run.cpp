@@ -183,7 +183,7 @@ void run_using_vulkan
 
     // Control when an image rendering is done and ready to be shown.
     std::vector<VkSemaphore> render_finished_semaphores;
-    render_finished_semaphores.resize(semaphores_count / 2);
+    render_finished_semaphores.reserve(semaphores_count / 2);
 
     int i = 0;
 

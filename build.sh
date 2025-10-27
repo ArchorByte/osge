@@ -11,10 +11,10 @@ cd out
 
 mkdir -p shaders
 
-glslc ../../../shaders/default.vert -o ./shaders/default.vert
-glslc ../../../shaders/default.frag -o ./shaders/default.frag
+glslc ../../../game/shaders/default.vert -o ./shaders/default.vert
+glslc ../../../game/shaders/default.frag -o ./shaders/default.frag
 
-cp -r ../../../textures ./
+cp -r ../../../game/textures ./
 
 cd ..
 mkdir -p cmake
