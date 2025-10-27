@@ -2,8 +2,8 @@
 
 #include "../logs/logs.handler.hpp"
 
-// Run the game using OpenGL as a graphics API.
-void run_opengl()
+// Run the game using OpenGL as the graphics API.
+void run_using_opengl()
 {
     log("Running OpenGL! Coming soon!");
 }

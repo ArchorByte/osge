@@ -31,7 +31,7 @@ public:
     Vulkan_PipelineLayout
     (
         const VkDevice &logical_device,
-    const VkDescriptorSetLayout &descriptor_set_layout
+        const VkDescriptorSetLayout &descriptor_set_layout
     );
 
     // Destructor.
