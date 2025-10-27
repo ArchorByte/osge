@@ -4,7 +4,7 @@
 #ifndef VULKAN_RUN_HPP
 #define VULKAN_RUN_HPP
 
-void run_vulkan
+void run_using_vulkan
 (
     SDL_Window* window
 );

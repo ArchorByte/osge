@@ -146,16 +146,16 @@ int main()
         switch (stoi(graphics_api))
         {
             case VULKAN:
-                run_vulkan(window.get());
+                run_using_vulkan(window.get());
                 break;
 
             case OPENGL:
-                run_opengl();
+                run_using_opengl();
                 break;
 
             // If the graphics API provided by the game.config file is not handled, we default to Vulkan.
             default:
-                run_vulkan(window.get());
+                run_using_vulkan(window.get());
                 break;
         }
 
