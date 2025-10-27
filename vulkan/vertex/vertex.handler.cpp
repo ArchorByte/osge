@@ -25,7 +25,7 @@ std::array<VkVertexInputAttributeDescription, 3> Vertex::get_attribute_descripti
     // Vertex position.
     descriptions[0].binding = 0;                         // Set the binding index.
     descriptions[0].location = 0;                        // Set the position.
-    descriptions[0].format = VK_FORMAT_R32G32_SFLOAT;    // Set the color format.
+    descriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT; // Set the color format.
     descriptions[0].offset = offsetof(Vertex, position); // Set the color offset.
 
     // Vertex color.
