@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <cstdint>
 #include <vector>
+#include <array>
 
 // Record the current state of a command buffer for rendering.
 void record_command_buffer
@@ -106,8 +107,9 @@ void record_command_buffer
         fatal_error_log("Failed to render a frame! The command buffer start returned error code " + std::to_string(buffer_launch) + ".");
     }
 
-    // Default black color.
-    const VkClearValue clear_color = {{{ 0.0f, 0.0f, 0.0f, 1.0f }}};
+    std::array<VkClearValue, 2> clear_values {};
+    clear_values[0].color = {{ 0.0f, 0.0f, 0.0f, 1.0f }};
+    clear_values[1].depthStencil = { 1.0f, 0 };
 
     VkRenderPassBeginInfo render_pass_begin_info
     {
@@ -119,8 +121,8 @@ void record_command_buffer
             .offset = { 0, 0 }, // Select the beginning of the rendering area.
             .extent = extent    // Pass the swap chain extent.
         },
-        .clearValueCount = 1,        // We are going to use only one clear color.
-        .pClearValues = &clear_color // Pass the clear color.
+        .clearValueCount = static_cast<uint32_t>(clear_values.size()), // Amount of clear values to pass.
+        .pClearValues = clear_values.data()
     };
 
     const VkBuffer vertex_buffers = { vertex_buffer };

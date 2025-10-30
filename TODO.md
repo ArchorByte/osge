@@ -3,7 +3,7 @@ This file contains the TODO list of the OSGE project. <br/>
 The project will be publicly released once we finished everything here.
 
 # TODO list
-- [ ] Implement Vulkan. (https://vulkan-tutorial.com/Depth_buffering)
+- [ ] Implement Vulkan. (https://vulkan-tutorial.com/Loading_models)
 - [X] Logs system.
 - [X] Add cryptography tools.
 - [ ] Build a custom compiling process.

@@ -10,6 +10,8 @@
 #include "core/vulkan.surface.hpp"
 #include "core/validation.layers.hpp"
 #include "core/vulkan.extensions.hpp"
+#include "depth/depth.attachments.hpp"
+#include "depth/depth.resources.hpp"
 #include "descriptors/descriptor.set.layout.hpp"
 #include "descriptors/descriptor.pool.hpp"
 #include "descriptors/descriptor.sets.hpp"
@@ -151,15 +153,20 @@ void run_using_vulkan
     const VkViewport viewport = create_vulkan_viewport(extent);
     const VkRect2D scissor = create_vulkan_scissor(extent);
 
-    const VkAttachmentDescription color_attachment = create_vulkan_color_attachment(surface_format.format);
-    const Vulkan_RenderPass render_pass(logical_device.get(), color_attachment); // Define the way we use color attachments for rendering.
-    Vulkan_Framebuffers framebuffers(logical_device.get(), swapchain_images_views.get(), extent, render_pass.get()); // Store the image views in buffers.
-
     const Vulkan_CommandPool command_pool(logical_device.get(), graphics_family_index); // Handle command buffers memory.
     const std::vector<VkCommandBuffer> command_buffers = create_vulkan_command_buffers(logical_device.get(), command_pool.get(), images_count); // Store sent commands.
     const Vulkan_VertexBuffer vertex_buffer(logical_device.get(), physical_device, command_pool.get(), graphics_queue); // Handle the vertex shader data.
     const Vulkan_IndexBuffer index_buffer(logical_device.get(), physical_device, command_pool.get(), graphics_queue); // Handle the shader data indexes.
     const Vulkan_UniformBuffers uniform_buffers(logical_device.get(), physical_device, command_pool.get(), graphics_queue, images_count); // Handle data passed to shaders.
+
+    // Depth management.
+    Vulkan_DepthResources depth_resources(physical_device, logical_device.get(), command_pool.get(), graphics_queue, extent);
+    const VkAttachmentDescription depth_attachment = create_depth_attachment(physical_device);
+    const VkAttachmentReference depth_attachment_reference = create_depth_attachment_reference();
+
+    const VkAttachmentDescription color_attachment = create_vulkan_color_attachment(surface_format.format);
+    const Vulkan_RenderPass render_pass(logical_device.get(), color_attachment, depth_attachment, depth_attachment_reference); // Define the way we use color attachments for rendering.
+    Vulkan_Framebuffers framebuffers(logical_device.get(), swapchain_images_views.get(), depth_resources.get().image_view, extent, render_pass.get()); // Store the image views in buffers.
 
     const Vulkan_Fence fences(logical_device.get(), images_count); // Handle CPU/GPU synchronisation.
     Vulkan_Semaphores semaphores(logical_device.get(), (images_count * 2)); // Image retrieve and rendering synchronisation.
@@ -309,10 +316,13 @@ void run_using_vulkan
                 graphics_family_index,
                 present_family_index,
                 render_pass.get(),
+                command_pool.get(),
+                graphics_queue,
                 window,
                 swapchain,
                 swapchain_images_views,
                 framebuffers,
+                depth_resources,
                 extent,
                 semaphores,
                 image_available_semaphores,

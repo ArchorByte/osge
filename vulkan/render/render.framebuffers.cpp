@@ -6,6 +6,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <string>
+#include <array>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
@@ -16,6 +17,7 @@ std::vector<VkFramebuffer> create_vulkan_framebuffers
 (
     const VkDevice &logical_device,
     const std::vector<VkImageView> &image_views,
+    const VkImageView &depth_image_view,
     const VkExtent2D &extent,
     const VkRenderPass &render_pass
 )
@@ -32,6 +34,11 @@ std::vector<VkFramebuffer> create_vulkan_framebuffers
         fatal_error_log("Frame buffers creation failed! No image views were provided!");
     }
 
+    if (depth_image_view == VK_NULL_HANDLE)
+    {
+        fatal_error_log("Frame buffers creation failed! The depth image view provided (" + force_string(depth_image_view) + ") is not valid!");
+    }
+
     if (render_pass == VK_NULL_HANDLE)
     {
         fatal_error_log("Frame buffers creation failed! The render pass provided (" + force_string(render_pass) + ") is not valid!");
@@ -42,14 +49,14 @@ std::vector<VkFramebuffer> create_vulkan_framebuffers
 
     for (int i = 0; i < image_views.size(); i++)
     {
-        VkImageView image_view = image_views[i];
+        const std::array<VkImageView, 2> attachments = { image_views[i], depth_image_view };
 
         const VkFramebufferCreateInfo create_info
         {
             .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-            .renderPass = render_pass,   // Pass the render pass.
-            .attachmentCount = 1,        // Amount of attachments to pass
-            .pAttachments = &image_view, // Pass the swapchain image view as an attachment.
+            .renderPass = render_pass,
+            .attachmentCount = static_cast<uint32_t>(attachments.size()),
+            .pAttachments = attachments.data(),
             .width = extent.width,
             .height = extent.height,
             .layers = 1 // Amount of layers to enable.
@@ -135,11 +142,12 @@ Vulkan_Framebuffers::Vulkan_Framebuffers
 (
     const VkDevice &logical_device,
     const std::vector<VkImageView> &image_views,
+    const VkImageView &depth_image_view,
     const VkExtent2D &extent,
     const VkRenderPass &render_pass
 ) : logical_device(logical_device)
 {
-    framebuffers = create_vulkan_framebuffers(logical_device, image_views, extent, render_pass);
+    framebuffers = create_vulkan_framebuffers(logical_device, image_views, depth_image_view, extent, render_pass);
 }
 
 // Destructor.

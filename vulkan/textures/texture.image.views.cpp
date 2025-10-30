@@ -1,7 +1,7 @@
 #include "texture.image.views.hpp"
 
 #include "texture.images.handler.hpp"
-#include "../helpers/image.views.handler.hpp"
+#include "../images/image.views.handler.hpp"
 #include "../../logs/logs.handler.hpp"
 #include "../../helpers/help.text.format.hpp"
 
@@ -37,7 +37,7 @@ std::vector<VkImageView> create_vulkan_texture_image_views
 
     for (int i = 0; i < texture_images.size(); i++)
     {
-        const VkImageView image_view = create_image_view(logical_device, texture_images[i].texture_image, VK_FORMAT_R8G8B8A8_SRGB);
+        const VkImageView image_view = create_image_view(logical_device, texture_images[i].texture_image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
         image_views.emplace_back(image_view);
         log("- Texture image view #" + std::to_string(i + 1) + "/" + std::to_string(texture_images.size()) + " (" + force_string(image_view) + ") created successfully!");
     }
