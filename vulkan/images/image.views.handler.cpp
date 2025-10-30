@@ -10,7 +10,8 @@ VkImageView create_image_view
 (
     const VkDevice &logical_device,
     const VkImage &image,
-    const VkFormat &format
+    const VkFormat &format,
+    const VkImageAspectFlags &aspect_flags
 )
 {
     if (logical_device == VK_NULL_HANDLE)
@@ -43,11 +44,11 @@ VkImageView create_image_view
         },
         .subresourceRange =
         {
-            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, // Image view for a color aspect.
-            .baseMipLevel = 0,                       // Set the starting mipmap level.
-            .levelCount = 1,                         // Amount of mipmap levels that we are going to use.
-            .baseArrayLayer = 0,                     // Set the starting layer.
-            .layerCount = 1                          // Amount of layers that we are going to use.
+            .aspectMask = aspect_flags, // Image view for a color aspect.
+            .baseMipLevel = 0,          // Set the starting mipmap level.
+            .levelCount = 1,            // Amount of mipmap levels that we are going to use.
+            .baseArrayLayer = 0,        // Set the starting layer.
+            .layerCount = 1             // Amount of layers that we are going to use.
         }
     };
 

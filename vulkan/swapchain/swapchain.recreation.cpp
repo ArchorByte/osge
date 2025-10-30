@@ -4,6 +4,7 @@
 #include "swapchain.data.selection.hpp"
 #include "swapchain.handler.hpp"
 #include "swapchain.images.hpp"
+#include "../depth/depth.resources.hpp"
 #include "../render/render.framebuffers.hpp"
 #include "../render/sync/render.sync.semaphores.hpp"
 #include "../../logs/logs.handler.hpp"
@@ -27,10 +28,13 @@ std::string recreate_vulkan_swapchain
     const uint32_t &graphics_family_index,
     const uint32_t &present_family_index,
     const VkRenderPass &render_pass,
+    const VkCommandPool &command_pool,
+    const VkQueue &graphics_queue,
     SDL_Window* window,
     Vulkan_Swapchain &swapchain,
     Vulkan_SwapchainImageViews &image_views,
     Vulkan_Framebuffers &framebuffers,
+    Vulkan_DepthResources &depth_resources,
     VkExtent2D &extent,
     Vulkan_Semaphores &semaphores,
     std::vector<VkSemaphore> &image_available_semaphores,
@@ -69,6 +73,16 @@ std::string recreate_vulkan_swapchain
         fatal_error_log("Swap chain recreation failed! The render pass provided (" + force_string(render_pass) + ") is not valid!");
     }
 
+    if (command_pool == VK_NULL_HANDLE)
+    {
+        fatal_error_log("Swap chain recreation failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
+    }
+
+    if (graphics_queue == VK_NULL_HANDLE)
+    {
+        fatal_error_log("Swap chain recreation failed! The graphics queue provided (" + force_string(graphics_queue) + ") is not valid!");
+    }
+
     if (!window)
     {
         fatal_error_log("Swap chain recreation failed! The window provided (" + force_string(window) + ") is not valid!");
@@ -101,6 +115,7 @@ std::string recreate_vulkan_swapchain
     image_views.~Vulkan_SwapchainImageViews();
     swapchain.~Vulkan_Swapchain();
     semaphores.~Vulkan_Semaphores();
+    depth_resources.~Vulkan_DepthResources();
 
     image_available_semaphores.clear();
     render_finished_semaphores.clear();
@@ -134,7 +149,8 @@ std::string recreate_vulkan_swapchain
     // Create again the new rendering objects.
     const std::vector<VkImage> new_images = get_vulkan_swapchain_images(logical_device, swapchain.get());
     new (&image_views) Vulkan_SwapchainImageViews(logical_device, new_images, surface_format.format);
-    new (&framebuffers) Vulkan_Framebuffers(logical_device, image_views.get(), extent, render_pass);
+    new (&depth_resources) Vulkan_DepthResources(physical_device, logical_device, command_pool, graphics_queue, extent);
+    new (&framebuffers) Vulkan_Framebuffers(logical_device, image_views.get(), VK_NULL_HANDLE, extent, render_pass);
     new (&semaphores) Vulkan_Semaphores(logical_device, images_count * 2);
 
     int i = 0;

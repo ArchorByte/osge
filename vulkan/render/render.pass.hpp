@@ -10,7 +10,9 @@
 VkRenderPass create_vulkan_render_pass
 (
     const VkDevice &logical_device,
-    const VkAttachmentDescription &color_attachment
+    const VkAttachmentDescription &color_attachment,
+    const VkAttachmentDescription &depth_attachment,
+    const VkAttachmentReference &depth_attachment_reference
 );
 
 void destroy_vulkan_render_pass
@@ -31,7 +33,9 @@ public:
     Vulkan_RenderPass
     (
         const VkDevice &logical_device,
-        const VkAttachmentDescription &color_attachment
+        const VkAttachmentDescription &color_attachment,
+        const VkAttachmentDescription &depth_attachment,
+        const VkAttachmentReference &depth_attachment_reference
     );
 
     // Destructor.

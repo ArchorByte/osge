@@ -5,6 +5,7 @@
 
 #include <vulkan/vulkan.h>
 #include <vector>
+#include <string>
 
 // Find a format supported by the physical device that matches the given criteria.
 VkFormat find_supported_format

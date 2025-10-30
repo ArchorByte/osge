@@ -63,7 +63,16 @@ VkPipeline create_vulkan_graphics_pipeline
         .pAttachments = &color_blend_attachment_state
     };
 
-    // Create info for the graphics pipeline.
+    VkPipelineDepthStencilStateCreateInfo depth_stencil
+    {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+        .depthTestEnable = VK_TRUE,
+        .depthWriteEnable = VK_TRUE,
+        .depthCompareOp = VK_COMPARE_OP_LESS,
+        .depthBoundsTestEnable = VK_FALSE,
+        .stencilTestEnable = VK_FALSE
+    };
+
     const VkGraphicsPipelineCreateInfo pipeline_create_info
     {
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
@@ -74,6 +83,7 @@ VkPipeline create_vulkan_graphics_pipeline
         .pViewportState = &viewport_state,
         .pRasterizationState = &rasterization_state,
         .pMultisampleState = &multisampling_state,
+        .pDepthStencilState = &depth_stencil,
         .pColorBlendState = &color_blend_create_info,
         .pDynamicState = &dynamic_state,
         .layout = pipeline_layout,
