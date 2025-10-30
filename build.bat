@@ -12,11 +12,11 @@ cd out
 
 if not exist "shaders" (mkdir "shaders")
 
-glslc ../../../game/shaders/default.vert -o ./shaders/default.vert
-glslc ../../../game/shaders/default.frag -o ./shaders/default.frag
+glslc ../../../game/assets/shaders/default.vert -o ./shaders/default.vert
+glslc ../../../game/assets/shaders/default.frag -o ./shaders/default.frag
 
 if not exist "textures" (mkdir "textures")
-xcopy "../../../game/textures" "./textures" /E /I /H /Y
+xcopy "../../../game/assets/textures" "./textures" /E /I /H /Y
 
 cd ..
 if not exist "cmake" (mkdir "cmake")
