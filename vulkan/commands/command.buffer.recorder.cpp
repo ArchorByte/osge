@@ -26,7 +26,8 @@ void record_command_buffer
     const size_t &frame,
     const VkPipelineLayout &pipeline_layout,
     const std::vector<VkDescriptorSet> descriptor_sets,
-    const std::vector<VkImageView> texture_image_views
+    const std::vector<VkImageView> texture_image_views,
+    std::vector<uint32_t> indices
 )
 {
     if (command_buffer == VK_NULL_HANDLE)
@@ -130,11 +131,10 @@ void record_command_buffer
 
     vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphics_pipeline); // Bind the graphics pipeline to the command buffer.
     vkCmdBindVertexBuffers(command_buffer, 0, 1, &vertex_buffers, offsets);                // Bind the vertex buffers to the command buffer.
-    vkCmdBindIndexBuffer(command_buffer, index_buffer, 0, VK_INDEX_TYPE_UINT16);           // Bind the index buffer to the command buffer.
+    vkCmdBindIndexBuffer(command_buffer, index_buffer, 0, VK_INDEX_TYPE_UINT32);           // Bind the index buffer to the command buffer.
     vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout, 0, 1, &descriptor_sets[frame], 0, nullptr); // Bind the descriptor set to the command buffer.
 
-    // TODO: Allow the developers to select which texture is going to be used for a targeted object.
-    int targeted_texture = 1;
+    int targeted_texture = 0;
 
     // Select the default texture if the targeted texture doesn't exist.
     if (targeted_texture < 0 || targeted_texture > texture_image_views.size())

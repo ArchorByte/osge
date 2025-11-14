@@ -34,7 +34,7 @@ void write_log_file
     const std::string date_format = date[1] + "/" + date[2] + "/" + date[0] + "-" + date[3] + ":" + date[4] + ":" + date[5];
 
     // Log format: DATE [LOG_TYPE] LOG.
-    const std::string log_format = date_format + " [" + log_type + "] " + log;
+    const std::string log_format = date_format + " [" + log_type + "] " + log + "\n";
 
     write_file("osge.logs", log_format, true);
 }

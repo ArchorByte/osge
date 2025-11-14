@@ -16,6 +16,8 @@ glslc ../../../game/assets/shaders/default.frag -o ./shaders/default.frag
 
 cp -r ../../../game/assets/textures ./
 
+cp -r ../../../game/assets/models ./
+
 cd ..
 mkdir -p cmake
 cd cmake

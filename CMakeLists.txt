@@ -11,37 +11,36 @@ include_directories (
 if (WIN32)
     set(WINDOWS_BINARIES ${CMAKE_SOURCE_DIR}/bin/windows)
 
-    # SDL3 headers and binaries.
+    # SDL3 binaries.
     set(SDL3_LIB ${WINDOWS_BINARIES}/SDL3.lib)
-    include_directories(${CMAKE_SOURCE_DIR}/include/SDL3)
 
-    # Vulkan headers and binaries.
+    # Vulkan binaries.
     set(VULKAN_LIB ${WINDOWS_BINARIES}/vulkan-1.lib)
-    include_directories(${CMAKE_SOURCE_DIR}/include/vulkan)
 
-    # OpenSSL headers and binaries.
+    # OpenSSL binaries.
     set(OPENSSL_CRYPTO_LIB ${WINDOWS_BINARIES}/libcrypto.lib)
     set(OPENSSL_SSL_LIB ${WINDOWS_BINARIES}/libssl.lib)
-    include_directories(${CMAKE_SOURCE_DIR}/include/openssl)
 
 # Linux systems.
 else()
     set(LINUX_BINARIES ${CMAKE_SOURCE_DIR}/bin/linux)
 
-    # SDL3 headers and binaries.
+    # SDL3 binaries.
     set(SDL3_LIB ${LINUX_BINARIES}/libSDL3.so)
-    include_directories(${CMAKE_SOURCE_DIR}/include/SDL3)
 
-    # Vulkan headers and binaries.
+    # Vulkan binaries.
     set(VULKAN_LIB ${LINUX_BINARIES}/libvulkan.so)
-    include_directories(${CMAKE_SOURCE_DIR}/include/vulkan)
 
-    # OpenSSL headers and binaries.
+    # OpenSSL binaries.
     set(OPENSSL_CRYPTO_LIB ${LINUX_BINARIES}/libcrypto.so)
     set(OPENSSL_SSL_LIB ${LINUX_BINARIES}/libssl.so)
-    include_directories(${CMAKE_SOURCE_DIR}/include/openssl)
 
 endif()
+
+# Library headers.
+include_directories(${CMAKE_SOURCE_DIR}/include/SDL3)
+include_directories(${CMAKE_SOURCE_DIR}/include/vulkan)
+include_directories(${CMAKE_SOURCE_DIR}/include/openssl)
 
 # Include folders for compilation.
 include_directories (
@@ -71,6 +70,7 @@ include_directories (
     ${CMAKE_SOURCE_DIR}/vulkan/textures
     ${CMAKE_SOURCE_DIR}/vulkan/uniform
     ${CMAKE_SOURCE_DIR}/vulkan/vertex
+    ${CMAKE_SOURCE_DIR}/vulkan/vertex/models
 )
 
 # Select all C++ scripts contained in the previously included folder.
@@ -101,6 +101,7 @@ file(GLOB VULKAN_SWAPCHAIN vulkan/swapchain/*.cpp)
 file(GLOB VULKAN_TEXTURES vulkan/textures/*.cpp)
 file(GLOB VULKAN_UNIFORM vulkan/uniform/*.cpp)
 file(GLOB VULKAN_VERTEX vulkan/vertex/*.cpp)
+file(GLOB VULKAN_VERTEX_MODELS vulkan/vertex/models/*.cpp)
 
 # Set a list with all of the sources we retrieved.
 set(ALL_SOURCES
@@ -131,6 +132,7 @@ set(ALL_SOURCES
     ${VULKAN_TEXTURES}
     ${VULKAN_UNIFORM}
     ${VULKAN_VERTEX}
+    ${VULKAN_VERTEX_MODELS}
 )
 
 # Add the all of the sources to the executable.

@@ -1,3 +1,5 @@
+#include "vertex.handler.hpp"
+
 #include <vulkan/vulkan.h>
 #include <cstdint>
 #include <utility>
@@ -21,7 +23,9 @@ std::pair<VkBuffer, VkDeviceMemory> create_vulkan_vertex_buffer
     const VkDevice &logical_device,
     const VkPhysicalDevice &physical_device,
     const VkCommandPool &command_pool,
-    const VkQueue &graphics_queue
+    const VkQueue &graphics_queue,
+    std::vector<Vertex> &vertices,
+    std::vector<uint32_t> &indices
 );
 
 void destroy_vulkan_vertex_buffer
@@ -45,7 +49,9 @@ public:
         const VkDevice &logical_device,
         const VkPhysicalDevice &physical_device,
         const VkCommandPool &command_pool,
-        const VkQueue &graphics_queue
+        const VkQueue &graphics_queue,
+        std::vector<Vertex> &vertices,
+        std::vector<uint32_t> &indices
     );
 
     // Destructor.

@@ -20,7 +20,9 @@ std::pair<VkBuffer, VkDeviceMemory> create_vulkan_index_buffer
     const VkDevice &logical_device,
     const VkPhysicalDevice &physical_device,
     const VkCommandPool &command_pool,
-    const VkQueue &graphics_queue
+    const VkQueue &graphics_queue,
+    std::vector<Vertex> &vertices,
+    std::vector<uint32_t> &indices
 )
 {
     log("Creating an index buffer..");
@@ -116,10 +118,12 @@ Vulkan_IndexBuffer::Vulkan_IndexBuffer
     const VkDevice &logical_device,
     const VkPhysicalDevice &physical_device,
     const VkCommandPool &command_pool,
-    const VkQueue &graphics_queue
+    const VkQueue &graphics_queue,
+    std::vector<Vertex> &vertices,
+    std::vector<uint32_t> &indices
 ) : logical_device(logical_device)
 {
-    const std::pair buffer_data = create_vulkan_index_buffer(logical_device, physical_device, command_pool, graphics_queue);
+    const std::pair buffer_data = create_vulkan_index_buffer(logical_device, physical_device, command_pool, graphics_queue, vertices, indices);
 
     buffer = buffer_data.first;
     buffer_memory = buffer_data.second;
