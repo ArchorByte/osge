@@ -1,9 +1,9 @@
 #include "logs.file.hpp"
 
 #include "logs.handler.hpp"
-#include "../helpers/help.files.hpp"
-#include "../helpers/help.text.format.hpp"
-#include "../helpers/help.time.handler.hpp"
+#include "../utils/tool.files.hpp"
+#include "../utils/tool.text.format.hpp"
+#include "../utils/tool.time.handler.hpp"
 
 #include <string>
 #include <ctime>

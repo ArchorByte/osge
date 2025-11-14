@@ -51,7 +51,7 @@ include_directories (
     ${CMAKE_SOURCE_DIR}/logs
     ${CMAKE_SOURCE_DIR}/opengl
     ${CMAKE_SOURCE_DIR}/sdl3
-    ${CMAKE_SOURCE_DIR}/helpers
+    ${CMAKE_SOURCE_DIR}/utils
     ${CMAKE_SOURCE_DIR}/vulkan
     ${CMAKE_SOURCE_DIR}/vulkan/buffers
     ${CMAKE_SOURCE_DIR}/vulkan/commands
@@ -59,7 +59,7 @@ include_directories (
     ${CMAKE_SOURCE_DIR}/vulkan/depth
     ${CMAKE_SOURCE_DIR}/vulkan/descriptors
     ${CMAKE_SOURCE_DIR}/vulkan/device
-    ${CMAKE_SOURCE_DIR}/vulkan/helpers
+    ${CMAKE_SOURCE_DIR}/vulkan/utils
     ${CMAKE_SOURCE_DIR}/vulkan/images
     ${CMAKE_SOURCE_DIR}/vulkan/pipeline
     ${CMAKE_SOURCE_DIR}/vulkan/queues
@@ -82,7 +82,7 @@ file(GLOB GAME_ENGINE game/engine/*.cpp)
 file(GLOB LOGS logs/*.cpp)
 file(GLOB OPENGL opengl/*.cpp)
 file(GLOB SDL3 sdl3/*.cpp)
-file(GLOB HELPERS helpers/*.cpp)
+file(GLOB HELPERS utils/*.cpp)
 file(GLOB VULKAN vulkan/*.cpp)
 file(GLOB VULKAN_BUFFERS vulkan/buffers/*.cpp)
 file(GLOB VULKAN_COMMANDS vulkan/commands/*.cpp)
@@ -90,7 +90,7 @@ file(GLOB VULKAN_CORE vulkan/core/*.cpp)
 file(GLOB VULKAN_DEPTH vulkan/depth/*.cpp)
 file(GLOB VULKAN_DESCRIPTORS vulkan/descriptors/*.cpp)
 file(GLOB VULKAN_DEVICE vulkan/device/*.cpp)
-file(GLOB VULKAN_HELPERS vulkan/helpers/*.cpp)
+file(GLOB VULKAN_HELPERS vulkan/utils/*.cpp)
 file(GLOB VULKAN_IMAGES vulkan/images/*.cpp)
 file(GLOB VULKAN_PIPELINE vulkan/pipeline/*.cpp)
 file(GLOB VULKAN_QUEUES vulkan/queues/*.cpp)

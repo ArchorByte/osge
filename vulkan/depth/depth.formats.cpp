@@ -1,6 +1,6 @@
 #include "depth.formats.hpp"
 
-#include "../helpers/supported.format.hpp"
+#include "../utils/supported.format.hpp"
 
 #include <vulkan/vulkan.h>
 

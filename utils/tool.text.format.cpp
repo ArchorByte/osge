@@ -1,10 +1,10 @@
-#include "help.text.format.hpp"
+#include "tool.text.format.hpp"
 
 #include <string>
 #include <cctype>
 #include <algorithm>
 
-// Note: The force_string is in the help.text.format.hpp script.
+// Note: The force_string is in the tool.text.format.hpp script.
 
 // Remove whitespaces from the start and end of the string.
 std::string trim
