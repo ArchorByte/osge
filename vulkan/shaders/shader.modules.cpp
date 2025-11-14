@@ -1,8 +1,8 @@
 #include "shader.modules.hpp"
 
 #include "../../logs/logs.handler.hpp"
-#include "../../helpers/help.files.hpp"
-#include "../../helpers/help.text.format.hpp"
+#include "../../utils/tool.files.hpp"
+#include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 #include <map>

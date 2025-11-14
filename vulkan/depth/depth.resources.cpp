@@ -4,7 +4,7 @@
 #include "../images/image.transitions.hpp"
 #include "../images/image.views.handler.hpp"
 #include "../images/images.handler.hpp"
-#include "../../helpers/help.text.format.hpp"
+#include "../../utils/tool.text.format.hpp"
 #include "../../logs/logs.handler.hpp"
 
 #include <vulkan/vulkan.h>
