@@ -90,7 +90,7 @@ bool create_new_empty_file
         return false;
     }
 
-    const bool file_exists(std::filesystem::exists(file_path));
+    const bool file_exists = std::filesystem::exists(file_path);
 
     if (file_exists)
     {

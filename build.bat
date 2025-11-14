@@ -18,6 +18,9 @@ glslc ../../../game/assets/shaders/default.frag -o ./shaders/default.frag
 if not exist "textures" (mkdir "textures")
 xcopy "../../../game/assets/textures" "./textures" /E /I /H /Y
 
+if not exist "models" (mkdir "models")
+xcopy "../../../game/assets/models" "./models" /E /I /H /Y
+
 cd ..
 if not exist "cmake" (mkdir "cmake")
 cd cmake

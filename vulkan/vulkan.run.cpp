@@ -49,6 +49,7 @@
 #include "uniform/uniform.buffers.hpp"
 #include "vertex/vertex.buffer.hpp"
 #include "vertex/vertex.input.state.hpp"
+#include "vertex/models/models.loader.hpp"
 
 #include <vulkan/vulkan.h>
 #include <SDL3/SDL.h>
@@ -153,10 +154,15 @@ void run_using_vulkan
     const VkViewport viewport = create_vulkan_viewport(extent);
     const VkRect2D scissor = create_vulkan_scissor(extent);
 
+    std::vector<Vertex> vertices;
+    std::vector<uint32_t> indices;
+
+    load_3d_models(vertices, indices);
+
     const Vulkan_CommandPool command_pool(logical_device.get(), graphics_family_index); // Handle command buffers memory.
     const std::vector<VkCommandBuffer> command_buffers = create_vulkan_command_buffers(logical_device.get(), command_pool.get(), images_count); // Store sent commands.
-    const Vulkan_VertexBuffer vertex_buffer(logical_device.get(), physical_device, command_pool.get(), graphics_queue); // Handle the vertex shader data.
-    const Vulkan_IndexBuffer index_buffer(logical_device.get(), physical_device, command_pool.get(), graphics_queue); // Handle the shader data indexes.
+    const Vulkan_VertexBuffer vertex_buffer(logical_device.get(), physical_device, command_pool.get(), graphics_queue, vertices, indices); // Handle the vertex shader data.
+    const Vulkan_IndexBuffer index_buffer(logical_device.get(), physical_device, command_pool.get(), graphics_queue, vertices, indices); // Handle the shader data indexes.
     const Vulkan_UniformBuffers uniform_buffers(logical_device.get(), physical_device, command_pool.get(), graphics_queue, images_count); // Handle data passed to shaders.
 
     // Depth management.
@@ -296,7 +302,8 @@ void run_using_vulkan
             uniform_buffers.get(),
             pipeline_layout.get(),
             descriptor_sets,
-            texture_image_views.get()
+            texture_image_views.get(),
+            indices
         );
 
         // Passing to the next frame.
