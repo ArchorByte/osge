@@ -24,8 +24,7 @@ std::pair<VkBuffer, VkDeviceMemory> create_vulkan_vertex_buffer
     const VkPhysicalDevice &physical_device,
     const VkCommandPool &command_pool,
     const VkQueue &graphics_queue,
-    std::vector<Vertex> &vertices,
-    std::vector<uint32_t> &indices
+    std::vector<Vertex> &vertices
 )
 {
     log("Creating a vertex buffer..");
@@ -49,8 +48,6 @@ std::pair<VkBuffer, VkDeviceMemory> create_vulkan_vertex_buffer
     {
         fatal_error_log("Vertex buffer creation failed! The graphics queue provided (" + force_string(graphics_queue) + ") is not valid!");
     }
-
-    load_3d_models(vertices, indices);
 
     VkBuffer staging_vertex_buffer = VK_NULL_HANDLE;
     VkDeviceMemory staging_buffer_memory = VK_NULL_HANDLE;
@@ -121,11 +118,10 @@ Vulkan_VertexBuffer::Vulkan_VertexBuffer
     const VkPhysicalDevice &physical_device,
     const VkCommandPool &command_pool,
     const VkQueue &graphics_queue,
-    std::vector<Vertex> &vertices,
-    std::vector<uint32_t> &indices
+    std::vector<Vertex> &vertices
 ) : logical_device(logical_device)
 {
-    std::pair buffer_data = create_vulkan_vertex_buffer(logical_device, physical_device, command_pool, graphics_queue, vertices, indices);
+    const std::pair buffer_data = create_vulkan_vertex_buffer(logical_device, physical_device, command_pool, graphics_queue, vertices);
 
     vertex_buffer = buffer_data.first;
     vertex_buffer_memory = buffer_data.second;
