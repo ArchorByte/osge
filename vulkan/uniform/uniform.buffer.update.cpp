@@ -21,9 +21,12 @@ void update_uniform_buffer
     const auto current_time = std::chrono::high_resolution_clock::now();
     const float time = std::chrono::duration<float, std::chrono::seconds::period>(current_time - start_time).count();
 
+    const glm::vec3 camera_position = glm::vec3(4.0f, 1.0f, 3.0f); // (x, y, z)
+    const glm::vec3 camera_angle = glm::vec3(0.0f, 0.0f, 0.0f);    // (x, y, z)
+
     UniformBufferObject object {};
     object.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    object.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    object.view = glm::lookAt(camera_position, camera_angle, glm::vec3(0.0f, 0.0f, 1.0f));
     object.projection = glm::perspective(glm::radians(45.0f), extent.width / (float) extent.height, 0.1f, 10.0f);
     object.projection[1][1] *= -1.0f;
 

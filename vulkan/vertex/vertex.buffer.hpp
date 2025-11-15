@@ -24,8 +24,7 @@ std::pair<VkBuffer, VkDeviceMemory> create_vulkan_vertex_buffer
     const VkPhysicalDevice &physical_device,
     const VkCommandPool &command_pool,
     const VkQueue &graphics_queue,
-    std::vector<Vertex> &vertices,
-    std::vector<uint32_t> &indices
+    std::vector<Vertex> &vertices
 );
 
 void destroy_vulkan_vertex_buffer
@@ -50,8 +49,7 @@ public:
         const VkPhysicalDevice &physical_device,
         const VkCommandPool &command_pool,
         const VkQueue &graphics_queue,
-        std::vector<Vertex> &vertices,
-        std::vector<uint32_t> &indices
+        std::vector<Vertex> &vertices
     );
 
     // Destructor.

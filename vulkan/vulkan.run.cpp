@@ -161,7 +161,7 @@ void run_using_vulkan
 
     const Vulkan_CommandPool command_pool(logical_device.get(), graphics_family_index); // Handle command buffers memory.
     const std::vector<VkCommandBuffer> command_buffers = create_vulkan_command_buffers(logical_device.get(), command_pool.get(), images_count); // Store sent commands.
-    const Vulkan_VertexBuffer vertex_buffer(logical_device.get(), physical_device, command_pool.get(), graphics_queue, vertices, indices); // Handle the vertex shader data.
+    const Vulkan_VertexBuffer vertex_buffer(logical_device.get(), physical_device, command_pool.get(), graphics_queue, vertices); // Handle the vertex shader data.
     const Vulkan_IndexBuffer index_buffer(logical_device.get(), physical_device, command_pool.get(), graphics_queue, vertices, indices); // Handle the shader data indexes.
     const Vulkan_UniformBuffers uniform_buffers(logical_device.get(), physical_device, command_pool.get(), graphics_queue, images_count); // Handle data passed to shaders.
 
