@@ -7,12 +7,12 @@ In the `./docs` folder, you will find courses to guide you through the making of
 # 📦 Requirements
 - CMake compiler (**using gcc/g++ recommended**).
 - GLSLC shaders compiler.
-- SDL3 C++ library **v3.2.20 recommended**.
-- Vulkan C++ library **v1.4.321 recommended**.
-- GLM C++ library **v1.0.1 recommended**.
-- STB C++ library.
-- OpenSSL C++ library **v3.2.6 recommended**.
-- TinyObjLoader C++ library **v1.0.6 recommended**.
+- [SDL3](https://github.com/libsdl-org/SDL) library **v3.2.20 recommended**.
+- [Vulkan](https://github.com/KhronosGroup/Vulkan-Headers) library **v1.4.321 recommended**.
+- [GLM](https://github.com/g-truc/glm) library **v1.0.1 recommended**.
+- [STB](https://github.com/nothings/stb) library **latest recommended**.
+- [OpenSSL](https://github.com/openssl/openssl) library **v3.2.6 recommended**.
+- [TinyObjLoader](https://github.com/tinyobjloader/tinyobjloader) library **v1.0.6 recommended**.
 > Dependencies may be installed in a `./include` folder that you can create.
 
 # 📥 Installation
