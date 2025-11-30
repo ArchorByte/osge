@@ -16,7 +16,8 @@ std::string get_physical_device_name
 
 VkPhysicalDevice select_physical_device
 (
-    const VkInstance &vulkan_instance
+    const VkInstance &vulkan_instance,
+    int &selected_gpu
 );
 
 #endif

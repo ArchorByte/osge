@@ -49,7 +49,8 @@ std::string get_physical_device_name
 // Return a usable physical device.
 VkPhysicalDevice select_physical_device
 (
-    const VkInstance &vulkan_instance
+    const VkInstance &vulkan_instance,
+    int &selected_gpu
 )
 {
     log("Looking for a usable physical device..");
@@ -73,6 +74,12 @@ VkPhysicalDevice select_physical_device
         fatal_error_log("Physical device search failed! Failed to find any physical device with a driver supporting Vulkan!");
     }
 
+    if (selected_gpu > devices_count)
+    {
+        error_log("Warning: The selected GPU index is out of bounds! Defaulted to GPU #1!");
+        selected_gpu = 1;
+    }
+
     // Register the physical devices available into a list.
     std::vector<VkPhysicalDevice> devices_list(devices_count);
     const VkResult second_devices_query = vkEnumeratePhysicalDevices(vulkan_instance, &devices_count, devices_list.data());
@@ -83,12 +90,14 @@ VkPhysicalDevice select_physical_device
     }
 
     VkPhysicalDevice physical_device = VK_NULL_HANDLE;
+    int i = 0;
 
     for (const VkPhysicalDevice &device : devices_list)
     {
-        if (is_valid_physical_device(device))
+        i++;
+
+        if (is_valid_physical_device(device) && i == selected_gpu)
         {
-            // We take the first valid physical device.
             physical_device = device;
             break;
         }
@@ -99,6 +108,6 @@ VkPhysicalDevice select_physical_device
         fatal_error_log("Physical device search failed! Failed to find any usable physical device!");
     }
 
-    log("Physical device selected successfully! Selected device: " + get_physical_device_name(physical_device));
+    log("Physical device selected successfully! Selected device: " + get_physical_device_name(physical_device) + ".");
     return physical_device;
 }
