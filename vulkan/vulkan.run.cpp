@@ -61,7 +61,8 @@
 // Run the game using Vulkan as the graphics API.
 void run_using_vulkan
 (
-    SDL_Window* window
+    SDL_Window* window,
+    int &gpu_index
 )
 {
     std::vector<const char*> layers;
@@ -75,7 +76,7 @@ void run_using_vulkan
 
     const Vulkan_Instance vulkan_instance(layers);                       // Start Vulkan.
     const Vulkan_Surface vulkan_surface (vulkan_instance.get(), window); // Create the surface that we are going to use for rendering.
-    const VkPhysicalDevice physical_device = select_physical_device(vulkan_instance.get()); // Select a compatible device with rendering capabilities.
+    const VkPhysicalDevice physical_device = select_physical_device(vulkan_instance.get(), gpu_index); // Select a compatible device with rendering capabilities.
 
     // Retrieve the swap chain capabilities of our selected physical device.
     const VkSurfaceCapabilitiesKHR swapchain_capabilities = get_vulkan_swapchain_capabilities(physical_device, vulkan_surface.get());

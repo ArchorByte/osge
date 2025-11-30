@@ -6,7 +6,8 @@
 
 void run_using_vulkan
 (
-    SDL_Window* window
+    SDL_Window* window,
+    int &gpu_index
 );
 
 #endif

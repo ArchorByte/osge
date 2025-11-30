@@ -99,19 +99,19 @@ int main()
 
         if (!is_an_integer(window_mode))
         {
-            error_log("The window mode configured (" + window_mode + ") is not valid! Switched to full screen by default!");
+            error_log("The window mode configured (" + window_mode + ") is not valid! Defaulted to full screen!");
             window_mode = "2";
         }
 
         if (!is_an_integer(graphics_api))
         {
-            error_log("The graphics API configured (" + graphics_api + ") is not valid! Switched to Vulkan by default!");
+            error_log("The graphics API configured (" + graphics_api + ") is not valid! Defaulted to Vulkan!");
             graphics_api = "0";
         }
 
         if (!is_an_integer(monitor))
         {
-            error_log("The monitor configured (" + monitor + ") is not valid! Switched to the primary monitor by default!");
+            error_log("The monitor configured (" + monitor + ") is not valid! Defaulted to the primary monitor!");
             monitor = "1";
         }
 
@@ -119,8 +119,22 @@ int main()
 
         if (monitor_index < 1 || monitor_index > display_indexes.size())
         {
-            error_log("The monitor configured (" + monitor + ") is out of bounds! Switched to the primary monitor by default!");
+            error_log("The monitor configured (" + monitor + ") is out of bounds! Defaulted to the primary monitor!");
             monitor_index = 1;
+        }
+
+        if (!is_an_integer(gpu))
+        {
+            error_log("The GPU selected (" + gpu + ") is not valid! Defaulted to GPU #1!");
+            gpu = 1;
+        }
+
+        int gpu_index = stoi(gpu);
+
+        if (gpu_index < 1)
+        {
+            error_log("The GPU selected (" + gpu + ") is not valid as 1 is the lowest accepted index! Defaulted to GPU #1!");
+            gpu = 1;
         }
 
         // Get the screen resolution.
@@ -146,7 +160,7 @@ int main()
         switch (stoi(graphics_api))
         {
             case VULKAN:
-                run_using_vulkan(window.get());
+                run_using_vulkan(window.get(), gpu_index);
                 break;
 
             case OPENGL:
@@ -155,7 +169,7 @@ int main()
 
             // If the graphics API provided by the game.config file is not handled, we default to Vulkan.
             default:
-                run_using_vulkan(window.get());
+                run_using_vulkan(window.get(), gpu_index);
                 break;
         }
 

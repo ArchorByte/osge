@@ -46,7 +46,7 @@ VkPresentModeKHR select_best_vulkan_swapchain_present_mode
         // Try to find a mode with the "VK_PRESENT_MODE_MAILBOX_KHR" or "VK_PRESENT_MODE_IMMEDIATE_KHR" flag.
         if (present_mode == VK_PRESENT_MODE_MAILBOX_KHR || present_mode == VK_PRESENT_MODE_IMMEDIATE_KHR)
         {
-            log("Best swap chain present mode selected successfully!!");
+            log("Best swap chain present mode selected successfully!");
             return present_mode;
         }
     }
