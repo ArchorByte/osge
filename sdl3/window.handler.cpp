@@ -35,7 +35,7 @@ enum GraphicsAPI
 SDL_Window* create_sdl3_window
 (
     const int &width,
-    const int &height,
+    int height,
     int window_mode,
     std::string window_name,
     int graphic_api
@@ -55,11 +55,14 @@ SDL_Window* create_sdl3_window
         graphic_api = VULKAN;
     }
 
-    const int initialization = SDL_Init(SDL_INIT_VIDEO);
+    // Verify if our input resolution is 16/9 or not.
+    const float display_ratio = static_cast<float>(width) / height;
 
-    if (initialization < 0)
+    if (!abs(display_ratio - (16.0f / 9.0f)) < 0.01f)
     {
-        fatal_error_log("SDL3 initialization failed: " + std::string(SDL_GetError()));
+        const int new_height = width * 9 / 16; // Calculate a new height that will make a 16/9 resolution if we keep the provided width.
+        error_log("Warning: Invalid resolution provided! Defaulted to the 16/9 resolution " + std::to_string(width) + "x" + std::to_string(new_height) + ".");
+        height = new_height;
     }
 
     // We hide the window.
@@ -82,7 +85,9 @@ SDL_Window* create_sdl3_window
 
     // Add a "Debug Mode" suffix to the window name if we're running in debug mode.
     if constexpr (EngineConfig::DEBUG_MODE)
+    {
         window_name += " - Debug Mode";
+    }
 
     // Create the window itself.
     SDL_Window* window = SDL_CreateWindow
