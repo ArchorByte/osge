@@ -20,7 +20,7 @@ void update_sdl3_window
     SDL_Window* window,
     int new_window_mode,
     const int &new_width,
-    const int &new_height,
+    int new_height,
     const int &new_refresh_rate,
     const int &new_display_index
 )
@@ -47,6 +47,16 @@ void update_sdl3_window
     {
         error_log("SDL3 window update failed! The new window height provided (" + std::to_string(new_height) + ") is not valid!");
         return;
+    }
+
+    // Verify if our input resolution is 16/9 or not.
+    const float display_ratio = static_cast<float>(new_width) / new_height;
+
+    if (!abs(display_ratio - (16.0f / 9.0f)) < 0.01f)
+    {
+        const int height = new_width * 9 / 16; // Calculate a new height that will make a 16/9 resolution if we keep the provided width.
+        error_log("Warning: Invalid resolution provided! Defaulted to the 16/9 resolution " + std::to_string(new_width) + "x" + std::to_string(height) + ".");
+        new_height = height;
     }
 
     if (new_refresh_rate < 1)

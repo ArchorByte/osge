@@ -11,7 +11,7 @@
 SDL_Window* create_sdl3_window
 (
     const int &width,
-    const int &height,
+    int height,
     int window_mode,
     std::string window_name,
     int graphic_api
