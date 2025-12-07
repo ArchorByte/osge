@@ -1,6 +1,5 @@
 # OSGE TODO list
 This file contains the TODO list of the OSGE project. <br/>
-The project will be publicly released once we have finished everything written bellow.
 
 # TODO list
 - [ ] Implement Vulkan (https://vulkan-tutorial.com/Loading_models).

@@ -7,6 +7,7 @@
 #include <tinyobjloader/tiny_obj_loader.h>
 #include <vector>
 #include <filesystem>
+#include <unordered_map>
 
 // Return vertices and indices from an OBJ model.
 std::pair<std::vector<Vertex>, std::vector<uint32_t>> load_obj_model
@@ -51,6 +52,8 @@ std::pair<std::vector<Vertex>, std::vector<uint32_t>> load_obj_model
         error_log("Warning while loading the OBJ model \"" + file_name + "\": " + warning + ".");
     }
 
+    std::unordered_map<Vertex, uint32_t> unique_vertices {};
+
     for (const auto &shape : shapes)
     {
         for (const auto &index : shape.mesh.indices)
@@ -72,8 +75,13 @@ std::pair<std::vector<Vertex>, std::vector<uint32_t>> load_obj_model
 
             vertex.color = { 1.0f, 1.0f, 1.0f };
 
-            vertices.push_back(vertex);
-            indices.push_back(indices.size());
+            if (unique_vertices.count(vertex) == 0)
+            {
+                unique_vertices[vertex] = static_cast<uint32_t>(vertices.size());
+                vertices.push_back(vertex);
+            }
+
+            indices.push_back(unique_vertices[vertex]);
         }
     }
 
