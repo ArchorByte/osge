@@ -51,6 +51,7 @@ std::vector<TextureImageInfo> load_texture_images()
 
         stbi_uc* pixels = stbi_load(file_path.c_str(), &width, &height, &channels, STBI_rgb_alpha);
         const VkDeviceSize image_size = width * height * bytes;
+        const uint32_t mip_levels = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
 
         if (!pixels)
         {
@@ -76,6 +77,7 @@ std::vector<TextureImageInfo> load_texture_images()
             width,
             height,
             channels, // Color channels of the image.
+            mip_levels,
             pixels,   // Image itself.
             image_size
         };

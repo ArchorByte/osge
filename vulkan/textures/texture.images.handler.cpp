@@ -1,5 +1,6 @@
 #include "texture.images.handler.hpp"
 
+#include "mitmaps.generator.hpp"
 #include "texture.images.loader.hpp"
 #include "texture.image.buffers.hpp"
 #include "../buffers/buffer.copy.hpp"
@@ -70,6 +71,7 @@ std::vector<TextureImage> create_vulkan_texture_images
         const std::string texture_name = info.name;
         const int image_width = info.width;
         const int image_height = info.height;
+        const uint32_t mip_levels = info.mip_levels;
 
         if (trim(texture_name).size() < 1)
         {
@@ -92,21 +94,23 @@ std::vector<TextureImage> create_vulkan_texture_images
             logical_device,
             image_width,
             image_height,
+            mip_levels,
             VK_FORMAT_R8G8B8A8_SRGB,
             VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
+            VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
         );
 
         const TextureImage image
         {
             texture_name,
             texture_image.first,
-            texture_image.second
+            texture_image.second,
+            mip_levels
         };
 
-        transition_image_layout(logical_device, command_pool, graphics_queue, texture_image.first, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+        transition_image_layout(logical_device, command_pool, graphics_queue, texture_image.first, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mip_levels);
         copy_vulkan_buffer_to_texture_image(logical_device, command_pool, graphics_queue, texture_image_buffers.get()[i - 1].buffer, texture_image.first, info);
-        transition_image_layout(logical_device, command_pool, graphics_queue, texture_image.first, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        generate_mipmaps(logical_device, physical_device, command_pool, graphics_queue, texture_image.first, VK_FORMAT_R8G8B8A8_SRGB, image_width, image_height, mip_levels);
 
         texture_images.emplace_back(image);
         log("- Texture image #" + std::to_string(i) + "/" + std::to_string(texture_image_info.size()) + " (" + force_string(texture_image.first) + ") created successfully!");

@@ -46,11 +46,9 @@ VkSampler create_vulkan_texture_sampler
         .addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT, // Address mode for the X-axis.
         .addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT, // Address mode for the Y-axis.
         .addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT, // Address mode for the Z-axis.
-        .mipLodBias = 0.0f,
         .compareEnable = VK_FALSE, // Disable compare features.
         .compareOp = VK_COMPARE_OP_ALWAYS,
-        .minLod = 0.0f,
-        .maxLod = 0.0f,
+        .maxLod = VK_LOD_CLAMP_NONE,
         .borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
         .unnormalizedCoordinates = VK_FALSE // Normalize coordinates.
     };

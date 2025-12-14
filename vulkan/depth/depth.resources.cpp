@@ -54,13 +54,14 @@ DepthResources create_depth_resources
         logical_device,
         extent.width,
         extent.height,
+        1,
         depth_format,
         VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT
     );
 
-    const VkImageView image_view = create_image_view(logical_device, depth_image.first, depth_format, VK_IMAGE_ASPECT_DEPTH_BIT);
-    transition_image_layout(logical_device, command_pool, graphics_queue, depth_image.first, depth_format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+    const VkImageView image_view = create_image_view(logical_device, depth_image.first, depth_format, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
+    transition_image_layout(logical_device, command_pool, graphics_queue, depth_image.first, depth_format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 
     log("Depth resources created successfully!");
     return { depth_image.first, depth_image.second, image_view };

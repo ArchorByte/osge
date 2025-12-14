@@ -16,6 +16,7 @@ struct TextureImageInfo
     int width;
     int height;
     int channels;
+    uint32_t mip_levels;
     stbi_uc* pixels;
     VkDeviceSize size;
 };

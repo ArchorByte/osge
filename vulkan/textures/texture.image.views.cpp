@@ -37,7 +37,8 @@ std::vector<VkImageView> create_vulkan_texture_image_views
 
     for (int i = 0; i < texture_images.size(); i++)
     {
-        const VkImageView image_view = create_image_view(logical_device, texture_images[i].texture_image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+        const VkImageView image_view = create_image_view(logical_device, texture_images[i].texture_image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, texture_images[i].mip_levels);
+
         image_views.emplace_back(image_view);
         log("- Texture image view #" + std::to_string(i + 1) + "/" + std::to_string(texture_images.size()) + " (" + force_string(image_view) + ") created successfully!");
     }

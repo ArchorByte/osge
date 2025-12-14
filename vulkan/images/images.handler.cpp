@@ -14,6 +14,7 @@ std::pair<VkImage, VkDeviceMemory> create_image
     const VkDevice &logical_device,
     const int &width,
     const int &height,
+    const uint32_t &mip_levels,
     const VkFormat &format,
     const VkImageTiling &tiling,
     const VkImageUsageFlags &usage_flags
@@ -39,6 +40,11 @@ std::pair<VkImage, VkDeviceMemory> create_image
         fatal_error_log("Image creation failed! The image height provided (" + std::to_string(height) + ") is not valid!");
     }
 
+    if (mip_levels < 1)
+    {
+        fatal_error_log("Image creation failed! The mip levels count provided (" + std::to_string(mip_levels) + ") is not valid!");
+    }
+
     const VkImageCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -50,12 +56,12 @@ std::pair<VkImage, VkDeviceMemory> create_image
             .height = static_cast<uint32_t>(height), // Pass the image height.
             .depth = 1,                              // Select the image depth.
         },
-        .mipLevels = 1,                                                        // Amount of mit maps.
-        .arrayLayers = 1,                                                      // Amount of array layers.
-        .samples = VK_SAMPLE_COUNT_1_BIT,                                      // Disable multisampling.
+        .mipLevels = mip_levels,                  // Amount of mit maps.
+        .arrayLayers = 1,                         // Amount of array layers.
+        .samples = VK_SAMPLE_COUNT_1_BIT,         // Disable multisampling.
         .tiling = tiling,
         .usage = usage_flags,
-        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,                              // That texture image is not shared by queues.
+        .sharingMode = VK_SHARING_MODE_EXCLUSIVE, // That texture image is not shared by queues.
         .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
     };
 

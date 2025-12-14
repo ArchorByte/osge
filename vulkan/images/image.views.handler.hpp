@@ -8,7 +8,8 @@ VkImageView create_image_view
     const VkDevice &logical_device,
     const VkImage &image,
     const VkFormat &format,
-    const VkImageAspectFlags &aspect_flags
+    const VkImageAspectFlags &aspect_flags,
+    const uint32_t &mip_levels
 );
 
 #endif

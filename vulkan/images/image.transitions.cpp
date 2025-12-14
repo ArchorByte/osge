@@ -16,7 +16,8 @@ void transition_image_layout
     const VkImage &image,
     const VkFormat &format,
     const VkImageLayout &old_layout,
-    const VkImageLayout &new_layout
+    const VkImageLayout &new_layout,
+    const uint32_t &mip_levels
 )
 {
     log(" > Transitioning an image layout from " + std::to_string(old_layout) + " to " + std::to_string(new_layout) + "..");
@@ -41,6 +42,11 @@ void transition_image_layout
         fatal_error_log("Image layout transition failed! The image provided (" + force_string(image) + ") is not valid!");
     }
 
+    if (mip_levels < 1)
+    {
+        fatal_error_log("Image layout transition failed! The mip levels count provided (" + std::to_string(mip_levels) + ") is not valid!");
+    }
+
     VkCommandBuffer command_buffer = begin_one_time_vulkan_command_buffer(logical_device, command_pool);
     VkPipelineStageFlags source_stage;
     VkPipelineStageFlags destination_stage;
@@ -56,7 +62,7 @@ void transition_image_layout
         .subresourceRange =
         {
             .baseMipLevel = 0,
-            .levelCount = 1,
+            .levelCount = mip_levels,
             .baseArrayLayer = 0,
             .layerCount = 1
         }

@@ -2,7 +2,7 @@
 This file contains the TODO list of the OSGE project. <br/>
 
 # TODO list
-- [ ] Implement Vulkan (https://vulkan-tutorial.com/Loading_models).
+- [ ] Implement Vulkan (https://vulkan-tutorial.com/Multisampling).
 - [ ] Implement OpenGL.
 - [X] Full logs system.
 - [X] Add cryptography tools.
