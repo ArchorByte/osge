@@ -11,7 +11,8 @@ VkImageView create_image_view
     const VkDevice &logical_device,
     const VkImage &image,
     const VkFormat &format,
-    const VkImageAspectFlags &aspect_flags
+    const VkImageAspectFlags &aspect_flags,
+    const uint32_t &mip_levels
 )
 {
     if (logical_device == VK_NULL_HANDLE)
@@ -27,6 +28,11 @@ VkImageView create_image_view
     if (!format)
     {
         fatal_error_log("Image view creation failed! The format provided (" + std::to_string(format) + ") is not valid!");
+    }
+
+    if (mip_levels < 1)
+    {
+        fatal_error_log("Image view creation failed! The mip levels count provided (" + std::to_string(mip_levels) + ") is not valid!");
     }
 
     const VkImageViewCreateInfo info
@@ -46,7 +52,7 @@ VkImageView create_image_view
         {
             .aspectMask = aspect_flags, // Image view for a color aspect.
             .baseMipLevel = 0,          // Set the starting mipmap level.
-            .levelCount = 1,            // Amount of mipmap levels that we are going to use.
+            .levelCount = mip_levels,   // Amount of mipmap levels that we are going to use.
             .baseArrayLayer = 0,        // Set the starting layer.
             .layerCount = 1             // Amount of layers that we are going to use.
         }

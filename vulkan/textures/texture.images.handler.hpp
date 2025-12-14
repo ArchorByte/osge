@@ -17,6 +17,7 @@ struct TextureImage
     std::string name;
     VkImage texture_image;
     VkDeviceMemory image_memory;
+    uint32_t mip_levels;
 };
 
 ///////////////////////////////////////////////////

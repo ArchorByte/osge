@@ -86,7 +86,7 @@ std::vector<VkImageView> create_vulkan_swapchain_image_views
 
     for (int i = 0; i < swapchain_images.size(); i++)
     {
-        const VkImageView image_view = create_image_view(logical_device, swapchain_images[i], swapchain_image_format, VK_IMAGE_ASPECT_COLOR_BIT);
+        const VkImageView image_view = create_image_view(logical_device, swapchain_images[i], swapchain_image_format, VK_IMAGE_ASPECT_COLOR_BIT, 1);
         image_views.emplace_back(image_view);
         log("- Swap chain image view #" + std::to_string(i + 1) + "/" + std::to_string(swapchain_images.size()) + " (" + force_string(image_view) + ") created successfully!");
     }

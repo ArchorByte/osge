@@ -11,7 +11,8 @@ void transition_image_layout
     const VkImage &image,
     const VkFormat &format,
     const VkImageLayout &old_layout,
-    const VkImageLayout &new_layout
+    const VkImageLayout &new_layout,
+    const uint32_t &mip_levels
 );
 
 #endif
