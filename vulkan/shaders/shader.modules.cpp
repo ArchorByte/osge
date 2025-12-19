@@ -88,7 +88,7 @@ std::vector<ShaderInfo> create_all_vulkan_shader_modules
         total++;
 
         const std::string file_name = file.path().filename().string();
-        const std::string file_extension = file.path().extension();
+        const std::string file_extension = file.path().extension().string();
 
         if (!fs::is_regular_file(file.status()))
         {

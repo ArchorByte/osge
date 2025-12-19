@@ -11,29 +11,55 @@ include_directories (
 if (WIN32)
     set(WINDOWS_BINARIES ${CMAKE_SOURCE_DIR}/bin/windows)
 
-    # SDL3 binaries.
-    set(SDL3_LIB ${WINDOWS_BINARIES}/SDL3.lib)
+    # SDL3 .lib binaries.
+    set(SDL3_LIB ${WINDOWS_BINARIES}/lib/SDL3.lib)
 
-    # Vulkan binaries.
-    set(VULKAN_LIB ${WINDOWS_BINARIES}/vulkan-1.lib)
+    # Vulkan .lib binaries.
+    set(VULKAN_LIB ${WINDOWS_BINARIES}/lib/vulkan-1.lib)
 
-    # OpenSSL binaries.
-    set(OPENSSL_CRYPTO_LIB ${WINDOWS_BINARIES}/libcrypto.lib)
-    set(OPENSSL_SSL_LIB ${WINDOWS_BINARIES}/libssl.lib)
+    # OpenSSL .lib binaries.
+    set(OPENSSL_CRYPTO_LIB ${WINDOWS_BINARIES}/lib/libcrypto.lib)
+    set(OPENSSL_SSL_LIB ${WINDOWS_BINARIES}/lib/libssl.lib)
+
+    # Copy the .dll binaries into the build folder.
+    add_custom_target(copy_binaries ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/windows/dll/SDL3.dll" "${CMAKE_SOURCE_DIR}/build/win64/out"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/windows/dll/vulkan-1.dll" "${CMAKE_SOURCE_DIR}/build/win64/out"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/windows/dll/libcrypto-3-x64.dll" "${CMAKE_SOURCE_DIR}/build/win64/out"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/windows/dll/libssl-3-x64.dll" "${CMAKE_SOURCE_DIR}/build/win64/out"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/windows/dll/libgcc_s_seh-1.dll" "${CMAKE_SOURCE_DIR}/build/win64/out"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/windows/dll/libstdc++-6.dll" "${CMAKE_SOURCE_DIR}/build/win64/out"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/windows/dll/libwinpthread-1.dll" "${CMAKE_SOURCE_DIR}/build/win64/out"
+    )
 
 # Linux systems.
 else()
     set(LINUX_BINARIES ${CMAKE_SOURCE_DIR}/bin/linux)
 
     # SDL3 binaries.
-    set(SDL3_LIB ${LINUX_BINARIES}/libSDL3.so)
+    set(SDL3_LIB ${LINUX_BINARIES}/libSDL3.so.0.2.24)
 
     # Vulkan binaries.
-    set(VULKAN_LIB ${LINUX_BINARIES}/libvulkan.so)
+    set(VULKAN_LIB ${LINUX_BINARIES}/libvulkan.so.1.4.328)
 
     # OpenSSL binaries.
-    set(OPENSSL_CRYPTO_LIB ${LINUX_BINARIES}/libcrypto.so)
-    set(OPENSSL_SSL_LIB ${LINUX_BINARIES}/libssl.so)
+    set(OPENSSL_CRYPTO_LIB ${LINUX_BINARIES}/libcrypto.so.3.5.4)
+    set(OPENSSL_SSL_LIB ${LINUX_BINARIES}/libssl.so.3.5.4)
+
+    # Copy the .so binaries into the build folder.
+    add_custom_target(copy_binaries ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/linux/libSDL3.so.0.2.24" "${CMAKE_SOURCE_DIR}/build/linux/out/libSDL3.so.0.2.24"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/linux/libvulkan.so.1.4.328" "${CMAKE_SOURCE_DIR}/build/linux/out/libvulkan.so.1.4.328"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/linux/libcrypto.so.3.5.4" "${CMAKE_SOURCE_DIR}/build/linux/out/libcrypto.so.3.5.4"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/linux/libssl.so.3.5.4" "${CMAKE_SOURCE_DIR}/build/linux/out/libssl.so.3.5.4"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/linux/libgcc_s-15-20251211.so.1" "${CMAKE_SOURCE_DIR}/build/linux/out/libgcc_s-15-20251211.so.1"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/linux/libpthread.so.0" "${CMAKE_SOURCE_DIR}/build/linux/out/libpthread.so.0"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/linux/libstdc++.so.6.0.34" "${CMAKE_SOURCE_DIR}/build/linux/out/libstdc++.so.6.0.34"
+    )
+
+    # Set the libraries location to the build folder.
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/out")
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
 endif()
 
@@ -135,81 +161,6 @@ set(ALL_SOURCES
     ${VULKAN_VERTEX_MODELS}
 )
 
-# Add the all of the sources to the executable.
+# Add all scripts and libraries to the executable.
 add_executable(new_osge_project ${ALL_SOURCES})
-
-# Windows systems.
-if (WIN32)
-    # Copy the SDL3.dll file into the build folder.
-    add_custom_command (
-        TARGET new_osge_project POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/bin/windows/SDL3.dll"
-        "${CMAKE_SOURCE_DIR}/build/win64/out"
-    )
-
-    # Copy the vulkan-1.dll file into the build folder.
-    add_custom_command (
-        TARGET new_osge_project POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/bin/windows/vulkan-1.dll"
-        "${CMAKE_SOURCE_DIR}/build/win64/out"
-    )
-
-    # Copy the libcrypto-3-x64.dll file into the build folder.
-    add_custom_command (
-        TARGET new_osge_project POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/bin/windows/libcrypto-3-x64.dll"
-        "${CMAKE_SOURCE_DIR}/build/win64/out"
-    )
-
-    # Copy the libssl-3-x64.dll file into the build folder.
-    add_custom_command (
-        TARGET new_osge_project POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/bin/windows/libssl-3-x64.dll"
-        "${CMAKE_SOURCE_DIR}/build/win64/out"
-    )
-
-    # Link the .lib files to the executable.
-    target_link_libraries(new_osge_project PRIVATE ${VULKAN_LIB} ${SDL3_LIB} ${OPENSSL_CRYPTO_LIB} ${OPENSSL_SSL_LIB})
-
-# Linux systems.
-else()
-    # Copy the libSDL3.so into the build folder.
-    add_custom_command (
-        TARGET new_osge_project POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/bin/linux/libSDL3.so"
-        "${CMAKE_SOURCE_DIR}/build/linux/out/libSDL3.so"
-    )
-
-    # Copy the libvulkan.so file into the build folder.
-    add_custom_command (
-        TARGET new_osge_project POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/bin/linux/libvulkan.so"
-        "${CMAKE_SOURCE_DIR}/build/linux/out/libvulkan.so"
-    )
-
-    # Copy the libcrypto.so file into the build folder.
-    add_custom_command (
-        TARGET new_osge_project POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/bin/linux/libcrypto.so"
-        "${CMAKE_SOURCE_DIR}/build/linux/out/libcrypto.so"
-    )
-
-    # Copy the libssl.so file into the build folder.
-    add_custom_command (
-        TARGET new_osge_project POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/bin/linux/libssl.so"
-        "${CMAKE_SOURCE_DIR}/build/linux/out/libssl.so"
-    )
-
-    # Link the .so files to the executable.
-    target_link_libraries(new_osge_project PRIVATE ${VULKAN_LIB} ${SDL3_LIB} ${OPENSSL_CRYPTO_LIB} ${OPENSSL_SSL_LIB})
-
-endif()
+target_link_libraries(new_osge_project PRIVATE ${VULKAN_LIB} ${SDL3_LIB} ${OPENSSL_CRYPTO_LIB} ${OPENSSL_SSL_LIB})
