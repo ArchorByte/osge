@@ -26,7 +26,7 @@ std::pair<std::vector<Vertex>, std::vector<uint32_t>> load_obj_model
     }
 
     const std::string file_name = file_path.filename().string();
-    const std::string file_extension = file_path.extension();
+    const std::string file_extension = file_path.extension().string();
 
     if (file_extension != ".obj")
     {
@@ -39,7 +39,7 @@ std::pair<std::vector<Vertex>, std::vector<uint32_t>> load_obj_model
     std::vector<tinyobj::material_t> materials;
     std::string warning, error;
 
-    const bool loaded = tinyobj::LoadObj(&attrib, &shapes, &materials, &warning, &error, file_path.c_str());
+    const bool loaded = tinyobj::LoadObj(&attrib, &shapes, &materials, &warning, &error, file_path.string().c_str());
 
     if (!loaded)
     {

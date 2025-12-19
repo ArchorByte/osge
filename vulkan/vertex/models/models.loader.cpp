@@ -26,7 +26,7 @@ void load_3d_models
 
         const std::filesystem::path file_path = file.path();
         const std::string file_name = file_path.filename().string();
-        const std::string file_extension = file_path.extension();
+        const std::string file_extension = file_path.extension().string();
 
         if (!std::filesystem::is_regular_file(file.status()))
         {
