@@ -1,69 +1,67 @@
 #include <vulkan/vulkan.h>
 
-#ifndef VULKAN_DEPTH_RESOURCES_HPP
-#define VULKAN_DEPTH_RESOURCES_HPP
+#ifndef VULKAN_COLOR_RESOURCES_HPP
+#define VULKAN_COLOR_RESOURCES_HPP
 
 ///////////////////////////////////////////////////
 //////////////////// Structure ////////////////////
 ///////////////////////////////////////////////////
 
-struct DepthResources
+struct ColorResources
 {
-    VkImage depth_image;
-    VkDeviceMemory image_memory;
-    VkImageView image_view;
+    VkImage color_image;
+    VkDeviceMemory color_image_memory;
+    VkImageView color_image_view;
 };
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
 ///////////////////////////////////////////////////
 
-DepthResources create_depth_resources
+ColorResources create_color_resources
 (
     const VkPhysicalDevice &physical_device,
     const VkDevice &logical_device,
-    const VkCommandPool &command_pool,
-    const VkQueue &graphics_queue,
-    const VkExtent2D &extent,
+    const VkExtent2D &swapchain_extent,
+    const VkFormat &swapchain_image_format,
     const VkSampleCountFlagBits &samples_count
 );
 
-void destroy_depth_resources
+void destroy_color_resources
 (
     const VkDevice &logical_device,
-    DepthResources &depth_resources
+    ColorResources &color_resources
 );
 
 ///////////////////////////////////////////////
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-class Vulkan_DepthResources
+class Vulkan_ColorResources
 {
 
 public:
     // Constructor.
-    Vulkan_DepthResources
+    Vulkan_ColorResources
     (
         const VkPhysicalDevice &physical_device,
         const VkDevice &logical_device,
-        const VkCommandPool &command_pool,
-        const VkQueue &graphics_queue,
-        const VkExtent2D &extent,
+        const VkExtent2D &swapchain_extent,
+        const VkFormat &swapchain_image_format,
         const VkSampleCountFlagBits &samples_count
     );
 
     // Destructor.
-    ~Vulkan_DepthResources();
+    ~Vulkan_ColorResources();
 
-    DepthResources get() const;
+    ColorResources get() const;
 
     // Prevent data duplication.
-    Vulkan_DepthResources(const Vulkan_DepthResources&) = delete;
-    Vulkan_DepthResources &operator = (const Vulkan_DepthResources&) = delete;
+    Vulkan_ColorResources(const Vulkan_ColorResources&) = delete;
+    Vulkan_ColorResources &operator = (const Vulkan_ColorResources&) = delete;
 
 private:
-    DepthResources depth_resources;
+    ColorResources color_resources;
     VkDevice logical_device = VK_NULL_HANDLE;
 
 };

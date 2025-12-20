@@ -17,6 +17,7 @@ std::vector<VkFramebuffer> create_vulkan_framebuffers
 (
     const VkDevice &logical_device,
     const std::vector<VkImageView> &image_views,
+    const VkImageView &color_image_view,
     const VkImageView &depth_image_view,
     const VkExtent2D &extent,
     const VkRenderPass &render_pass
@@ -49,7 +50,7 @@ std::vector<VkFramebuffer> create_vulkan_framebuffers
 
     for (int i = 0; i < image_views.size(); i++)
     {
-        const std::array<VkImageView, 2> attachments = { image_views[i], depth_image_view };
+        const std::array<VkImageView, 3> attachments = { color_image_view, depth_image_view, image_views[i] };
 
         const VkFramebufferCreateInfo create_info
         {
@@ -142,12 +143,13 @@ Vulkan_Framebuffers::Vulkan_Framebuffers
 (
     const VkDevice &logical_device,
     const std::vector<VkImageView> &image_views,
+    const VkImageView &color_image_view,
     const VkImageView &depth_image_view,
     const VkExtent2D &extent,
     const VkRenderPass &render_pass
 ) : logical_device(logical_device)
 {
-    framebuffers = create_vulkan_framebuffers(logical_device, image_views, depth_image_view, extent, render_pass);
+    framebuffers = create_vulkan_framebuffers(logical_device, image_views, color_image_view, depth_image_view, extent, render_pass);
 }
 
 // Destructor.

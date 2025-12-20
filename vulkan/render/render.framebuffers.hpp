@@ -12,6 +12,7 @@ std::vector<VkFramebuffer> create_vulkan_framebuffers
 (
     const VkDevice &logical_device,
     const std::vector<VkImageView> &image_views,
+    const VkImageView &color_image_view,
     const VkImageView &depth_image_view,
     const VkExtent2D &extent,
     const VkRenderPass &render_pass
@@ -36,6 +37,7 @@ public:
     (
         const VkDevice &logical_device,
         const std::vector<VkImageView> &image_views,
+        const VkImageView &color_image_view,
         const VkImageView &depth_image_view,
         const VkExtent2D &extent,
         const VkRenderPass &render_pass

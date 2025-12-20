@@ -4,6 +4,8 @@
 #include "../logs/logs.handler.hpp"
 #include "../game/game.main.hpp"
 #include "buffers/buffer.index.hpp"
+#include "colors/color.attachment.hpp"
+#include "colors/color.resources.hpp"
 #include "commands/command.buffers.hpp"
 #include "commands/command.pool.hpp"
 #include "core/vulkan.instance.hpp"
@@ -18,7 +20,6 @@
 #include "device/physical.device.hpp"
 #include "device/logical.device.hpp"
 #include "pipeline/pipeline.input.assembly.state.hpp"
-#include "pipeline/color.attachment.hpp"
 #include "pipeline/pipeline.dynamic.states.hpp"
 #include "pipeline/graphics.pipeline.hpp"
 #include "pipeline/pipeline.multisampling.hpp"
@@ -30,6 +31,7 @@
 #include "queues/present.queue.hpp"
 #include "queues/queues.handler.hpp"
 #include "render/draw.frames.hpp"
+#include "render/multisampling.hpp"
 #include "render/render.framebuffers.hpp"
 #include "render/render.pass.hpp"
 #include "render/sync/render.sync.fences.hpp"
@@ -76,7 +78,9 @@ void run_using_vulkan
 
     const Vulkan_Instance vulkan_instance(layers);                       // Start Vulkan.
     const Vulkan_Surface vulkan_surface (vulkan_instance.get(), window); // Create the surface that we are going to use for rendering.
+
     const VkPhysicalDevice physical_device = select_physical_device(vulkan_instance.get(), gpu_index); // Select a compatible device with rendering capabilities.
+    const VkSampleCountFlagBits samples_count = get_max_sample_count(physical_device);
 
     // Retrieve the swap chain capabilities of our selected physical device.
     const VkSurfaceCapabilitiesKHR swapchain_capabilities = get_vulkan_swapchain_capabilities(physical_device, vulkan_surface.get());
@@ -116,6 +120,9 @@ void run_using_vulkan
     // Create the logical device which handles rendering, queues and extensions.
     const Vulkan_LogicalDevice logical_device(physical_device, queues_create_info, required_extensions);
 
+    // Create the color resources for multisampling.
+    Vulkan_ColorResources color_resources(physical_device, logical_device.get(), extent, surface_format.format, samples_count);
+
     // Retrieve the queues that have been created alongside the logical device.
     VkQueue graphics_queue, present_queue;
     vkGetDeviceQueue(logical_device.get(), graphics_family_index, 0, &graphics_queue);
@@ -148,7 +155,7 @@ void run_using_vulkan
     const VkPipelineVertexInputStateCreateInfo vertex_input_state = create_vulkan_vertex_input_state(); // Handle inputs in the vertex shader files.
     const VkPipelineInputAssemblyStateCreateInfo assembly_input_state = create_vulkan_assembly_input_state(); // Define how we assemble objects.
     const VkPipelineRasterizationStateCreateInfo rasterization_state = create_vulkan_rasterization_state(); // Handle the conversion from geometry to pixels.
-    const VkPipelineMultisampleStateCreateInfo multisampling_state = create_vulkan_multisampling_state(); // Anti-aliasing.
+    const VkPipelineMultisampleStateCreateInfo multisampling_state = create_vulkan_multisampling_state(samples_count); // Anti-aliasing.
 
     // Define the region of the Vulkan surface that will be affected by the rendering.
     const VkPipelineViewportStateCreateInfo viewport_state = create_viewport_state();
@@ -167,13 +174,13 @@ void run_using_vulkan
     const Vulkan_UniformBuffers uniform_buffers(logical_device.get(), physical_device, command_pool.get(), graphics_queue, images_count); // Handle data passed to shaders.
 
     // Depth management.
-    Vulkan_DepthResources depth_resources(physical_device, logical_device.get(), command_pool.get(), graphics_queue, extent);
-    const VkAttachmentDescription depth_attachment = create_depth_attachment(physical_device);
+    Vulkan_DepthResources depth_resources(physical_device, logical_device.get(), command_pool.get(), graphics_queue, extent, samples_count);
+    const VkAttachmentDescription depth_attachment = create_depth_attachment(physical_device, samples_count);
     const VkAttachmentReference depth_attachment_reference = create_depth_attachment_reference();
 
-    const VkAttachmentDescription color_attachment = create_vulkan_color_attachment(surface_format.format);
-    const Vulkan_RenderPass render_pass(logical_device.get(), color_attachment, depth_attachment, depth_attachment_reference); // Define the way we use color attachments for rendering.
-    Vulkan_Framebuffers framebuffers(logical_device.get(), swapchain_images_views.get(), depth_resources.get().image_view, extent, render_pass.get()); // Store the image views in buffers.
+    const VkAttachmentDescription color_attachment = create_vulkan_color_attachment(surface_format.format, samples_count);
+    const Vulkan_RenderPass render_pass(logical_device.get(), color_attachment, depth_attachment, depth_attachment_reference, surface_format); // Define the way we use color attachments for rendering.
+    Vulkan_Framebuffers framebuffers(logical_device.get(), swapchain_images_views.get(), color_resources.get().color_image_view, depth_resources.get().image_view, extent, render_pass.get()); // Store the image views in buffers.
 
     const Vulkan_Fence fences(logical_device.get(), images_count); // Handle CPU/GPU synchronisation.
     Vulkan_Semaphores semaphores(logical_device.get(), (images_count * 2)); // Image retrieve and rendering synchronisation.
@@ -326,11 +333,13 @@ void run_using_vulkan
                 render_pass.get(),
                 command_pool.get(),
                 graphics_queue,
+                samples_count,
                 window,
                 swapchain,
                 swapchain_images_views,
                 framebuffers,
                 depth_resources,
+                color_resources,
                 extent,
                 semaphores,
                 image_available_semaphores,

@@ -15,6 +15,7 @@ std::pair<VkImage, VkDeviceMemory> create_image
     const int &width,
     const int &height,
     const uint32_t &mip_levels,
+    const VkSampleCountFlagBits &samples_count,
     const VkFormat &format,
     const VkImageTiling &tiling,
     const VkImageUsageFlags &usage_flags
@@ -56,12 +57,12 @@ std::pair<VkImage, VkDeviceMemory> create_image
             .height = static_cast<uint32_t>(height), // Pass the image height.
             .depth = 1,                              // Select the image depth.
         },
-        .mipLevels = mip_levels,                  // Amount of mit maps.
-        .arrayLayers = 1,                         // Amount of array layers.
-        .samples = VK_SAMPLE_COUNT_1_BIT,         // Disable multisampling.
+        .mipLevels = mip_levels, // Amount of mit maps.
+        .arrayLayers = 1,        // Amount of array layers.
+        .samples = samples_count,
         .tiling = tiling,
         .usage = usage_flags,
-        .sharingMode = VK_SHARING_MODE_EXCLUSIVE, // That texture image is not shared by queues.
+        .sharingMode = VK_SHARING_MODE_EXCLUSIVE, // This texture image won't be sharable.
         .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
     };
 

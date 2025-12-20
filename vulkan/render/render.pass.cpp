@@ -16,7 +16,8 @@ VkRenderPass create_vulkan_render_pass
     const VkDevice &logical_device,
     const VkAttachmentDescription &color_attachment,
     const VkAttachmentDescription &depth_attachment,
-    const VkAttachmentReference &depth_attachment_reference
+    const VkAttachmentReference &depth_attachment_reference,
+    const VkSurfaceFormatKHR &surface_format
 )
 {
     log("Creating a render pass..");
@@ -25,6 +26,24 @@ VkRenderPass create_vulkan_render_pass
     {
         fatal_error_log("Render pass creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
     }
+
+    VkAttachmentDescription resolve
+    {
+        .format = surface_format.format,
+        .samples = VK_SAMPLE_COUNT_1_BIT,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+        .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+    };
+
+    const VkAttachmentReference resolve_attachment_reference
+    {
+        .attachment = 2,
+        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+    };
 
     const VkAttachmentReference color_attachment_reference
     {
@@ -37,6 +56,7 @@ VkRenderPass create_vulkan_render_pass
         .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS, // This subpass will be used for a graphics pipeline.
         .colorAttachmentCount = 1,
         .pColorAttachments = &color_attachment_reference,
+        .pResolveAttachments = &resolve_attachment_reference,
         .pDepthStencilAttachment = &depth_attachment_reference
     };
 
@@ -50,7 +70,7 @@ VkRenderPass create_vulkan_render_pass
         .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT
     };
 
-    const std::array<VkAttachmentDescription, 2> attachments = { color_attachment, depth_attachment };
+    const std::array<VkAttachmentDescription, 3> attachments = { color_attachment, depth_attachment, resolve };
 
     const VkRenderPassCreateInfo create_info
     {
@@ -116,10 +136,11 @@ Vulkan_RenderPass::Vulkan_RenderPass
     const VkDevice &logical_device,
     const VkAttachmentDescription &color_attachment,
     const VkAttachmentDescription &depth_attachment,
-    const VkAttachmentReference &depth_attachment_reference
+    const VkAttachmentReference &depth_attachment_reference,
+    const VkSurfaceFormatKHR &surface_format
 ) : logical_device(logical_device)
 {
-    render_pass = create_vulkan_render_pass(logical_device, color_attachment, depth_attachment, depth_attachment_reference);
+    render_pass = create_vulkan_render_pass(logical_device, color_attachment, depth_attachment, depth_attachment_reference, surface_format);
 }
 
 // Destructor.
