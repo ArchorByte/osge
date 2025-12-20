@@ -21,7 +21,8 @@ DepthResources create_depth_resources
     const VkDevice &logical_device,
     const VkCommandPool &command_pool,
     const VkQueue &graphics_queue,
-    const VkExtent2D &extent
+    const VkExtent2D &extent,
+    const VkSampleCountFlagBits &samples_count
 )
 {
     log("Creation depth resources..");
@@ -55,6 +56,7 @@ DepthResources create_depth_resources
         extent.width,
         extent.height,
         1,
+        samples_count,
         depth_format,
         VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT
@@ -127,10 +129,11 @@ Vulkan_DepthResources::Vulkan_DepthResources
     const VkDevice &logical_device,
     const VkCommandPool &command_pool,
     const VkQueue &graphics_queue,
-    const VkExtent2D &extent
+    const VkExtent2D &extent,
+    const VkSampleCountFlagBits &samples_count
 ) : logical_device(logical_device)
 {
-    depth_resources = create_depth_resources(physical_device, logical_device, command_pool, graphics_queue, extent);
+    depth_resources = create_depth_resources(physical_device, logical_device, command_pool, graphics_queue, extent, samples_count);
 }
 
 // Destructor.

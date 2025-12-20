@@ -3,6 +3,9 @@
 #ifndef VULKAN_PIPELINE_MULTISAMPLING_HPP
 #define VULKAN_PIPELINE_MULTISAMPLING_HPP
 
-VkPipelineMultisampleStateCreateInfo create_vulkan_multisampling_state();
+VkPipelineMultisampleStateCreateInfo create_vulkan_multisampling_state
+(
+    const VkSampleCountFlagBits &samples_count
+);
 
 #endif

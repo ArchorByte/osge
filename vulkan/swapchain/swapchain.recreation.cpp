@@ -4,6 +4,7 @@
 #include "swapchain.data.selection.hpp"
 #include "swapchain.handler.hpp"
 #include "swapchain.images.hpp"
+#include "../colors/color.resources.hpp"
 #include "../depth/depth.resources.hpp"
 #include "../render/render.framebuffers.hpp"
 #include "../render/sync/render.sync.semaphores.hpp"
@@ -30,11 +31,13 @@ std::string recreate_vulkan_swapchain
     const VkRenderPass &render_pass,
     const VkCommandPool &command_pool,
     const VkQueue &graphics_queue,
+    const VkSampleCountFlagBits &samples_count,
     SDL_Window* window,
     Vulkan_Swapchain &swapchain,
     Vulkan_SwapchainImageViews &image_views,
     Vulkan_Framebuffers &framebuffers,
     Vulkan_DepthResources &depth_resources,
+    Vulkan_ColorResources &color_resources,
     VkExtent2D &extent,
     Vulkan_Semaphores &semaphores,
     std::vector<VkSemaphore> &image_available_semaphores,
@@ -149,9 +152,10 @@ std::string recreate_vulkan_swapchain
     // Create again the new rendering objects.
     const std::vector<VkImage> new_images = get_vulkan_swapchain_images(logical_device, swapchain.get());
     new (&image_views) Vulkan_SwapchainImageViews(logical_device, new_images, surface_format.format);
-    new (&depth_resources) Vulkan_DepthResources(physical_device, logical_device, command_pool, graphics_queue, extent);
-    new (&framebuffers) Vulkan_Framebuffers(logical_device, image_views.get(), VK_NULL_HANDLE, extent, render_pass);
+    new (&depth_resources) Vulkan_DepthResources(physical_device, logical_device, command_pool, graphics_queue, extent, samples_count);
     new (&semaphores) Vulkan_Semaphores(logical_device, images_count * 2);
+    new (&color_resources) Vulkan_ColorResources(physical_device, logical_device, extent, surface_format.format, samples_count);
+    new (&framebuffers) Vulkan_Framebuffers(logical_device, image_views.get(), color_resources.get().color_image_view, depth_resources.get().image_view, extent, render_pass);
 
     int i = 0;
 

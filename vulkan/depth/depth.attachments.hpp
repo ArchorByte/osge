@@ -5,7 +5,8 @@
 
 VkAttachmentDescription create_depth_attachment
 (
-    const VkPhysicalDevice &physical_device
+    const VkPhysicalDevice &physical_device,
+    const VkSampleCountFlagBits &samples_count
 );
 
 VkAttachmentReference create_depth_attachment_reference();

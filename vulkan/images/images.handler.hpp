@@ -11,6 +11,7 @@ std::pair<VkImage, VkDeviceMemory> create_image
     const int &width,
     const int &height,
     const uint32_t &mip_levels,
+    const VkSampleCountFlagBits &samples_count,
     const VkFormat &format,
     const VkImageTiling &tiling,
     const VkImageUsageFlags &usage_flags

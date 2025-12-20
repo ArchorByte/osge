@@ -31,7 +31,7 @@ VkDevice create_logical_device
         fatal_error_log("Logical device creation failed! No queues create info were provided!");
     }
 
-    VkPhysicalDeviceFeatures device_features {};
+    VkPhysicalDeviceFeatures device_features { .sampleRateShading = VK_TRUE };
     vkGetPhysicalDeviceFeatures(physical_device, &device_features);
 
     const VkDeviceCreateInfo create_info

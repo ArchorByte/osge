@@ -1,5 +1,6 @@
 #include "swapchain.handler.hpp"
 #include "swapchain.images.hpp"
+#include "../colors/color.resources.hpp"
 #include "../depth/depth.resources.hpp"
 #include "../render/render.framebuffers.hpp"
 #include "../render/sync/render.sync.semaphores.hpp"
@@ -25,11 +26,13 @@ std::string recreate_vulkan_swapchain
     const VkRenderPass &render_pass,
     const VkCommandPool &command_pool,
     const VkQueue &graphics_queue,
+    const VkSampleCountFlagBits &samples_count,
     SDL_Window* window,
     Vulkan_Swapchain &swapchain,
     Vulkan_SwapchainImageViews &image_views,
     Vulkan_Framebuffers &framebuffers,
     Vulkan_DepthResources &depth_resources,
+    Vulkan_ColorResources &color_resources,
     VkExtent2D &extent,
     Vulkan_Semaphores &semaphores,
     std::vector<VkSemaphore> &image_available_semaphores,

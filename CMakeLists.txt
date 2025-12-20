@@ -80,6 +80,7 @@ include_directories (
     ${CMAKE_SOURCE_DIR}/utils
     ${CMAKE_SOURCE_DIR}/vulkan
     ${CMAKE_SOURCE_DIR}/vulkan/buffers
+    ${CMAKE_SOURCE_DIR}/vulkan/colors
     ${CMAKE_SOURCE_DIR}/vulkan/commands
     ${CMAKE_SOURCE_DIR}/vulkan/core
     ${CMAKE_SOURCE_DIR}/vulkan/depth
@@ -111,6 +112,7 @@ file(GLOB SDL3 sdl3/*.cpp)
 file(GLOB HELPERS utils/*.cpp)
 file(GLOB VULKAN vulkan/*.cpp)
 file(GLOB VULKAN_BUFFERS vulkan/buffers/*.cpp)
+file(GLOB VULKAN_COLORS vulkan/colors/*.cpp)
 file(GLOB VULKAN_COMMANDS vulkan/commands/*.cpp)
 file(GLOB VULKAN_CORE vulkan/core/*.cpp)
 file(GLOB VULKAN_DEPTH vulkan/depth/*.cpp)
@@ -142,6 +144,7 @@ set(ALL_SOURCES
     ${HELPERS}
     ${VULKAN}
     ${VULKAN_BUFFERS}
+    ${VULKAN_COLORS}
     ${VULKAN_COMMANDS}
     ${VULKAN_CORE}
     ${VULKAN_DEPTH}

@@ -5,7 +5,8 @@
 
 VkAttachmentDescription create_vulkan_color_attachment
 (
-    const VkFormat &surface_format
+    const VkFormat &surface_format,
+    const VkSampleCountFlagBits &samples_count
 );
 
 #endif
