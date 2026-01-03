@@ -3,8 +3,8 @@
 #include "config/engine.version.hpp"
 #include "logs/logs.popup.hpp"
 #include "logs/logs.handler.hpp"
-#include "sdl3/sdl3.instance.hpp"
-#include "sdl3/window.handler.hpp"
+#include "sdl3/window/sdl3.instance.hpp"
+#include "sdl3/window/window.handler.hpp"
 #include "environment/env.console.hpp"
 #include "environment/env.displays.hpp"
 #include "environment/env.resolutions.hpp"
@@ -13,7 +13,7 @@
 #include "utils/tool.integer.hpp"
 #include "utils/tool.files.hpp"
 #include "utils/tool.versioning.hpp"
-#include "vulkan/vulkan.run.hpp"
+#include "vulkan/vulkan.hpp"
 #include "opengl/opengl.run.hpp"
 
 #include <vulkan/vulkan.h>

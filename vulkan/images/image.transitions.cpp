@@ -1,53 +1,61 @@
-#include "image.transitions.hpp"
+#include "vulkan.images.hpp"
 
-#include "../commands/command.buffer.handler.hpp"
-#include "../depth/depth.formats.hpp"
+#include "../buffers/vulkan.buffers.hpp"
+
 #include "../../logs/logs.handler.hpp"
 #include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 
-// Make the transition layout for an image.
-void transition_image_layout
+/*
+    Transition an image from a layout to another.
+
+    Tasks:
+        1) Verify the parameters.
+
+    Parameters:
+        - command_pool   / VkCommandPool / Command pool of the Vulkan instance.
+        - format         / VkFormat      / Format of the image.
+        - graphics_queue / VkQueue       / Graphics queue of the Vulkan instance.
+        - image          / VkImage       / Targeted image.
+        - logical_device / VkDevice      / Logical device of the Vulkan instance.
+        - mip_levels     / uint32_t      / Mip levels used for LOD.
+        - new_layout     / VkImageLayout / Layout we want to transition to.
+        - old_layout     / VkImageLayout / Layout we want to transition from.
+
+    Returns:
+        No object returned.
+*/
+void Vulkan::Images::transition_image_layout
 (
-    const VkDevice &logical_device,
     const VkCommandPool &command_pool,
+    const VkFormat &format,
     const VkQueue &graphics_queue,
     const VkImage &image,
-    const VkFormat &format,
-    const VkImageLayout &old_layout,
+    const VkDevice &logical_device,
+    const uint32_t &mip_levels,
     const VkImageLayout &new_layout,
-    const uint32_t &mip_levels
+    const VkImageLayout &old_layout
 )
 {
-    log(" > Transitioning an image layout from " + std::to_string(old_layout) + " to " + std::to_string(new_layout) + "..");
-
-    if (logical_device == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Image layout transition failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
-    }
+    log("Transitioning an image layout from " + std::to_string(old_layout) + " to " + std::to_string(new_layout) + "..");
 
     if (command_pool == VK_NULL_HANDLE)
-    {
         fatal_error_log("Image layout transition failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
-    }
 
     if (graphics_queue == VK_NULL_HANDLE)
-    {
         fatal_error_log("Image layout transition failed! The graphics queue provided (" + force_string(graphics_queue) + ") is not valid!");
-    }
 
     if (image == VK_NULL_HANDLE)
-    {
         fatal_error_log("Image layout transition failed! The image provided (" + force_string(image) + ") is not valid!");
-    }
+
+    if (logical_device == VK_NULL_HANDLE)
+        fatal_error_log("Image layout transition failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
 
     if (mip_levels < 1)
-    {
         fatal_error_log("Image layout transition failed! The mip levels count provided (" + std::to_string(mip_levels) + ") is not valid!");
-    }
 
-    VkCommandBuffer command_buffer = begin_one_time_vulkan_command_buffer(logical_device, command_pool);
+    VkCommandBuffer command_buffer = Vulkan::Buffers::create_one_time_command_buffer(command_pool, logical_device);
     VkPipelineStageFlags source_stage;
     VkPipelineStageFlags destination_stage;
 
@@ -72,10 +80,8 @@ void transition_image_layout
     {
         barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 
-        if (has_stencil_component(format))
-        {
+        if (format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT)
             barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
-        }
     }
     else barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
@@ -103,7 +109,7 @@ void transition_image_layout
     else fatal_error_log("Image layout transition failed! The layout transition requested is not supported!");
 
     vkCmdPipelineBarrier(command_buffer, source_stage, destination_stage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
-    end_command_buffer(logical_device, command_pool, graphics_queue, command_buffer);
+    Vulkan::Buffers::destroy_command_buffer(command_buffer, command_pool, graphics_queue, logical_device);
 
-    log(" > Image layout transition done successfully!");
+    log("Image layout transition done successfully!");
 }

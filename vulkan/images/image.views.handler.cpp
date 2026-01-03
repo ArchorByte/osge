@@ -1,45 +1,54 @@
-#include "image.views.handler.hpp"
+#include "vulkan.images.hpp"
 
 #include "../../logs/logs.handler.hpp"
 #include "../../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 
-// Create a view for an image.
-VkImageView create_image_view
+/*
+    Create a view for an image.
+    Warning: There is no class that will automatically destroy this image view, you have to set one up yourself for memory safety reasons.
+
+    Tasks:
+        1) Verify the parameters.
+        2) Create the view.
+
+    Parameters:
+        - aspect_flags   / VkImageAspectFlags / Flags of the image aspects.
+        - format         / VkFormat           / Format of the image.
+        - image          / VkImage            / Targeted image.
+        - logical_device / VkDevice           / Logical device of the Vulkan instance.
+        - mip_levels     / uint32_t           / Mip levels used for LOD.
+
+    Returns:
+        The created image view.
+*/
+VkImageView Vulkan::Images::create_image_view
 (
-    const VkDevice &logical_device,
-    const VkImage &image,
-    const VkFormat &format,
     const VkImageAspectFlags &aspect_flags,
+    const VkFormat &format,
+    const VkImage &image,
+    const VkDevice &logical_device,
     const uint32_t &mip_levels
 )
 {
-    if (logical_device == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Image view creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
-    }
+    if (!format)
+        fatal_error_log("Image view creation failed! The format provided (" + std::to_string(format) + ") is not valid!");
 
     if (image == VK_NULL_HANDLE)
-    {
         fatal_error_log("Image view creation failed! The image provided (" + force_string(image) + ") is not valid!");
-    }
 
-    if (!format)
-    {
-        fatal_error_log("Image view creation failed! The format provided (" + std::to_string(format) + ") is not valid!");
-    }
+    if (logical_device == VK_NULL_HANDLE)
+        fatal_error_log("Image view creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
 
     if (mip_levels < 1)
-    {
         fatal_error_log("Image view creation failed! The mip levels count provided (" + std::to_string(mip_levels) + ") is not valid!");
-    }
 
     const VkImageViewCreateInfo info
     {
         .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
         .image = image,
-        .viewType = VK_IMAGE_VIEW_TYPE_2D, // Use 2D mode.
+        .viewType = VK_IMAGE_VIEW_TYPE_2D,
         .format = format,
         .components =
         {
@@ -50,26 +59,19 @@ VkImageView create_image_view
         },
         .subresourceRange =
         {
-            .aspectMask = aspect_flags, // Image view for a color aspect.
-            .baseMipLevel = 0,          // Set the starting mipmap level.
-            .levelCount = mip_levels,   // Amount of mipmap levels that we are going to use.
-            .baseArrayLayer = 0,        // Set the starting layer.
-            .layerCount = 1             // Amount of layers that we are going to use.
+            .aspectMask = aspect_flags,
+            .baseMipLevel = 0,
+            .levelCount = mip_levels,
+            .baseArrayLayer = 0,
+            .layerCount = 1
         }
     };
 
     VkImageView image_view = VK_NULL_HANDLE;
-    const VkResult view_creation = vkCreateImageView(logical_device, &info, nullptr, &image_view); // Try to create the image view.
+    const VkResult view_creation = vkCreateImageView(logical_device, &info, nullptr, &image_view);
 
     if (view_creation != VK_SUCCESS)
-    {
         fatal_error_log("Image view creation returned error code " + std::to_string(view_creation) + ".");
-    }
-
-    if (image_view == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Image view creation output (" + force_string(image_view) + ") is not valid!");
-    }
 
     return image_view;
 }

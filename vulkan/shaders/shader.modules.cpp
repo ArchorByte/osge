@@ -1,96 +1,109 @@
-#include "shader.modules.hpp"
+#include "vulkan.shaders.hpp"
 
 #include "../../logs/logs.handler.hpp"
 #include "../../utils/tool.files.hpp"
 #include "../../utils/tool.text.format.hpp"
 
-#include <vulkan/vulkan.h>
-#include <map>
-#include <vector>
 #include <cstdint>
-#include <string>
 #include <filesystem>
-
-namespace fs = std::filesystem;
+#include <map>
+#include <string>
+#include <vector>
+#include <vulkan/vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
 ///////////////////////////////////////////////////
 
-// Create one specific shader module using a binary file.
-// Note: This function only logs errors, as it was meant to be only used by the engine.
-VkShaderModule create_vulkan_shader_module
+/*
+    Create a shader module.
+    Note: This function was meant to be used by the create_all_shader_modules function only, itself meant to be used with the pre-made class.
+          If you create shader modules by yourself using this function, you will have to destroy them yourself as well.
+
+    Tasks:
+        1) Verify the parameters.
+        2) Create the shader module.
+
+    Parameters:
+        - file_name       / string          / Name of the shader file.
+        - logical_device  / VkDevice        / Logical device of the Vulkan instance.
+        - shader_binaries / shader_binaries / Binaries of the shader.
+
+    Returns:
+        The created shader module.
+*/
+VkShaderModule Vulkan::Shaders::create_shader_module
 (
+    const std::string &file_name,
     const VkDevice &logical_device,
-    const std::vector<char> &binaries,
-    const std::string &file_name
+    const std::vector<char> &shader_binaries
 )
 {
-    if (logical_device == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Shader module \"" + file_name + "\" creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
-    }
-
-    if (binaries.size() < 1)
-    {
-        fatal_error_log("Shader module \"" + file_name + "\" creation failed! No binaries were provided!");
-    }
+    if (shader_binaries.size() < 1)
+        fatal_error_log("Shader module \"" + file_name + "\" creation failed! No binaries provided!");
 
     if (trim(file_name).size() < 1)
-    {
         fatal_error_log("Shader module \"" + file_name + "\" creation failed! The file name provided is not valid!");
-    }
+
+    if (logical_device == VK_NULL_HANDLE)
+        fatal_error_log("Shader module \"" + file_name + "\" creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
 
     const VkShaderModuleCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-        .codeSize = binaries.size(),
-        .pCode = reinterpret_cast<const uint32_t*>(binaries.data()) // We pass the shader's binaries.
+        .codeSize = shader_binaries.size(),
+        .pCode = reinterpret_cast<const uint32_t*>(shader_binaries.data())
     };
 
     VkShaderModule shader_module = VK_NULL_HANDLE;
     const VkResult module_creation = vkCreateShaderModule(logical_device, &create_info, nullptr, &shader_module);
 
     if (module_creation != VK_SUCCESS)
-    {
         fatal_error_log("- Shader module \"" + file_name + "\" creation returned error code " + std::to_string(module_creation) + ".");
-    }
-
-    if (shader_module == VK_NULL_HANDLE)
-    {
-        fatal_error_log("- Shader module \"" + file_name + "\" creation output (" + force_string(shader_module) + ") is not valid!");
-    }
 
     return shader_module;
 }
 
-// Create all shader modules at once in the shaders directory.
-// Note: We only trigger a crash if we started the shader module creation process. If a file is not valid, we just ignore it.
-std::vector<ShaderInfo> create_all_vulkan_shader_modules
+
+
+/*
+    Create a shader module for each valid shader found in the shaders folder.
+    Note: You should use the pre-made class to handle the shader modules rather than directly using this function for memory safety reasons.
+
+    Tasks:
+        1) Verify the parameters.
+        2) Verify the files validity.
+        3) Load the shaders (create the modules) and get their info.
+
+    Parameters:
+        - logical_device / VkDevice / Logical device of the Vulkan instance.
+
+    Returns:
+        A vector list containing all created shader modules.
+*/
+std::vector<ShaderInfo> Vulkan::Shaders::create_all_shader_modules
 (
     const VkDevice &logical_device
 )
 {
-    log("Creating the shaders modules..");
+    log("Creating the shader modules..");
 
     if (logical_device == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Shaders modules creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
-    }
+        fatal_error_log("Shader modules creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
 
     int total = 0;
     int failed = 0;
 
-    std::vector<ShaderInfo> shaders_modules;
+    std::vector<ShaderInfo> shader_modules;
 
-    for (const auto &file : fs::directory_iterator("./shaders"))
+    for (const auto &file : std::filesystem::directory_iterator("./shaders"))
     {
         total++;
 
         const std::string file_name = file.path().filename().string();
         const std::string file_extension = file.path().extension().string();
 
-        if (!fs::is_regular_file(file.status()))
+        if (!std::filesystem::is_regular_file(file.status()))
         {
             error_log("- The creation of the shader module \"" + file_name + "\" failed! It's not a valid file!");
             continue;
@@ -104,35 +117,44 @@ std::vector<ShaderInfo> create_all_vulkan_shader_modules
 
         const std::string type = file_extension == ".vert" ? "vert" : "frag";
         const std::vector<char> shader_binaries = read_binary_file("./shaders/" + file_name);
-        const VkShaderModule shader_module = create_vulkan_shader_module(logical_device, shader_binaries, file_name);
 
-        const ShaderInfo shader_info
-        {
-            type,
-            shader_module
-        };
+        const VkShaderModule shader_module = Vulkan::Shaders::create_shader_module(file_name, logical_device, shader_binaries);
+        const ShaderInfo shader_info = { type, shader_module };
 
-        shaders_modules.emplace_back(shader_info);
+        shader_modules.emplace_back(shader_info);
         log("- Shader module \"" + file_name + "\" (" + force_string(shader_module) + ") created successfully!");
     }
 
     if (failed != 0)
-    {
         error_log("Warning: " + std::to_string(failed) + " shader modules creation failed!");
-    }
 
-    log(std::to_string(shaders_modules.size()) + "/" + std::to_string(total) + " shaders modules created successfully!");
-    return shaders_modules;
+    log(std::to_string(shader_modules.size()) + "/" + std::to_string(total) + " shader modules created successfully!");
+    return shader_modules;
 }
 
-// Destroy some shader modules.
-void destroy_vulkan_shader_modules
+
+
+/*
+    Cleanly destroy all shader modules.
+
+    Tasks:
+        1) Verify the parameters.
+        2) Destroy valid shader modules.
+
+    Parameters:
+        - logical_device / VkDevice           / Logical device of the Vulkan instance.
+        - shader_modules / vector<ShaderInfo> / Shader modules to destroy.
+
+    Returns:
+        No object returned.
+*/
+void Vulkan::Shaders::destroy_shader_modules
 (
     const VkDevice &logical_device,
-    std::vector<ShaderInfo> &shaders_modules
+    std::vector<ShaderInfo> &shader_modules
 )
 {
-    log("Destroying " + std::to_string(shaders_modules.size()) + " shaders modules..");
+    log("Destroying " + std::to_string(shader_modules.size()) + " shader modules..");
 
     if (logical_device == VK_NULL_HANDLE)
     {
@@ -140,23 +162,23 @@ void destroy_vulkan_shader_modules
         return;
     }
 
-    if (shaders_modules.size() < 1)
+    if (shader_modules.size() < 1)
     {
-        error_log("Shader modules destruction failed! No shader modules were provided!");
+        error_log("Shader modules destruction failed! No shader modules provided!");
         return;
     }
 
     int failed = 0;
     int i = 0;
 
-    for (ShaderInfo &data : shaders_modules)
+    for (ShaderInfo &data : shader_modules)
     {
         i++;
         VkShaderModule shader_module = data.shader_module;
 
         if (shader_module == VK_NULL_HANDLE)
         {
-            error_log("- Failed to destroy the shader module #" + std::to_string(i) + "/" + std::to_string(shaders_modules.size()) + "! The shader module provided (" + force_string(shader_module) + ") is not valid!");
+            error_log("- Failed to destroy the shader module #" + std::to_string(i) + "/" + std::to_string(shader_modules.size()) + "! The shader module provided (" + force_string(shader_module) + ") is not valid!");
             failed++;
             continue;
         }
@@ -164,38 +186,35 @@ void destroy_vulkan_shader_modules
         vkDestroyShaderModule(logical_device, shader_module, nullptr);
         shader_module = VK_NULL_HANDLE;
 
-        log("- Shader module #" + std::to_string(i) + "/" + std::to_string(shaders_modules.size()) + " destroyed successfully!");
+        log("- Shader module #" + std::to_string(i) + "/" + std::to_string(shader_modules.size()) + " destroyed successfully!");
     }
 
     if (failed != 0)
-    {
         error_log("Warning: " + std::to_string(failed) + " shader modules failed to destroy! This might lead to some memory leaks!");
-    }
 
-    log(std::to_string(shaders_modules.size() - failed) + "/" + std::to_string(shaders_modules.size()) + " shader modules destroyed successfully!");
-    shaders_modules.clear();
+    log(std::to_string(shader_modules.size() - failed) + "/" + std::to_string(shader_modules.size()) + " shader modules destroyed successfully!");
+    shader_modules.clear();
 }
 
 ///////////////////////////////////////////////
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-// Constructor.
-Vulkan_ShadersModules::Vulkan_ShadersModules
+Vulkan::Shaders::shader_modules_handler::shader_modules_handler
 (
     const VkDevice &logical_device
-) : logical_device(logical_device)
+)
+    : logical_device(logical_device)
 {
-    shaders_modules = create_all_vulkan_shader_modules(logical_device);
+    shader_modules = Vulkan::Shaders::create_all_shader_modules(logical_device);
 }
 
-// Destructor.
-Vulkan_ShadersModules::~Vulkan_ShadersModules()
+Vulkan::Shaders::shader_modules_handler::~shader_modules_handler()
 {
-    destroy_vulkan_shader_modules(logical_device, shaders_modules);
+    Vulkan::Shaders::destroy_shader_modules(logical_device, shader_modules);
 }
 
-std::vector<ShaderInfo> Vulkan_ShadersModules::get() const
+std::vector<ShaderInfo> Vulkan::Shaders::shader_modules_handler::get() const
 {
-    return shaders_modules;
+    return shader_modules;
 }

@@ -1,31 +1,39 @@
-#include "color.attachment.hpp"
+#include "vulkan.colors.hpp"
 
 #include "../../logs/logs.handler.hpp"
 
 #include <vulkan/vulkan.h>
 
-// Create a color attachment description for a graphics pipeline.
-VkAttachmentDescription create_vulkan_color_attachment
+/*
+    Create a color attachment description for a graphics pipeline.
+
+    Tasks:
+        1) Create the attachment.
+
+    Parameters:
+        - samples_count  / VkSampleCountFlagBits / Amount of samples to use for the MSAA.
+        - surface_format / VkFormat              / Surface format of the Vulkan instance.
+*/
+VkAttachmentDescription Vulkan::Colors::create_color_attachment
 (
-    const VkFormat &surface_format,
-    const VkSampleCountFlagBits &samples_count
+    const VkSampleCountFlagBits &samples_count,
+    const VkFormat &surface_format
 )
 {
     log("Creating a color attachment description..");
 
-    // Description of out color attachment.
-    VkAttachmentDescription description
+    const VkAttachmentDescription attachment
     {
-        .format = surface_format,                               // Pass the surface format.
-        .samples = samples_count,                               // MSAA.
-        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,                  // Clear this attachment when the render pass start.
-        .storeOp = VK_ATTACHMENT_STORE_OP_STORE,                // Store the render result.
-        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,       // Ignore the stencil buffer. No need to load anything.
-        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,     // Same. No need to store anything.
-        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,             // Ignore the initial layout.
-        .finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL // Use a valid layout for the frame presents.
+        .format = surface_format,
+        .samples = samples_count,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,   // Clear this attachment when the render pass starts.
+        .storeOp = VK_ATTACHMENT_STORE_OP_STORE, // Store the render result.
+        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+        .finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     };
 
     log("Color attachment description created successfully!");
-    return description;
+    return attachment;
 }

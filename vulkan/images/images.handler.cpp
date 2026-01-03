@@ -1,50 +1,61 @@
-#include "images.handler.hpp"
+#include "vulkan.images.hpp"
 
-#include "../buffers/buffers.memory.hpp"
+#include "../buffers/vulkan.buffers.hpp"
+
 #include "../../utils/tool.text.format.hpp"
 #include "../../logs/logs.handler.hpp"
 
-#include <vulkan/vulkan.h>
 #include <utility>
+#include <vulkan/vulkan.h>
 
-// Create an image and bind it to some memory.
-std::pair<VkImage, VkDeviceMemory> create_image
+/*
+    Create an image.
+    Warning: There is no class that will automatically destroy this image, you have to set one up yourself for memory safety reasons.
+
+    Tasks:
+        1) Verify the parameters.
+
+    Parameters:
+        - format          / VkFormat              / Format of the image.
+        - height          / int                   / Height of the image.
+        - image_tiling    / VkImageTiling         / Image tiling.
+        - logical_device  / VkDevice              / Logical device of the Vulkan instance.
+        - mip_levels      / uint32_t              / Mip levels used for LOD.
+        - physical_device / VkPhysicalDevice      / Physical device used to run Vulkan.
+        - samples_count   / VkSampleCountFlagBits / Amount of samples to render at the same time for multisampling.
+        - usage_flags     / VkImageUsageFlags     / Usage flags.
+        - width           / int                   / Width of the image.
+
+    Returns:
+        A pair containing the created image and its memory.
+*/
+std::pair<VkImage, VkDeviceMemory> Vulkan::Images::create_image
 (
-    const VkPhysicalDevice &physical_device,
-    const VkDevice &logical_device,
-    const int &width,
-    const int &height,
-    const uint32_t &mip_levels,
-    const VkSampleCountFlagBits &samples_count,
     const VkFormat &format,
-    const VkImageTiling &tiling,
-    const VkImageUsageFlags &usage_flags
+    const int &height,
+    const VkImageTiling &image_tiling,
+    const VkDevice &logical_device,
+    const uint32_t &mip_levels,
+    const VkPhysicalDevice &physical_device,
+    const VkSampleCountFlagBits &samples_count,
+    const VkImageUsageFlags &usage_flags,
+    const int &width
 )
 {
-    if (physical_device == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Image creation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
-    }
+    if (height < 1)
+        fatal_error_log("Image creation failed! The image height provided (" + std::to_string(height) + ") is not valid!");
 
     if (logical_device == VK_NULL_HANDLE)
-    {
         fatal_error_log("Image creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
-    }
-
-    if (width < 1)
-    {
-        fatal_error_log("Image creation failed! The image width provided (" + std::to_string(width) + ") is not valid!");
-    }
-
-    if (height < 1)
-    {
-        fatal_error_log("Image creation failed! The image height provided (" + std::to_string(height) + ") is not valid!");
-    }
 
     if (mip_levels < 1)
-    {
         fatal_error_log("Image creation failed! The mip levels count provided (" + std::to_string(mip_levels) + ") is not valid!");
-    }
+
+    if (physical_device == VK_NULL_HANDLE)
+        fatal_error_log("Image creation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+
+    if (width < 1)
+        fatal_error_log("Image creation failed! The image width provided (" + std::to_string(width) + ") is not valid!");
 
     const VkImageCreateInfo create_info
     {
@@ -53,16 +64,16 @@ std::pair<VkImage, VkDeviceMemory> create_image
         .format = format,
         .extent =
         {
-            .width = static_cast<uint32_t>(width),   // Pass the image width.
-            .height = static_cast<uint32_t>(height), // Pass the image height.
-            .depth = 1,                              // Select the image depth.
+            .width = static_cast<uint32_t>(width),
+            .height = static_cast<uint32_t>(height),
+            .depth = 1,
         },
-        .mipLevels = mip_levels, // Amount of mit maps.
-        .arrayLayers = 1,        // Amount of array layers.
+        .mipLevels = mip_levels,
+        .arrayLayers = 1,
         .samples = samples_count,
-        .tiling = tiling,
+        .tiling = image_tiling,
         .usage = usage_flags,
-        .sharingMode = VK_SHARING_MODE_EXCLUSIVE, // This texture image won't be sharable.
+        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
         .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
     };
 
@@ -70,20 +81,11 @@ std::pair<VkImage, VkDeviceMemory> create_image
     const VkResult image_creation = vkCreateImage(logical_device, &create_info, nullptr, &image);
 
     if (image_creation != VK_SUCCESS)
-    {
         fatal_error_log("Image creation returned error code " + std::to_string(image_creation) + ".");
-    }
 
-    if (image == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Image creation output (" + force_string(image) + ") is not valid!");
-    }
-
-    // Get the memory properties of the physical device.
     VkPhysicalDeviceMemoryProperties memory_properties;
     vkGetPhysicalDeviceMemoryProperties(physical_device, &memory_properties);
 
-    // Get the memory requirements of the texture image.
     VkMemoryRequirements memory_requirements;
     vkGetImageMemoryRequirements(logical_device, image, &memory_requirements);
 
@@ -91,24 +93,15 @@ std::pair<VkImage, VkDeviceMemory> create_image
     {
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
         .allocationSize = memory_requirements.size,
-        .memoryTypeIndex = find_memory_type(memory_requirements.memoryTypeBits, memory_properties, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
+        .memoryTypeIndex = Vulkan::Buffers::find_memory_type(memory_properties, memory_requirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
     };
 
     VkDeviceMemory image_memory = VK_NULL_HANDLE;
     const VkResult memory_allocation = vkAllocateMemory(logical_device, &allocation_info, nullptr, &image_memory);
 
     if (memory_allocation != VK_SUCCESS)
-    {
         fatal_error_log("Image creation failed! The memory allocation returned error code " + std::to_string(memory_allocation) + ".");
-    }
 
-    if (image_memory == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Image creation failed! The memory allocation output (" + force_string(image_memory) + ") is not valid!");
-    }
-
-    // Bind the texture image and its memory.
     vkBindImageMemory(logical_device, image, image_memory, 0);
-
     return { image, image_memory };
 }

@@ -1,88 +1,93 @@
-#include "descriptor.sets.hpp"
+#include "vulkan.descriptors.hpp"
 
-#include "../uniform/uniform.buffers.hpp"
+#include "../buffers/vulkan.buffers.hpp"
 #include "../../logs/logs.handler.hpp"
 #include "../../utils/tool.text.format.hpp"
 
-#include <vulkan/vulkan.h>
-#include <vector>
-#include <cstdint>
 #include <string>
+#include <vector>
+#include <vulkan/vulkan.h>
 
-// Create a descriptor set for each swap chain image.
-std::vector<VkDescriptorSet> create_vulkan_descriptor_sets
+///////////////////////////////////////////////////
+//////////////////// Functions ////////////////////
+///////////////////////////////////////////////////
+
+/*
+    Create a descriptor set for each swap chain image.
+    Note: You should use the pre-made class to handle the descriptor sets rather than directly using this function for memory safety reasons.
+
+    Tasks:
+        1) Verify the parameters.
+
+    Parameters:
+        - descriptor_set_layout / VkDescriptorSetLayout     / Layout to use for the descriptor sets.
+        - descriptor_pool       / VkDescriptorPool          / Descriptor pool of the Vulkan instance.
+        - image_count           / uint32_t                  / Amount of descriptor sets to create.
+        - logical_device        / VkDevice                  / Logical device of the Vulkan instance.
+        - texture_image_views   / vector<VkImageView>       / Image views of the textures.
+        - texture_sampler       / VkSampler                 / Texture sampler of the Vulkan instance.
+        - uniform_buffers       / vector<UniformBufferInfo> / Uniform buffers of the Vulkan instance.
+
+    Returns:
+        A vector list containing all created descriptor sets.
+*/
+std::vector<VkDescriptorSet> Vulkan::Descriptors::create_descriptor_sets
 (
-    const VkDevice &logical_device,
-    const uint32_t &images_count,
     const VkDescriptorSetLayout &descriptor_set_layout,
     const VkDescriptorPool &descriptor_pool,
-    const std::vector<UniformBufferInfo> &uniform_buffers,
+    const uint32_t &image_count,
+    const VkDevice &logical_device,
     const std::vector<VkImageView> &texture_image_views,
-    const VkSampler &texture_sampler
+    const VkSampler &texture_sampler,
+    const std::vector<UniformBufferInfo> &uniform_buffers
 )
 {
-    log("Creating " + std::to_string(images_count) + " descriptor sets..");
-
-    if (logical_device == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Descriptor sets creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
-    }
-
-    if (images_count < 1)
-    {
-        fatal_error_log("Descriptor sets creation failed! The images count provided (" + std::to_string(images_count) + ") is not valid!");
-    }
+    log("Creating " + std::to_string(image_count) + " descriptor sets..");
 
     if (descriptor_set_layout == VK_NULL_HANDLE)
-    {
         fatal_error_log("Descriptor sets creation failed! The descriptor set layout provided (" + force_string(descriptor_set_layout) + ") is not valid!");
-    }
 
     if (descriptor_pool == VK_NULL_HANDLE)
-    {
         fatal_error_log("Descriptor sets creation failed! The descriptor pool provided (" + force_string(descriptor_pool) + ") is not valid!");
-    }
 
-    if (uniform_buffers.size() < 1)
-    {
-        fatal_error_log("Descriptor sets creation failed! No uniform buffers were provided!");
-    }
+    if (image_count < 1)
+        fatal_error_log("Descriptor sets creation failed! The images count provided (" + std::to_string(image_count) + ") is not valid!");
+
+    if (logical_device == VK_NULL_HANDLE)
+        fatal_error_log("Descriptor sets creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
 
     if (texture_image_views.size() < 1)
-    {
-        fatal_error_log("Descriptor sets creation failed! No texture image views were provided!");
-    }
+        fatal_error_log("Descriptor sets creation failed! No texture image views provided!");
 
     if (texture_sampler == VK_NULL_HANDLE)
-    {
         fatal_error_log("Descriptor sets creation failed! The texture sampler provided (" + force_string(texture_sampler) + ") is not valid!");
-    }
 
-    std::vector<VkDescriptorSet> descriptor_sets(images_count);
-    std::vector<VkDescriptorSetLayout> layouts(images_count, descriptor_set_layout); // Duplicate 'images count' times the descriptor set layout.
+    if (uniform_buffers.size() < 1)
+        fatal_error_log("Descriptor sets creation failed! No uniform buffers provided!");
+
+    std::vector<VkDescriptorSet> descriptor_sets(image_count);
+    std::vector<VkDescriptorSetLayout> layouts(image_count, descriptor_set_layout);
 
     VkDescriptorSetAllocateInfo allocation_info
     {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .descriptorPool = descriptor_pool,
-        .descriptorSetCount = static_cast<uint32_t>(images_count), // Amount of descriptor sets to pass.
-        .pSetLayouts = layouts.data()                              // Pass the descriptor set layouts.
+        .descriptorSetCount = static_cast<uint32_t>(image_count),
+        .pSetLayouts = layouts.data()
     };
 
     const VkResult sets_allocation = vkAllocateDescriptorSets(logical_device, &allocation_info, descriptor_sets.data());
 
     if (sets_allocation != VK_SUCCESS)
-    {
         fatal_error_log("Descriptor sets creation failed! Descriptor sets allocation returned error code " + std::to_string(sets_allocation) + ".");
-    }
 
-    for (int i = 0; i < images_count; i++)
+    for (int i = 0; i < image_count; i++)
     {
         VkDescriptorBufferInfo buffer_info
         {
-            .buffer = uniform_buffers[i].buffer, // Pass the uniform buffer.
-            .offset = 0,                         // Start reading at the start of the buffer.
-            .range = sizeof(UniformBufferObject) // Pass the size of the buffer.
+            .buffer = uniform_buffers[i].buffer,
+            .offset = 0,
+            .range = sizeof(UniformBufferObject)
         };
 
         std::vector<VkWriteDescriptorSet> write_sets(2);
@@ -90,13 +95,12 @@ std::vector<VkDescriptorSet> create_vulkan_descriptor_sets
 
         write_sets[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         write_sets[0].dstSet = descriptor_sets[i];
-        write_sets[0].dstBinding = 0;                                     // Binding index in the shader.
-        write_sets[0].dstArrayElement = 0;                                // Update the first element of the array.
-        write_sets[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER; // Descriptor for a uniform buffer.
-        write_sets[0].descriptorCount = 1;                                // Amount of descriptors to update.
+        write_sets[0].dstBinding = 0;
+        write_sets[0].dstArrayElement = 0;
+        write_sets[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        write_sets[0].descriptorCount = 1;
         write_sets[0].pBufferInfo = &buffer_info;
 
-        // Create a descriptor image view for each texture image views.
         for (int j = 0; j < texture_image_views.size(); j++)
         {
             descriptor_image_info[j].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -108,7 +112,7 @@ std::vector<VkDescriptorSet> create_vulkan_descriptor_sets
         write_sets[1].dstSet = descriptor_sets[i];
         write_sets[1].dstBinding = 1;
         write_sets[1].dstArrayElement = 0;
-        write_sets[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER; // Descriptor for an image sampler.
+        write_sets[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         write_sets[1].descriptorCount = static_cast<uint32_t>(descriptor_image_info.size());
         write_sets[1].pImageInfo = descriptor_image_info.data();
 
@@ -117,5 +121,79 @@ std::vector<VkDescriptorSet> create_vulkan_descriptor_sets
     }
 
     log(std::to_string(descriptor_sets.size()) + " descriptor sets created successfully!");
+    return descriptor_sets;
+}
+
+
+
+/*
+    Cleanly destroy some descriptor sets.
+
+    Tasks:
+        1) Verify the parameters.
+        2) Free the descriptor sets.
+        3) Clear the vector list.
+
+    Parameters:
+        - descriptor_pool / VkDescriptorPool        / Descriptor pool of the Vulkan instance.
+        - descriptor_sets / vector<VkDescriptorSet> / Descriptor sets to destroy.
+        - logical_device  / VkDevice                / Logical device of the Vulkan instance.
+
+    Returns:
+        No object returned.
+*/
+void Vulkan::Descriptors::destroy_descriptor_sets
+(
+    const VkDescriptorPool &descriptor_pool,
+    std::vector<VkDescriptorSet> &descriptor_sets,
+    const VkDevice &logical_device
+)
+{
+    log("Destroying " + std::to_string(descriptor_sets.size()) + " descriptor sets..");
+
+    if (descriptor_sets.size() < 1)
+    {
+        error_log("Descriptor sets destruction failed! No descriptor sets provided!");
+        return;
+    }
+
+    if (logical_device == VK_NULL_HANDLE)
+    {
+        error_log("Descriptor sets destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        return;
+    }
+
+    vkFreeDescriptorSets(logical_device, descriptor_pool, descriptor_sets.size(), descriptor_sets.data());
+    descriptor_sets.clear();
+
+    log("Descriptor sets destroyed successfully!");
+}
+
+///////////////////////////////////////////////
+//////////////////// Class ////////////////////
+///////////////////////////////////////////////
+
+Vulkan::Descriptors::descriptor_sets_handler::descriptor_sets_handler
+(
+    const VkDescriptorSetLayout &descriptor_set_layout,
+    const VkDescriptorPool &descriptor_pool,
+    const uint32_t &image_count,
+    const VkDevice &logical_device,
+    const std::vector<VkImageView> &texture_image_views,
+    const VkSampler &texture_sampler,
+    const std::vector<UniformBufferInfo> &uniform_buffers
+)
+    : descriptor_pool(descriptor_pool), logical_device(logical_device)
+{
+    descriptor_sets = Vulkan::Descriptors::create_descriptor_sets(descriptor_set_layout, descriptor_pool, image_count, logical_device, texture_image_views, texture_sampler, uniform_buffers);
+}
+
+Vulkan::Descriptors::descriptor_sets_handler::~descriptor_sets_handler()
+{
+    Vulkan::Descriptors::destroy_descriptor_sets(descriptor_pool, descriptor_sets, logical_device);
+}
+
+std::vector<VkDescriptorSet> Vulkan::Descriptors::descriptor_sets_handler::get() const
+{
     return descriptor_sets;
 }

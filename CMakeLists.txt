@@ -76,7 +76,8 @@ include_directories (
     ${CMAKE_SOURCE_DIR}/game/engine
     ${CMAKE_SOURCE_DIR}/logs
     ${CMAKE_SOURCE_DIR}/opengl
-    ${CMAKE_SOURCE_DIR}/sdl3
+    ${CMAKE_SOURCE_DIR}/sdl3/inputs
+    ${CMAKE_SOURCE_DIR}/sdl3/window
     ${CMAKE_SOURCE_DIR}/utils
     ${CMAKE_SOURCE_DIR}/vulkan
     ${CMAKE_SOURCE_DIR}/vulkan/buffers
@@ -108,7 +109,8 @@ file(GLOB GAME game/*.cpp)
 file(GLOB GAME_ENGINE game/engine/*.cpp)
 file(GLOB LOGS logs/*.cpp)
 file(GLOB OPENGL opengl/*.cpp)
-file(GLOB SDL3 sdl3/*.cpp)
+file(GLOB SDL3_INPUTS sdl3/inputs/*.cpp)
+file(GLOB SDL3_WINDOW sdl3/window/*.cpp)
 file(GLOB HELPERS utils/*.cpp)
 file(GLOB VULKAN vulkan/*.cpp)
 file(GLOB VULKAN_BUFFERS vulkan/buffers/*.cpp)
@@ -140,7 +142,8 @@ set(ALL_SOURCES
     ${GAME_ENGINE}
     ${LOGS}
     ${OPENGL}
-    ${SDL3}
+    ${SDL3_INPUTS}
+    ${SDL3_WINDOW}
     ${HELPERS}
     ${VULKAN}
     ${VULKAN_BUFFERS}

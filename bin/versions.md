@@ -1,4 +1,4 @@
-# Windows Binaries
+# Windows binaries
 - libcrypto-3-x64.dll **v3.2.6**.
 - libgcc_s_seh-1.dll (**MinGW64 v15.2.0**)
 - libssl-3-x64.dll **v3.2.6**.
@@ -7,7 +7,7 @@
 - SDL3.dll **v3.2.20**.
 - vulkan-1.dll **v1.4.321.1**.
 
-# Linux Binaries
+# Linux binaries
 - libcrypto.so.3.5.4 **v3.5.4**.
 - libgcc_s-15-20251211.so.1 **v14.0.0**.
 - libpthread.so.0 **v2.36**.

@@ -1,11 +1,24 @@
-#include "depth.attachments.hpp"
+#include "vulkan.depth.hpp"
 
-#include "depth.formats.hpp"
 #include "../../logs/logs.handler.hpp"
+#include "../utils/tool.text.format.hpp"
 
 #include <vulkan/vulkan.h>
 
-// Create a depth attachment.
+/*
+    Create a depth attachment.
+
+    Tasks:
+        1) Verify the parameters.
+        2) Create the depth attachment.
+
+    Parameters:
+        - physical_device / VkPhysicalDevice      / Physical device used to run Vulkan.
+        - samples_count   / VkSampleCountFlagBits / Amount of samples to render at the same time for multisampling.
+
+    Returns:
+        The created depth attachment.
+*/
 VkAttachmentDescription create_depth_attachment
 (
     const VkPhysicalDevice &physical_device,
@@ -14,33 +27,21 @@ VkAttachmentDescription create_depth_attachment
 {
     log("Creating a depth attachment..");
 
+    if (physical_device == VK_NULL_HANDLE)
+        fatal_error_log("Depth attachment creation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+
     const VkAttachmentDescription depth_attachment
     {
-        .format = find_depth_format(physical_device),
-        .samples = samples_count,                    // MSAA.
-        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,       // Clear depth buffer.
-        .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE, // Don't store depth buffer data after render pass.
-        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,   // Ignore stencil buffer loading.
-        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE, // Ignore stencil buffer storing.
+        .format = Vulkan::Depth::find_depth_format(physical_device),
+        .samples = samples_count,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
         .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
         .finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
     };
 
     log("Depth attachment created successfully!");
     return depth_attachment;
-}
-
-// Create a depth attachment reference.
-VkAttachmentReference create_depth_attachment_reference()
-{
-    log("Creating a depth attachment reference..");
-
-    VkAttachmentReference reference
-    {
-        .attachment = 1,
-        .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-    };
-
-    log("Depth attachment reference created successfully!");
-    return reference;
 }

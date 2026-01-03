@@ -16,7 +16,6 @@ VkRenderPass create_vulkan_render_pass
     const VkDevice &logical_device,
     const VkAttachmentDescription &color_attachment,
     const VkAttachmentDescription &depth_attachment,
-    const VkAttachmentReference &depth_attachment_reference,
     const VkSurfaceFormatKHR &surface_format
 )
 {
@@ -37,6 +36,12 @@ VkRenderPass create_vulkan_render_pass
         .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
         .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
         .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+    };
+
+    VkAttachmentReference depth_attachment_reference
+    {
+        .attachment = 1,
+        .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
     };
 
     const VkAttachmentReference resolve_attachment_reference

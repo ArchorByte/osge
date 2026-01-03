@@ -7,36 +7,45 @@
 #include <vector>
 #include <cstdint>
 
-// Return the capabilities of a swap chain.
-VkSurfaceCapabilitiesKHR get_vulkan_swapchain_capabilities
+/*
+    Get the capabilities of a the Vulkan surface.
+
+    Tasks:
+        1) Verify the parameters.
+        2) Get the capabilities.
+
+    Parameters:
+        - physical_device / VkPhysicalDevice / Physical device used to run Vulkan.
+        - vulkan_surface  / VkSurfaceKHR     / Vulkan surface of the Vulkan instance.
+
+    Returns:
+        The 
+*/
+VkSurfaceCapabilitiesKHR get_surface_capabilities
 (
     const VkPhysicalDevice &physical_device,
     const VkSurfaceKHR &vulkan_surface
 )
 {
-    log("Fetching the swap chain capabilities..");
+    log("Getting the swap chain capabilities..");
 
     if (physical_device == VK_NULL_HANDLE)
-    {
         fatal_error_log("Swap chain capabilities query failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
-    }
 
     if (vulkan_surface == VK_NULL_HANDLE)
-    {
         fatal_error_log("Swap chain capabilities query failed! The Vulkan surface provided (" + force_string(vulkan_surface) + ") is not valid!");
-    }
 
     VkSurfaceCapabilitiesKHR swapchain_capabilities;
     const VkResult query_result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical_device, vulkan_surface, &swapchain_capabilities);
 
     if (query_result != VK_SUCCESS)
-    {
         fatal_error_log("Swap chain capabilites query returned error code " + std::to_string(query_result) + ".");
-    }
 
     log("Swap chain capabilities retrieved successfully!");
     return swapchain_capabilities;
 }
+
+
 
 // Return every surface format supported by a swap chain.
 std::vector<VkSurfaceFormatKHR> get_vulkan_swapchain_surface_formats

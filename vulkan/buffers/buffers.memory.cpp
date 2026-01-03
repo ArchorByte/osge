@@ -1,97 +1,107 @@
-#include "buffers.memory.hpp"
+#include "vulkan.buffers.hpp"
 
 #include "../../logs/logs.handler.hpp"
 #include "../../utils/tool.text.format.hpp"
 
-#include <vulkan/vulkan.h>
 #include <cstdint>
+#include <vulkan/vulkan.h>
 
-// Find the index of a specific memory type.
-uint32_t find_memory_type
+/*
+    Get the index of a specific memory type.
+
+    Tasks:
+        1) Check each memory type available.
+        2) Return the index if our requirements are satisfied.
+
+    Parameters:
+        - memory_properties / VkPhysicalDeviceMemoryProperties / Properties of the memory.
+        - property_flags    / VkMemoryPropertyFlags            / Targeted property flags.
+        - type_filter       / uint32_t                         / Targeted memory types.
+
+    Returns:
+        The index of the memory type.
+*/
+uint32_t Vulkan::Buffers::find_memory_type
 (
-    const uint32_t &type_filter,
     const VkPhysicalDeviceMemoryProperties &memory_properties,
-    const VkMemoryPropertyFlags &property_flags
+    const VkMemoryPropertyFlags &property_flags,
+    const uint32_t &type_filter
 )
 {
     for (uint32_t i = 0; i < memory_properties.memoryTypeCount; i++)
     {
-        // If the filter and the properties flags match, we found the memory type index.
         if ((type_filter & (1 << i)) && (memory_properties.memoryTypes[i].propertyFlags & property_flags))
         {
             return i;
         }
     }
 
-    fatal_error_log("Memory allocation failed! Failed to find any suitable memory type!");
-    return -1; // Useless line because the log above triggers a crash. But without it, the compiler will give unnecessary warnings during compilation.
+    fatal_error_log("Failed to get the memory type index! Failed to find any suitable memory type!");
+    return -1; // Avoid compiler warnings.
 }
 
-// Allocate some memory to a buffer.
-VkDeviceMemory allocate_vulkan_buffer_memory
+
+
+/*
+    Allocate and bind some memory to a buffer.
+    Warning: There is no class that will automatically free the memory, you have to set one up yourself for memory safety reasons.
+
+    Tasks:
+        1) Verify the parameters.
+        2) Retrieve necessary information about the memory.
+        3) Allocate the memory.
+        4) Bind the memory to the buffer.
+
+    Parameters:
+        - buffer          / VkBuffer         / Targeted buffer.
+        - logical_device  / VkDevice         / Logical device of the Vulkan instance.
+        - physical_device / VkPhysicalDevice / Physical device used to run Vulkan.
+
+    Returns:
+        The buffer memory.
+*/
+VkDeviceMemory Vulkan::Buffers::allocate_buffer_memory
 (
+    const VkBuffer &buffer,
     const VkDevice &logical_device,
-    const VkPhysicalDevice &physical_device,
-    const VkBuffer &buffer
+    const VkPhysicalDevice &physical_device
 )
 {
-    log(" > Allocating memory to the " + force_string(buffer) + " buffer..");
+    log("Allocating memory to the " + force_string(buffer) + " buffer..");
 
     if (logical_device == VK_NULL_HANDLE)
-    {
         fatal_error_log("Buffer memory allocation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
-    }
 
     if (physical_device == VK_NULL_HANDLE)
-    {
         fatal_error_log("Buffer memory allocation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
-    }
 
     if (buffer == VK_NULL_HANDLE)
-    {
         fatal_error_log("Buffer memory allocation failed! The buffer provided (" + force_string(buffer) + ") is not valid!");
-    }
 
-    // Fetch memory requirements for the buffer.
     VkMemoryRequirements memory_requirements;
     vkGetBufferMemoryRequirements(logical_device, buffer, &memory_requirements);
 
-    // Retrieve memory types available on the physical device.
     VkPhysicalDeviceMemoryProperties memory_properties;
     vkGetPhysicalDeviceMemoryProperties(physical_device, &memory_properties);
 
-    VkMemoryAllocateInfo info {};
-    info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    info.allocationSize = memory_requirements.size; // Pass the required amount of memory to allocate.
+    VkMemoryAllocateInfo allocation_info
+    {
+        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+        .allocationSize = memory_requirements.size,
+        .memoryTypeIndex = Vulkan::Buffers::find_memory_type(memory_properties, memory_requirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+    };
 
-    // Get the memory type index with our requirements.
-    info.memoryTypeIndex = find_memory_type
-    (
-        memory_requirements.memoryTypeBits,
-        memory_properties,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-    );
-
-    VkDeviceMemory memory = VK_NULL_HANDLE;
-    const VkResult memory_allocation = vkAllocateMemory(logical_device, &info, nullptr, &memory);
+    VkDeviceMemory buffer_memory = VK_NULL_HANDLE;
+    const VkResult memory_allocation = vkAllocateMemory(logical_device, &allocation_info, nullptr, &buffer_memory);
 
     if (memory_allocation != VK_SUCCESS)
-    {
         fatal_error_log("Buffer memory allocation returned error code " + std::to_string(memory_allocation) + ".");
-    }
 
-    if (memory == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Buffer memory allocation output (" + force_string(memory) + ") is not valid!");
-    }
-
-    const VkResult memory_binding = vkBindBufferMemory(logical_device, buffer, memory, 0);
+    const VkResult memory_binding = vkBindBufferMemory(logical_device, buffer, buffer_memory, 0);
 
     if (memory_binding != VK_SUCCESS)
-    {
         fatal_error_log("Buffer memory allocation failed! The memory binding returned error code " + std::to_string(memory_binding) + ".");
-    }
 
-    log(" > Memory " + force_string(memory) + " allocated successfully!");
-    return memory;
+    log("Memory " + force_string(buffer_memory) + " allocated successfully!");
+    return buffer_memory;
 }
