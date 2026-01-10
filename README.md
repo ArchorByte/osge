@@ -2,7 +2,7 @@
 Build your game or any 3D projects on top of this open source C++ engine! <br/>
 This engine both supports Vulkan and OpenGL at the time. <br/>
 In the `./docs` folder, you will find courses to guide you through the making of your project!
-> To get started: `./docs/get-started.html`.
+> To get started: `./documentation/get-started.html`.
 
 # 📦 Requirements
 - CMake compiler (**using gcc/g++ recommended**).
