@@ -1,8 +1,6 @@
 #include "vulkan.colors.hpp"
-
-#include "../../logs/logs.handler.hpp"
-
-#include <vulkan/vulkan.h>
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 
 /*
     Create a color attachment description for a graphics pipeline.
@@ -20,7 +18,7 @@ VkAttachmentDescription Vulkan::Colors::create_color_attachment
     const VkFormat &surface_format
 )
 {
-    log("Creating a color attachment description..");
+    Utils::Logs::log("Creating a color attachment description..");
 
     const VkAttachmentDescription attachment
     {
@@ -34,6 +32,6 @@ VkAttachmentDescription Vulkan::Colors::create_color_attachment
         .finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     };
 
-    log("Color attachment description created successfully!");
+    Utils::Logs::log("Color attachment description created successfully!");
     return attachment;
 }

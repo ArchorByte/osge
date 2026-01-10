@@ -1,9 +1,9 @@
 #ifndef VULKAN_CORE_HPP
 #define VULKAN_CORE_HPP
 
+#include <libraries/vulkan/vulkan.h>
 #include <SDL3/SDL.h>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 namespace Vulkan::Core
 {

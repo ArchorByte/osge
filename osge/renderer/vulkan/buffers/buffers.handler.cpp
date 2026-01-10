@@ -1,9 +1,6 @@
 #include "vulkan.buffers.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
-#include <vulkan/vulkan.h>
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 
 /*
     Create a buffer.
@@ -34,16 +31,16 @@ void Vulkan::Buffers::create_buffer
     const VkBufferUsageFlags &usage_flags
 )
 {
-    log("Creating a buffer..");
+    Utils::Logs::log("Creating a buffer..");
 
     if (buffer_size < 1)
-        fatal_error_log("Buffer creation failed! The buffer size provided (" + std::to_string(buffer_size) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer creation failed! The buffer size provided (" + std::to_string(buffer_size) + ") is not valid!");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Buffer creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     if (physical_device == VK_NULL_HANDLE)
-        fatal_error_log("Buffer creation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
     const VkBufferCreateInfo create_info
     {
@@ -57,10 +54,10 @@ void Vulkan::Buffers::create_buffer
     const VkResult buffer_creation = vkCreateBuffer(logical_device, &create_info, nullptr, &buffer);
 
     if (buffer_creation != VK_SUCCESS)
-        fatal_error_log("Buffer creation returned error code " + std::to_string(buffer_creation) + ".");
+        Utils::Logs::crash_error_log("Buffer creation returned error code " + std::to_string(buffer_creation) + ".");
 
     buffer_memory = Vulkan::Buffers::allocate_buffer_memory(buffer, logical_device, physical_device);
-    log("Buffer " + force_string(buffer) + " created successfully!");
+    Utils::Logs::log("Buffer " + Utils::Text::get_memory_address(buffer) + " created successfully!");
 }
 
 
@@ -89,23 +86,23 @@ void Vulkan::Buffers::destroy_buffer
     const VkDevice &logical_device
 )
 {
-    log("Destroying the " + force_string(buffer) + " buffer and freeing its " + force_string(buffer_memory) + " buffer memory!");
+    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(buffer) + " buffer and freeing its " + Utils::Text::get_memory_address(buffer_memory) + " buffer memory!");
 
     if (buffer == VK_NULL_HANDLE)
     {
-        error_log("Buffer destruction failed! The buffer provided (" + force_string(buffer) + ") is not valid!");
+        Utils::Logs::error_log("Buffer destruction failed! The buffer provided (" + Utils::Text::get_memory_address(buffer) + ") is not valid!");
         return;
     }
 
     if (buffer_memory == VK_NULL_HANDLE)
     {
-        error_log("Buffer destruction failed! The buffer memory provided (" + force_string(buffer_memory) + ") is not valid!");
+        Utils::Logs::error_log("Buffer destruction failed! The buffer memory provided (" + Utils::Text::get_memory_address(buffer_memory) + ") is not valid!");
         return;
     }
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Buffer destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::error_log("Buffer destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
         return;
     }
 
@@ -115,5 +112,5 @@ void Vulkan::Buffers::destroy_buffer
     buffer = VK_NULL_HANDLE;
     buffer_memory = VK_NULL_HANDLE;
 
-    log("Buffer destroyed and memory freed successfully!");
+    Utils::Logs::log("Buffer destroyed and memory freed successfully!");
 }

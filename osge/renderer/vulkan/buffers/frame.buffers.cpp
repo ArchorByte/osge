@@ -1,12 +1,9 @@
 #include "vulkan.buffers.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
+#include "osge/utils/utils.hpp"
 #include <array>
+#include <libraries/vulkan/vulkan.h>
 #include <string>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
@@ -41,22 +38,22 @@ std::vector<VkFramebuffer> Vulkan::Buffers::create_frame_buffers
     const VkRenderPass &render_pass
 )
 {
-    log("Creating " + std::to_string(image_views.size()) + " frame buffers..");
+    Utils::Logs::log("Creating " + std::to_string(image_views.size()) + " frame buffers..");
 
     if (color_image_view == VK_NULL_HANDLE)
-        fatal_error_log("Frame buffers creation failed! The color image view provided (" + force_string(color_image_view) + ") is not valid!");
+        Utils::Logs::crash_error_log("Frame buffers creation failed! The color image view provided (" + Utils::Text::get_memory_address(color_image_view) + ") is not valid!");
 
     if (depth_image_view == VK_NULL_HANDLE)
-        fatal_error_log("Frame buffers creation failed! The depth image view provided (" + force_string(depth_image_view) + ") is not valid!");
+        Utils::Logs::crash_error_log("Frame buffers creation failed! The depth image view provided (" + Utils::Text::get_memory_address(depth_image_view) + ") is not valid!");
 
     if (image_views.size() < 1)
-        fatal_error_log("Frame buffers creation failed! No image views provided!");
+        Utils::Logs::crash_error_log("Frame buffers creation failed! No image views provided!");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Frame buffers creation failed! The logical device provided (" + force_string(render_pass) + ") is not valid!");
+        Utils::Logs::crash_error_log("Frame buffers creation failed! The logical device provided (" + Utils::Text::get_memory_address(render_pass) + ") is not valid!");
 
     if (render_pass == VK_NULL_HANDLE)
-        fatal_error_log("Frame buffers creation failed! The render pass provided (" + force_string(render_pass) + ") is not valid!");
+        Utils::Logs::crash_error_log("Frame buffers creation failed! The render pass provided (" + Utils::Text::get_memory_address(render_pass) + ") is not valid!");
 
     std::vector<VkFramebuffer> framebuffers;
     framebuffers.reserve(image_views.size());
@@ -80,13 +77,13 @@ std::vector<VkFramebuffer> Vulkan::Buffers::create_frame_buffers
         const VkResult framebuffer_creation = vkCreateFramebuffer(logical_device, &create_info, nullptr, &framebuffer);
 
         if (framebuffer_creation != VK_SUCCESS)
-            fatal_error_log("Frame buffer #" + std::to_string(i + 1) + "/" + std::to_string(framebuffers.size()) + " creation returned error code " + std::to_string(framebuffer_creation));
+            Utils::Logs::crash_error_log("Frame buffer #" + std::to_string(i + 1) + "/" + std::to_string(framebuffers.size()) + " creation returned error code " + std::to_string(framebuffer_creation));
 
         framebuffers.emplace_back(framebuffer);
-        log("- Frame buffer #" + std::to_string(i + 1) + "/" + std::to_string(image_views.size()) + " (" + force_string(framebuffer) + ") created successfully.");
+        Utils::Logs::log("- Frame buffer #" + std::to_string(i + 1) + "/" + std::to_string(image_views.size()) + " (" + Utils::Text::get_memory_address(framebuffer) + ") created successfully.");
     }
 
-    log(std::to_string(framebuffers.size()) + " frame buffers created successfully!");
+    Utils::Logs::log(std::to_string(framebuffers.size()) + " frame buffers created successfully!");
     return framebuffers;
 }
 
@@ -112,17 +109,17 @@ void Vulkan::Buffers::destroy_frame_buffers
     const VkDevice &logical_device
 )
 {
-    log("Destroying " + std::to_string(frame_buffers.size()) + " frame buffers..");
+    Utils::Logs::log("Destroying " + std::to_string(frame_buffers.size()) + " frame buffers..");
 
     if (frame_buffers.size() < 1)
     {
-        error_log("Frame buffers destruction failed! No frame buffers provided!");
+        Utils::Logs::error_log("Frame buffers destruction failed! No frame buffers provided!");
         return;
     }
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Frame buffers destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::error_log("Frame buffers destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
         return;
     }
 
@@ -135,7 +132,7 @@ void Vulkan::Buffers::destroy_frame_buffers
 
         if (frame_buffer == VK_NULL_HANDLE)
         {
-            error_log("- Failed to destroy the frame buffer #" + std::to_string(i) + "/" + std::to_string(frame_buffers.size()) + "! The frame buffer provided (" + force_string(frame_buffer) + ") is not valid!");
+            Utils::Logs::error_log("- Failed to destroy the frame buffer #" + std::to_string(i) + "/" + std::to_string(frame_buffers.size()) + "! The frame buffer provided (" + Utils::Text::get_memory_address(frame_buffer) + ") is not valid!");
             failed++;
             continue;
         }
@@ -143,13 +140,13 @@ void Vulkan::Buffers::destroy_frame_buffers
         vkDestroyFramebuffer(logical_device, frame_buffer, nullptr);
         frame_buffer = VK_NULL_HANDLE;
 
-        log("- Frame buffer #" + std::to_string(i) + "/" + std::to_string(frame_buffers.size()) + " destroyed successfully!");
+        Utils::Logs::log("- Frame buffer #" + std::to_string(i) + "/" + std::to_string(frame_buffers.size()) + " destroyed successfully!");
     }
 
     if (failed > 0)
-        error_log("Warning: " + std::to_string(failed) + " frame buffers failed to destroy! This might leads to some memory leaks!");
+        Utils::Logs::error_log("Warning: " + std::to_string(failed) + " frame buffers failed to destroy! This might leads to some memory leaks!");
 
-    log(std::to_string(frame_buffers.size() - failed) + "/" + std::to_string(frame_buffers.size()) + " frame buffers destroyed successfully!");
+    Utils::Logs::log(std::to_string(frame_buffers.size() - failed) + "/" + std::to_string(frame_buffers.size()) + " frame buffers destroyed successfully!");
     frame_buffers.clear();
 }
 

@@ -1,10 +1,11 @@
 #ifndef VULKAN_BUFFERS_HPP
 #define VULKAN_BUFFERS_HPP
 
-#include <glm/glm.hpp>
+#include <libraries/glm/glm.hpp>
+#include <libraries/vulkan/vulkan.h>
+
 #include <utility>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 #include "../textures/texture.images.loader.hpp"
 #include "../vertex/vertex.handler.hpp"

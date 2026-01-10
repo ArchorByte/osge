@@ -1,9 +1,6 @@
 #include "vulkan.depth.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../utils/tool.text.format.hpp"
-
-#include <vulkan/vulkan.h>
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 
 /*
     Create a depth attachment.
@@ -25,10 +22,10 @@ VkAttachmentDescription create_depth_attachment
     const VkSampleCountFlagBits &samples_count
 )
 {
-    log("Creating a depth attachment..");
+    Utils::Logs::log("Creating a depth attachment..");
 
     if (physical_device == VK_NULL_HANDLE)
-        fatal_error_log("Depth attachment creation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Depth attachment creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
     const VkAttachmentDescription depth_attachment
     {
@@ -42,6 +39,6 @@ VkAttachmentDescription create_depth_attachment
         .finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
     };
 
-    log("Depth attachment created successfully!");
+    Utils::Logs::log("Depth attachment created successfully!");
     return depth_attachment;
 }

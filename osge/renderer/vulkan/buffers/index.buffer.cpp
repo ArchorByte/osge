@@ -1,12 +1,10 @@
 #include "vulkan.buffers.hpp"
+#include "osge/utils/utils.hpp"
+#include <cstring>
+#include <libraries/vulkan/vulkan.h>
+#include <utility>
 
 #include "../vertex/vertex.handler.hpp"
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
-#include <cstring>
-#include <utility>
-#include <vulkan/vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
@@ -45,25 +43,25 @@ std::pair<VkBuffer, VkDeviceMemory> Vulkan::Buffers::create_index_buffer
     std::vector<Vertex> &vertices
 )
 {
-    log("Creating an index buffer..");
+    Utils::Logs::log("Creating an index buffer..");
 
     if (command_pool == VK_NULL_HANDLE)
-        fatal_error_log("Index buffer creation failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
+        Utils::Logs::crash_error_log("Index buffer creation failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
 
     if (graphics_queue == VK_NULL_HANDLE)
-        fatal_error_log("Index buffer creation failed! The graphics queue provided (" + force_string(graphics_queue) + ") is not valid!");
+        Utils::Logs::crash_error_log("Index buffer creation failed! The graphics queue provided (" + Utils::Text::get_memory_address(graphics_queue) + ") is not valid!");
 
     if (indices.size() < 1)
-        fatal_error_log("Index buffer creation failed! No indices provided!");
+        Utils::Logs::crash_error_log("Index buffer creation failed! No indices provided!");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Index buffer creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Index buffer creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     if (physical_device == VK_NULL_HANDLE)
-        fatal_error_log("Index buffer creation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Index buffer creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
     if (vertices.size() < 1)
-        fatal_error_log("Index buffer creation failed! No vertices provided!");
+        Utils::Logs::crash_error_log("Index buffer creation failed! No vertices provided!");
 
     const VkDeviceSize buffer_size = sizeof(vertices[0]) * vertices.size();
     VkBuffer staging_index_buffer = VK_NULL_HANDLE;
@@ -83,7 +81,7 @@ std::pair<VkBuffer, VkDeviceMemory> Vulkan::Buffers::create_index_buffer
     Vulkan::Buffers::copy_buffer_data(buffer_size, command_pool, index_buffer, graphics_queue, logical_device, staging_index_buffer);
     Vulkan::Buffers::destroy_buffer(staging_index_buffer, staging_buffer_memory, logical_device);
 
-    log("Index buffer " + force_string(index_buffer) + " created successfully!");
+    Utils::Logs::log("Index buffer " + Utils::Text::get_memory_address(index_buffer) + " created successfully!");
     return { index_buffer, buffer_memory };
 }
 
@@ -112,23 +110,23 @@ void Vulkan::Buffers::destroy_index_buffer
     const VkDevice &logical_device
 )
 {
-    log("Destroying the " + force_string(index_buffer) + " index buffer..");
+    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(index_buffer) + " index buffer..");
 
     if (index_buffer == VK_NULL_HANDLE)
     {
-        error_log("Index buffer destruction failed! The buffer provided (" + force_string(index_buffer) + ") is not valid!");
+        Utils::Logs::error_log("Index buffer destruction failed! The buffer provided (" + Utils::Text::get_memory_address(index_buffer) + ") is not valid!");
         return;
     }
 
     if (buffer_memory == VK_NULL_HANDLE)
     {
-        error_log("Index buffer destruction failed! The buffer memory provided (" + force_string(buffer_memory) + ") is not valid!");
+        Utils::Logs::error_log("Index buffer destruction failed! The buffer memory provided (" + Utils::Text::get_memory_address(buffer_memory) + ") is not valid!");
         return;
     }
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Index buffer destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::error_log("Index buffer destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
         return;
     }
 
@@ -136,7 +134,7 @@ void Vulkan::Buffers::destroy_index_buffer
     index_buffer = VK_NULL_HANDLE;
     buffer_memory = VK_NULL_HANDLE;
 
-    log("Index buffer destroyed successfully!");
+    Utils::Logs::log("Index buffer destroyed successfully!");
 }
 
 ///////////////////////////////////////////////

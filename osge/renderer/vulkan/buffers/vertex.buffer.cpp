@@ -1,13 +1,11 @@
 #include "vulkan.buffers.hpp"
 
 #include "vertex.handler.hpp"
-#include "models/models.loader.hpp"
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
+#include "osge/renderer/vulkan/models/models.loader.cpp"
 
 #include <cstring>
+#include <libraries/vulkan/vulkan.h>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////

@@ -1,16 +1,13 @@
 #include "vulkan.buffers.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
+#include "osge/utils/utils.hpp"
 #include <chrono>
 #include <cstring>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <libraries/glm/glm.hpp>
+#include <libraries/glm/gtc/matrix_transform.hpp>
+#include <libraries/vulkan/vulkan.h>
 #include <string>
 #include <utility>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
@@ -43,22 +40,22 @@ std::vector<UniformBufferInfo> Vulkan::Buffers::create_uniform_buffers
     const VkPhysicalDevice &physical_device
 )
 {
-    log("Creating " + std::to_string(image_count) + " uniform buffers..");
+    Utils::Logs::log("Creating " + std::to_string(image_count) + " uniform buffers..");
 
     if (command_pool == VK_NULL_HANDLE)
-        fatal_error_log("Uniform buffers creation failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
+        Utils::Logs::crash_error_log("Uniform buffers creation failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
 
     if (graphics_queue == VK_NULL_HANDLE)
-        fatal_error_log("Uniform buffers creation failed! The graphics queue provided (" + force_string(graphics_queue) + ") is not valid!");
+        Utils::Logs::crash_error_log("Uniform buffers creation failed! The graphics queue provided (" + Utils::Text::get_memory_address(graphics_queue) + ") is not valid!");
 
     if (image_count < 1)
-        fatal_error_log("Uniform buffers creation failed! The images count provided (" + std::to_string(image_count) + ") is not valid!");
+        Utils::Logs::crash_error_log("Uniform buffers creation failed! The images count provided (" + std::to_string(image_count) + ") is not valid!");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Uniform buffers creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Uniform buffers creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     if (physical_device == VK_NULL_HANDLE)
-        fatal_error_log("Uniform buffers creation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Uniform buffers creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
     std::vector<UniformBufferInfo> output;
     output.reserve(image_count);
@@ -76,10 +73,10 @@ std::vector<UniformBufferInfo> Vulkan::Buffers::create_uniform_buffers
         const UniformBufferInfo info = { buffer, buffer_memory, data };
         output.emplace_back(info);
 
-        log("- Uniform buffer #" + std::to_string(i + 1) + "/" + std::to_string(image_count) + " (" + force_string(buffer) + ") created successfully!");
+        Utils::Logs::log("- Uniform buffer #" + std::to_string(i + 1) + "/" + std::to_string(image_count) + " (" + Utils::Text::get_memory_address(buffer) + ") created successfully!");
     }
 
-    log(std::to_string(output.size()) + " uniform buffers created successfully!");
+    Utils::Logs::log(std::to_string(output.size()) + " uniform buffers created successfully!");
     return output;
 }
 
@@ -145,17 +142,17 @@ void Vulkan::Buffers::destroy_uniform_buffers
     std::vector<UniformBufferInfo> &uniform_buffers
 )
 {
-    log("Destroying " + std::to_string(uniform_buffers.size()) + " uniform buffers..");
+    Utils::Logs::log("Destroying " + std::to_string(uniform_buffers.size()) + " uniform buffers..");
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Uniform buffers destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::error_log("Uniform buffers destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
         return;
     }
 
     if (uniform_buffers.size() < 1)
     {
-        error_log("Uniform buffers destruction failed! No uniform buffers provided!");
+        Utils::Logs::error_log("Uniform buffers destruction failed! No uniform buffers provided!");
         return;
     }
 
@@ -172,20 +169,20 @@ void Vulkan::Buffers::destroy_uniform_buffers
 
         if (buffer == VK_NULL_HANDLE)
         {
-            error_log("- Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer provided (" + force_string(buffer) + ") is not valid!");
+            Utils::Logs::error_log("- Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer provided (" + Utils::Text::get_memory_address(buffer) + ") is not valid!");
             failed++;
             continue;
         }
 
         if (buffer_memory == VK_NULL_HANDLE)
         {
-            error_log("- Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer memory provided (" + force_string(buffer_memory) + ") is not valid!");
+            Utils::Logs::error_log("- Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer memory provided (" + Utils::Text::get_memory_address(buffer_memory) + ") is not valid!");
             failed++;
             continue;
         }
 
         if (!buffer_data)
-            error_log("- Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer data provided (" + force_string(buffer_data) + ") is not valid!");
+            Utils::Logs::error_log("- Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer data provided (" + Utils::Text::get_memory_address(buffer_data) + ") is not valid!");
 
         vkDestroyBuffer(logical_device, buffer, nullptr);
         vkFreeMemory(logical_device, buffer_memory, nullptr);
@@ -194,13 +191,13 @@ void Vulkan::Buffers::destroy_uniform_buffers
         buffer_memory = VK_NULL_HANDLE;
         buffer_data = nullptr;
 
-        log("- Uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + " destroyed successfully!");
+        Utils::Logs::log("- Uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + " destroyed successfully!");
     }
 
     if (failed > 0)
-        error_log("Warning: " + std::to_string(failed) + " uniform buffers failed to destroy! This might lead to some memory leaks or memory overload.");
+        Utils::Logs::error_log("Warning: " + std::to_string(failed) + " uniform buffers failed to destroy! This might lead to some memory leaks or memory overload.");
 
-    log(std::to_string(uniform_buffers.size() - failed) + "/" + std::to_string(uniform_buffers.size()) + " uniform buffers destroyed successfully!");
+    Utils::Logs::log(std::to_string(uniform_buffers.size() - failed) + "/" + std::to_string(uniform_buffers.size()) + " uniform buffers destroyed successfully!");
     uniform_buffers.clear();
 }
 

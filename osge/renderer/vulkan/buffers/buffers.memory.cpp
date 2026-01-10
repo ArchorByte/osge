@@ -1,10 +1,6 @@
 #include "vulkan.buffers.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
-#include <cstdint>
-#include <vulkan/vulkan.h>
+#include <osge/utils/utils.hpp>
+#include <libraries/vulkan/vulkan.h>
 
 /*
     Get the index of a specific memory type.
@@ -36,7 +32,7 @@ uint32_t Vulkan::Buffers::find_memory_type
         }
     }
 
-    fatal_error_log("Failed to get the memory type index! Failed to find any suitable memory type!");
+    Utils::Logs::crash_error_log("Failed to get the memory type index! Failed to find any suitable memory type!");
     return -1; // Avoid compiler warnings.
 }
 
@@ -67,16 +63,16 @@ VkDeviceMemory Vulkan::Buffers::allocate_buffer_memory
     const VkPhysicalDevice &physical_device
 )
 {
-    log("Allocating memory to the " + force_string(buffer) + " buffer..");
+    Utils::Logs::log("Allocating memory to the " + Utils::Text::get_memory_address(buffer) + " buffer..");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Buffer memory allocation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer memory allocation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     if (physical_device == VK_NULL_HANDLE)
-        fatal_error_log("Buffer memory allocation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer memory allocation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
     if (buffer == VK_NULL_HANDLE)
-        fatal_error_log("Buffer memory allocation failed! The buffer provided (" + force_string(buffer) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer memory allocation failed! The buffer provided (" + Utils::Text::get_memory_address(buffer) + ") is not valid!");
 
     VkMemoryRequirements memory_requirements;
     vkGetBufferMemoryRequirements(logical_device, buffer, &memory_requirements);
@@ -95,13 +91,13 @@ VkDeviceMemory Vulkan::Buffers::allocate_buffer_memory
     const VkResult memory_allocation = vkAllocateMemory(logical_device, &allocation_info, nullptr, &buffer_memory);
 
     if (memory_allocation != VK_SUCCESS)
-        fatal_error_log("Buffer memory allocation returned error code " + std::to_string(memory_allocation) + ".");
+        Utils::Logs::crash_error_log("Buffer memory allocation returned error code " + std::to_string(memory_allocation) + ".");
 
     const VkResult memory_binding = vkBindBufferMemory(logical_device, buffer, buffer_memory, 0);
 
     if (memory_binding != VK_SUCCESS)
-        fatal_error_log("Buffer memory allocation failed! The memory binding returned error code " + std::to_string(memory_binding) + ".");
+        Utils::Logs::crash_error_log("Buffer memory allocation failed! The memory binding returned error code " + std::to_string(memory_binding) + ".");
 
-    log("Memory " + force_string(buffer_memory) + " allocated successfully!");
+    Utils::Logs::log("Memory " + Utils::Text::get_memory_address(buffer_memory) + " allocated successfully!");
     return buffer_memory;
 }

@@ -1,9 +1,6 @@
 #include "vulkan.images.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
-#include <vulkan/vulkan.h>
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 
 /*
     Create a view for an image.
@@ -33,16 +30,16 @@ VkImageView Vulkan::Images::create_image_view
 )
 {
     if (!format)
-        fatal_error_log("Image view creation failed! The format provided (" + std::to_string(format) + ") is not valid!");
+        Utils::Logs::crash_error_log("Image view creation failed! The format provided (" + std::to_string(format) + ") is not valid!");
 
     if (image == VK_NULL_HANDLE)
-        fatal_error_log("Image view creation failed! The image provided (" + force_string(image) + ") is not valid!");
+        Utils::Logs::crash_error_log("Image view creation failed! The image provided (" + Utils::Text::get_memory_address(image) + ") is not valid!");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Image view creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Image view creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     if (mip_levels < 1)
-        fatal_error_log("Image view creation failed! The mip levels count provided (" + std::to_string(mip_levels) + ") is not valid!");
+        Utils::Logs::crash_error_log("Image view creation failed! The mip levels count provided (" + std::to_string(mip_levels) + ") is not valid!");
 
     const VkImageViewCreateInfo info
     {
@@ -71,7 +68,7 @@ VkImageView Vulkan::Images::create_image_view
     const VkResult view_creation = vkCreateImageView(logical_device, &info, nullptr, &image_view);
 
     if (view_creation != VK_SUCCESS)
-        fatal_error_log("Image view creation returned error code " + std::to_string(view_creation) + ".");
+        Utils::Logs::crash_error_log("Image view creation returned error code " + std::to_string(view_creation) + ".");
 
     return image_view;
 }

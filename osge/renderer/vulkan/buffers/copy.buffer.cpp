@@ -1,10 +1,8 @@
 #include "vulkan.buffers.hpp"
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 
 #include "../textures/texture.images.loader.hpp"
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
-#include <vulkan/vulkan.h>
 
 /*
     Copy the data of a buffer to another one.
@@ -37,25 +35,25 @@ void Vulkan::Buffers::copy_buffer_data
     const VkBuffer &source_buffer
 )
 {
-    log("Copying data from the " + force_string(source_buffer) + " buffer to the " + force_string(destination_buffer) + " buffer..");
+    Utils::Logs::log("Copying data from the " + Utils::Text::get_memory_address(source_buffer) + " buffer to the " + Utils::Text::get_memory_address(destination_buffer) + " buffer..");
 
     if (buffer_size < 1)
-        fatal_error_log("Buffer copy failed! The buffer size provided (" + std::to_string(buffer_size) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer copy failed! The buffer size provided (" + std::to_string(buffer_size) + ") is not valid!");
 
     if (command_pool == VK_NULL_HANDLE)
-        fatal_error_log("Buffer copy failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer copy failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
 
     if (destination_buffer == VK_NULL_HANDLE)
-        fatal_error_log("Buffer copy failed! The destination buffer provided (" + force_string(destination_buffer) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer copy failed! The destination buffer provided (" + Utils::Text::get_memory_address(destination_buffer) + ") is not valid!");
 
     if (graphics_queue == VK_NULL_HANDLE)
-        fatal_error_log("Buffer copy failed! The graphics queue provided (" + force_string(graphics_queue) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer copy failed! The graphics queue provided (" + Utils::Text::get_memory_address(graphics_queue) + ") is not valid!");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Buffer copy failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer copy failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     if (source_buffer == VK_NULL_HANDLE)
-        fatal_error_log("Buffer copy failed! The source buffer provided is not valid!");
+        Utils::Logs::crash_error_log("Buffer copy failed! The source buffer provided is not valid!");
 
     VkCommandBuffer command_buffer = Vulkan::Buffers::create_one_time_command_buffer(command_pool, logical_device);
 
@@ -69,7 +67,7 @@ void Vulkan::Buffers::copy_buffer_data
     vkCmdCopyBuffer(command_buffer, source_buffer, destination_buffer, 1, &copy_region);
     Vulkan::Buffers::destroy_command_buffer(command_buffer, command_pool, graphics_queue, logical_device);
 
-    log("Buffer data copied successfully!");
+    Utils::Logs::log("Buffer data copied successfully!");
 }
 
 
@@ -105,28 +103,28 @@ void Vulkan::Buffers::copy_buffer_to_texture_image
     const TextureImageInfo &texture_image_info
 )
 {
-    log(" > Copying the " + force_string(source_buffer) + " buffer data to the " + force_string(texture_image) + " texture image..");
+    Utils::Logs::log(" > Copying the " + Utils::Text::get_memory_address(source_buffer) + " buffer data to the " + Utils::Text::get_memory_address(texture_image) + " texture image..");
 
     if (command_pool == VK_NULL_HANDLE)
-        fatal_error_log("Buffer copy failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer copy failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
 
     if (graphics_queue == VK_NULL_HANDLE)
-        fatal_error_log("Buffer copy failed! The graphics queue provided (" + force_string(graphics_queue) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer copy failed! The graphics queue provided (" + Utils::Text::get_memory_address(graphics_queue) + ") is not valid!");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Buffer copy failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer copy failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     if (source_buffer == VK_NULL_HANDLE)
-        fatal_error_log("Buffer copy failed! The source buffer provided (" + force_string(source_buffer) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer copy failed! The source buffer provided (" + Utils::Text::get_memory_address(source_buffer) + ") is not valid!");
 
     if (texture_image == VK_NULL_HANDLE)
-        fatal_error_log("Buffer copy failed! The destination texture image provided (" + force_string(texture_image) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer copy failed! The destination texture image provided (" + Utils::Text::get_memory_address(texture_image) + ") is not valid!");
 
     if (texture_image_info.width < 1)
-        fatal_error_log("Buffer copy failed! The texture image width provided (" + std::to_string(texture_image_info.width) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer copy failed! The texture image width provided (" + std::to_string(texture_image_info.width) + ") is not valid!");
 
     if (texture_image_info.height < 1)
-        fatal_error_log("Buffer copy failed! The texture image height provided (" + std::to_string(texture_image_info.height) + ") is not valid!");
+        Utils::Logs::crash_error_log("Buffer copy failed! The texture image height provided (" + std::to_string(texture_image_info.height) + ") is not valid!");
 
     VkCommandBuffer command_buffer = Vulkan::Buffers::create_one_time_command_buffer(command_pool, logical_device);
 
@@ -152,5 +150,5 @@ void Vulkan::Buffers::copy_buffer_to_texture_image
     vkCmdCopyBufferToImage(command_buffer, source_buffer, texture_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copy_region);
     Vulkan::Buffers::destroy_command_buffer(command_buffer, command_pool, graphics_queue, logical_device);
 
-    log(" > Buffer data copied to texture image successfully!");
+    Utils::Logs::log(" > Buffer data copied to texture image successfully!");
 }

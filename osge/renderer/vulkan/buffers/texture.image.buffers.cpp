@@ -1,13 +1,11 @@
 #include "vulkan.buffers.hpp"
-
-#include "texture.images.loader.hpp"
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
+#include "osge/utils/utils.hpp"
 #include <cstring>
 #include <string>
 #include <utility>
 #include <vector>
+
+#include "texture.images.loader.hpp"
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
@@ -35,16 +33,16 @@ std::vector<Buffer> Vulkan::Buffers::create_texture_image_buffers
     const std::vector<TextureImageInfo> &texture_image_info
 )
 {
-    log("Creating " + std::to_string(texture_image_info.size()) + " texture image buffers..");
+    Utils::Logs::log("Creating " + std::to_string(texture_image_info.size()) + " texture image buffers..");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Texture image buffers creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Texture image buffers creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     if (physical_device == VK_NULL_HANDLE)
-        fatal_error_log("Texture image buffers creation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Texture image buffers creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
     if (texture_image_info.size() < 1)
-        fatal_error_log("Texture image buffers creation failed! No texture image info provided!");
+        Utils::Logs::crash_error_log("Texture image buffers creation failed! No texture image info provided!");
 
     std::vector<Buffer> texture_image_buffers;
     int i = 0;
@@ -59,16 +57,16 @@ std::vector<Buffer> Vulkan::Buffers::create_texture_image_buffers
         const stbi_uc* pixels = image_info.pixels;
 
         if (image_width < 1)
-            fatal_error_log("Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_info.size()) + " creation failed! The image width provided (" + std::to_string(image_width) + ") is not valid!");
+            Utils::Logs::crash_error_log("Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_info.size()) + " creation failed! The image width provided (" + std::to_string(image_width) + ") is not valid!");
 
         if (image_height < 1)
-            fatal_error_log("Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_info.size()) + " creation failed! The image height provided (" + std::to_string(image_height) + ") is not valid!");
+            Utils::Logs::crash_error_log("Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_info.size()) + " creation failed! The image height provided (" + std::to_string(image_height) + ") is not valid!");
 
         if (image_size < 1)
-            fatal_error_log("Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_info.size()) + " creation failed! The image size provided (" + std::to_string(image_size) + ") is not valid!");
+            Utils::Logs::crash_error_log("Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_info.size()) + " creation failed! The image size provided (" + std::to_string(image_size) + ") is not valid!");
 
         if (!pixels)
-            fatal_error_log("Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_info.size()) + " creation failed! The image provided (" + force_string(pixels) + ") is not valid!");
+            Utils::Logs::crash_error_log("Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_info.size()) + " creation failed! The image provided (" + Utils::Text::get_memory_address(pixels) + ") is not valid!");
 
         VkBuffer buffer = VK_NULL_HANDLE;
         VkDeviceMemory buffer_memory = VK_NULL_HANDLE;
@@ -83,10 +81,10 @@ std::vector<Buffer> Vulkan::Buffers::create_texture_image_buffers
         const Buffer buffer_data = { buffer, buffer_memory };
         texture_image_buffers.emplace_back(buffer_data);
 
-        log("- Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_info.size()) + " (" + force_string(buffer) + ") created successfully!");
+        Utils::Logs::log("- Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_info.size()) + " (" + Utils::Text::get_memory_address(buffer) + ") created successfully!");
     }
 
-    log(std::to_string(texture_image_info.size()) + " texture image buffers created successfully!");
+    Utils::Logs::log(std::to_string(texture_image_info.size()) + " texture image buffers created successfully!");
     return texture_image_buffers;
 }
 
@@ -112,17 +110,17 @@ void Vulkan::Buffers::destroy_texture_image_buffers
     std::vector<Buffer> &texture_image_buffers
 )
 {
-    log("Destroying " + std::to_string(texture_image_buffers.size()) + " image texture buffers..");
+    Utils::Logs::log("Destroying " + std::to_string(texture_image_buffers.size()) + " image texture buffers..");
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Image texture buffers destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::error_log("Image texture buffers destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
         return;
     }
 
     if (texture_image_buffers.size() < 1)
     {
-        error_log("Image texture buffers destruction failed! No image texture info provided!");
+        Utils::Logs::error_log("Image texture buffers destruction failed! No image texture info provided!");
         return;
     }
 
@@ -138,26 +136,26 @@ void Vulkan::Buffers::destroy_texture_image_buffers
 
         if (buffer == VK_NULL_HANDLE)
         {
-            error_log("- Failed to destroy the texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_buffers.size()) + "! The buffer provided (" + force_string(buffer) + ") is not valid!");
+            Utils::Logs::error_log("- Failed to destroy the texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_buffers.size()) + "! The buffer provided (" + Utils::Text::get_memory_address(buffer) + ") is not valid!");
             failed++;
             continue;
         }
 
         if (buffer_memory == VK_NULL_HANDLE)
         {
-            error_log("- Failed to destroy the texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_buffers.size()) + "! The buffer memory provided (" + force_string(buffer_memory) + ") is not valid!");
+            Utils::Logs::error_log("- Failed to destroy the texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_buffers.size()) + "! The buffer memory provided (" + Utils::Text::get_memory_address(buffer_memory) + ") is not valid!");
             failed++;
             continue;
         }
 
         Vulkan::Buffers::destroy_buffer(buffer, buffer_memory, logical_device);
-        log("- Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_buffers.size()) + " destroyed successfully!");
+        Utils::Logs::log("- Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_buffers.size()) + " destroyed successfully!");
     }
 
     if (failed > 0)
-        error_log("Warning: " + std::to_string(failed) + " texture image buffers failed to destroy! This might lead to some memory leaks and memory overload.");
+        Utils::Logs::error_log("Warning: " + std::to_string(failed) + " texture image buffers failed to destroy! This might lead to some memory leaks and memory overload.");
 
-    log(std::to_string(texture_image_buffers.size() - failed) + "/" + std::to_string(texture_image_buffers.size()) + " texture image buffers destroyed successfully!");
+    Utils::Logs::log(std::to_string(texture_image_buffers.size() - failed) + "/" + std::to_string(texture_image_buffers.size()) + " texture image buffers destroyed successfully!");
     texture_image_buffers.clear();
 }
 

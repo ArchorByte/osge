@@ -1,11 +1,8 @@
 #include "vulkan.depth.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 #include <string>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 /*
     Find and return the depth format.
@@ -25,10 +22,10 @@ VkFormat Vulkan::Depth::find_depth_format
     const VkPhysicalDevice &physical_device
 )
 {
-    log("Looking for the depth format..");
+    Utils::Logs::log("Looking for the depth format..");
 
     if (physical_device == VK_NULL_HANDLE)
-        fatal_error_log("Failed to find such format! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Failed to find such format! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
     const std::vector<VkFormat> candidate_formats =
     {
@@ -44,11 +41,11 @@ VkFormat Vulkan::Depth::find_depth_format
 
         if ((properties.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) == VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
         {
-            log("Supported depth format found: " + std::to_string(format) + "!");
+            Utils::Logs::log("Supported depth format found: " + std::to_string(format) + "!");
             return format;
         }
     }
 
-    fatal_error_log("Failed to find the depth format!");
+    Utils::Logs::crash_error_log("Failed to find the depth format!");
     return candidate_formats[0]; // Avoid compiler warnings.
 }

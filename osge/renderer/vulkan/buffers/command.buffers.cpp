@@ -1,12 +1,9 @@
 #include "vulkan.buffers.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
+#include "osge/utils/utils.hpp"
 #include <array>
+#include <libraries/vulkan/vulkan.h>
 #include <unistd.h>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 /*
     Create a command buffer for each swap chain image.
@@ -30,16 +27,16 @@ std::vector<VkCommandBuffer> Vulkan::Buffers::create_command_buffers
     const VkDevice &logical_device
 )
 {
-    log("Creating " + std::to_string(images_count) + " command buffers..");
+    Utils::Logs::log("Creating " + std::to_string(images_count) + " command buffers..");
 
     if (command_pool == VK_NULL_HANDLE)
-        fatal_error_log("Commands buffers creation failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
+        Utils::Logs::crash_error_log("Commands buffers creation failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
 
     if (images_count < 1)
-        fatal_error_log("Command buffers creation failed! The amount of images provided (" + std::to_string(images_count) + ") is not valid!");
+        Utils::Logs::crash_error_log("Command buffers creation failed! The amount of images provided (" + std::to_string(images_count) + ") is not valid!");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Command buffers creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Command buffers creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     std::vector<VkCommandBuffer> command_buffers(images_count);
 
@@ -54,9 +51,9 @@ std::vector<VkCommandBuffer> Vulkan::Buffers::create_command_buffers
     const VkResult buffer_allocation = vkAllocateCommandBuffers(logical_device, &allocation_info, command_buffers.data());
 
     if (buffer_allocation != VK_SUCCESS)
-        fatal_error_log("Command buffers allocation returned error code " + std::to_string(buffer_allocation) + ".");
+        Utils::Logs::crash_error_log("Command buffers allocation returned error code " + std::to_string(buffer_allocation) + ".");
 
-    log(std::to_string(images_count) + " command buffers were created successfully!");
+    Utils::Logs::log(std::to_string(images_count) + " command buffers were created successfully!");
     return command_buffers;
 }
 
@@ -84,13 +81,13 @@ VkCommandBuffer Vulkan::Buffers::create_one_time_command_buffer
     const VkDevice &logical_device
 )
 {
-    log("Creating a one time command buffer..");
+    Utils::Logs::log("Creating a one time command buffer..");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("One time command buffer beginning failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("One time command buffer beginning failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     if (command_pool == VK_NULL_HANDLE)
-        fatal_error_log("One time command buffer beginning failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
+        Utils::Logs::crash_error_log("One time command buffer beginning failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
 
     VkCommandBufferAllocateInfo allocation_info
     {
@@ -104,7 +101,7 @@ VkCommandBuffer Vulkan::Buffers::create_one_time_command_buffer
     const VkResult buffer_allocation = vkAllocateCommandBuffers(logical_device, &allocation_info, &command_buffer);
 
     if (buffer_allocation != VK_SUCCESS)
-        fatal_error_log("One time command buffer creation failed! Command buffer allocation returned error code " + std::to_string(buffer_allocation) + ".");
+        Utils::Logs::crash_error_log("One time command buffer creation failed! Command buffer allocation returned error code " + std::to_string(buffer_allocation) + ".");
 
     VkCommandBufferBeginInfo buffer_begin_info
     {
@@ -115,9 +112,9 @@ VkCommandBuffer Vulkan::Buffers::create_one_time_command_buffer
     const VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &buffer_begin_info);
 
     if (buffer_launch != VK_SUCCESS)
-        fatal_error_log("The one time command buffer creation returned error code " + std::to_string(buffer_launch) + ".");
+        Utils::Logs::crash_error_log("The one time command buffer creation returned error code " + std::to_string(buffer_launch) + ".");
 
-    log("One time command buffer " + force_string(command_buffer) + " created successfully!");
+    Utils::Logs::log("One time command buffer " + Utils::Text::get_memory_address(command_buffer) + " created successfully!");
     return command_buffer;
 }
 
@@ -175,73 +172,73 @@ void Vulkan::Buffers::record_command_buffer_and_draw
 {
     if (command_buffer == VK_NULL_HANDLE)
     {
-        error_log("Failed to render a frame! The command buffer provided (" + force_string(command_buffer) + ") is not valid!");
+        Utils::Logs::error_log("Failed to render a frame! The command buffer provided (" + Utils::Text::get_memory_address(command_buffer) + ") is not valid!");
         return;
     }
 
     if (descriptor_sets.size() < 1)
     {
-        error_log("Failed to render a frame! No descriptor sets provided!");
+        Utils::Logs::error_log("Failed to render a frame! No descriptor sets provided!");
         return;
     }
 
     if (frame >= descriptor_sets.size())
     {
-        error_log("Failed to render a frame! The frame index provided is out of bounds for the descriptor sets: " + std::to_string(frame) + " >= " + std::to_string(descriptor_sets.size()) + ".");
+        Utils::Logs::error_log("Failed to render a frame! The frame index provided is out of bounds for the descriptor sets: " + std::to_string(frame) + " >= " + std::to_string(descriptor_sets.size()) + ".");
         return;
     }
 
     if (framebuffers.size() < 1)
     {
-        error_log("Failed to render a frame! No frame buffers provided!");
+        Utils::Logs::error_log("Failed to render a frame! No frame buffers provided!");
         return;
     }
 
     if (graphics_pipeline == VK_NULL_HANDLE)
     {
-        error_log("Failed to render a frame! The graphics pipeline provided (" + force_string(graphics_pipeline) + ") is not valid!");
+        Utils::Logs::error_log("Failed to render a frame! The graphics pipeline provided (" + Utils::Text::get_memory_address(graphics_pipeline) + ") is not valid!");
         return;
     }
 
     if (image_index >= framebuffers.size())
     {
-        error_log("Failed to render a frame! The image index provided is out of bounds for the frame buffers: " + std::to_string(image_index) + " >= " + std::to_string(framebuffers.size()) + ".");
+        Utils::Logs::error_log("Failed to render a frame! The image index provided is out of bounds for the frame buffers: " + std::to_string(image_index) + " >= " + std::to_string(framebuffers.size()) + ".");
         return;
     }
 
     if (index_buffer == VK_NULL_HANDLE)
     {
-        error_log("Failed to render a frame! The index buffer provided (" + force_string(index_buffer) + ") is not valid!");
+        Utils::Logs::error_log("Failed to render a frame! The index buffer provided (" + Utils::Text::get_memory_address(index_buffer) + ") is not valid!");
         return;
     }
 
     if (indices.size() < 1)
     {
-        error_log("Failed to render a frame! No indices provided!");
+        Utils::Logs::error_log("Failed to render a frame! No indices provided!");
         return;
     }
 
     if (pipeline_layout == VK_NULL_HANDLE)
     {
-        error_log("Failed to render a frame! The pipeline layout provided (" + force_string(pipeline_layout) + ") is not valid!");
+        Utils::Logs::error_log("Failed to render a frame! The pipeline layout provided (" + Utils::Text::get_memory_address(pipeline_layout) + ") is not valid!");
         return;
     }
 
     if (render_pass == VK_NULL_HANDLE)
     {
-        error_log("Failed to render a frame! The render pass provided (" + force_string(render_pass) + ") is not valid!");
+        Utils::Logs::error_log("Failed to render a frame! The render pass provided (" + Utils::Text::get_memory_address(render_pass) + ") is not valid!");
         return;
     }
 
     if (texture_image_views.size() < 1)
     {
-        error_log("Failed to render a frame! No texture image views were provided!");
+        Utils::Logs::error_log("Failed to render a frame! No texture image views were provided!");
         return;
     }
 
     if (vertex_buffer == VK_NULL_HANDLE)
     {
-        error_log("Failed to render a frame! The vertex buffer provided (" + force_string(vertex_buffer) + ") is not valid!");
+        Utils::Logs::error_log("Failed to render a frame! The vertex buffer provided (" + Utils::Text::get_memory_address(vertex_buffer) + ") is not valid!");
         return;
     }
 
@@ -249,7 +246,7 @@ void Vulkan::Buffers::record_command_buffer_and_draw
     const VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &begin_info);
 
     if (buffer_launch != VK_SUCCESS)
-        fatal_error_log("Failed to render a frame! The command buffer start returned error code " + std::to_string(buffer_launch) + ".");
+        Utils::Logs::crash_error_log("Failed to render a frame! The command buffer start returned error code " + std::to_string(buffer_launch) + ".");
 
     std::array<VkClearValue, 2> clear_values {};
     clear_values[0].color = {{ 0.0f, 0.0f, 0.0f, 1.0f }};
@@ -275,7 +272,7 @@ void Vulkan::Buffers::record_command_buffer_and_draw
 
     if (targeted_texture < 0 || targeted_texture > texture_image_views.size())
     {
-        error_log("Texture #" + std::to_string(targeted_texture) + " not found!");
+        Utils::Logs::error_log("Texture #" + std::to_string(targeted_texture) + " not found!");
         targeted_texture = 0;
     }
 
@@ -294,7 +291,7 @@ void Vulkan::Buffers::record_command_buffer_and_draw
     const VkResult buffer_end = vkEndCommandBuffer(command_buffer);
 
     if (buffer_end != VK_SUCCESS)
-        fatal_error_log("Failed to render a frame! The command buffer end returned error code " + std::to_string(buffer_end) + ".");
+        Utils::Logs::crash_error_log("Failed to render a frame! The command buffer end returned error code " + std::to_string(buffer_end) + ".");
 }
 
 
@@ -325,29 +322,29 @@ void Vulkan::Buffers::destroy_command_buffer
     const VkDevice &logical_device
 )
 {
-    log("Destroying the " + force_string(command_buffer) + " command buffer..");
+    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(command_buffer) + " command buffer..");
 
     if (command_buffer == VK_NULL_HANDLE)
     {
-        error_log("Command buffer destruction failed! The command buffer provided (" + force_string(command_buffer) + ") is not valid!");
+        Utils::Logs::error_log("Command buffer destruction failed! The command buffer provided (" + Utils::Text::get_memory_address(command_buffer) + ") is not valid!");
         return;
     }
 
     if (command_pool == VK_NULL_HANDLE)
     {
-        error_log("Command buffer destruction failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
+        Utils::Logs::error_log("Command buffer destruction failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
         return;
     }
 
     if (graphics_queue == VK_NULL_HANDLE)
     {
-        error_log("Command buffer destruction failed! The graphics queue provided (" + force_string(graphics_queue) + ") is not valid!");
+        Utils::Logs::error_log("Command buffer destruction failed! The graphics queue provided (" + Utils::Text::get_memory_address(graphics_queue) + ") is not valid!");
         return;
     }
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Command buffer destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::error_log("Command buffer destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
         return;
     }
 
@@ -355,7 +352,7 @@ void Vulkan::Buffers::destroy_command_buffer
 
     if (buffer_end != VK_SUCCESS)
     {
-        error_log("Command buffer destruction failed with error code " + std::to_string(buffer_end) + ".");
+        Utils::Logs::error_log("Command buffer destruction failed with error code " + std::to_string(buffer_end) + ".");
         return;
     }
 
@@ -369,11 +366,11 @@ void Vulkan::Buffers::destroy_command_buffer
     const VkResult queue_submit = vkQueueSubmit(graphics_queue, 1, &submit_info, VK_NULL_HANDLE);
 
     if (queue_submit != VK_SUCCESS)
-        fatal_error_log("Command buffer destruction failed! The queue submit returned error code " + std::to_string(queue_submit) + ".");
+        Utils::Logs::crash_error_log("Command buffer destruction failed! The queue submit returned error code " + std::to_string(queue_submit) + ".");
 
     vkQueueWaitIdle(graphics_queue);
     vkFreeCommandBuffers(logical_device, command_pool, 1, &command_buffer);
     command_buffer = VK_NULL_HANDLE;
 
-    log("Command buffer destroyed successfully!");
+    Utils::Logs::log("Command buffer destroyed successfully!");
 }

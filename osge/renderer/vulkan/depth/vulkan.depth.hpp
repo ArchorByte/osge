@@ -1,8 +1,8 @@
 #ifndef VULKAN_DEPTH_HPP
 #define VULKAN_DEPTH_HPP
 
+#include <libraries/vulkan/vulkan.h>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Structure ////////////////////
