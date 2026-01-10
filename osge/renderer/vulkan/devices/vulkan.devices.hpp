@@ -1,9 +1,9 @@
 #ifndef VULKAN_DEVICES_HPP
 #define VULKAN_DEVICES_HPP
 
+#include <libraries/vulkan/vulkan.h>
 #include <string>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 namespace Vulkan::Devices
 {

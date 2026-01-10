@@ -1,11 +1,8 @@
 #include "vulkan.queues.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 #include <set>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 /*
     Get all available queue families for a physical device.
@@ -25,24 +22,24 @@ std::vector<VkQueueFamilyProperties> Vulkan::Queues::get_queue_families
     const VkPhysicalDevice &physical_device
 )
 {
-    log("Fetching the queue families list..");
+    Utils::Logs::log("Fetching the queue families list..");
 
     if (physical_device == VK_NULL_HANDLE)
-        fatal_error_log("Queue families query failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Queue families query failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
     uint32_t families_count = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &families_count, nullptr);
 
     if (families_count == 0)
-        fatal_error_log("Queue families query failed! No queue family was found on this physical device!");
+        Utils::Logs::crash_error_log("Queue families query failed! No queue family was found on this physical device!");
 
     std::vector<VkQueueFamilyProperties> queue_families(families_count);
     vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &families_count, queue_families.data());
 
     if (queue_families.size() != families_count)
-        fatal_error_log("Queue families query failed! Some queue families are missing: " + std::to_string(families_count) + " queue families were found but " + std::to_string(queue_families.size()) + " queue families were collected!");
+        Utils::Logs::crash_error_log("Queue families query failed! Some queue families are missing: " + std::to_string(families_count) + " queue families were found but " + std::to_string(queue_families.size()) + " queue families were collected!");
 
-    log(std::to_string(families_count) + " queue families were found!");
+    Utils::Logs::log(std::to_string(families_count) + " queue families were found!");
     return queue_families;
 }
 
@@ -70,13 +67,13 @@ std::vector<VkDeviceQueueCreateInfo> Vulkan::Queues::make_queues_create_info
     const std::vector<uint32_t> &required_queue_indexes
 )
 {
-    log("Making queue families create info..");
+    Utils::Logs::log("Making queue families create info..");
 
     if (physical_device == VK_NULL_HANDLE)
-        fatal_error_log("Queue families create info making failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Queue families create info making failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
     if (required_queue_indexes.size() < 1)
-        fatal_error_log("Queue families create info making failed! No required queue family indexes provided!");
+        Utils::Logs::crash_error_log("Queue families create info making failed! No required queue family indexes provided!");
 
     std::set<uint32_t> unique_queue_families = { required_queue_indexes.begin(), required_queue_indexes.end() }; // Prevent index duplication.
     std::vector<VkDeviceQueueCreateInfo> queues_create_info {};
@@ -94,6 +91,6 @@ std::vector<VkDeviceQueueCreateInfo> Vulkan::Queues::make_queues_create_info
         queues_create_info.push_back(create_info);
     }
 
-    log(std::to_string(unique_queue_families.size()) + " queue families create info made successfully!");
+    Utils::Logs::log(std::to_string(unique_queue_families.size()) + " queue families create info made successfully!");
     return queues_create_info;
 }

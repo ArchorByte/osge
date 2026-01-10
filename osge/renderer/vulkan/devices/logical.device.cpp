@@ -1,10 +1,7 @@
 #include "vulkan.devices.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
@@ -34,13 +31,13 @@ VkDevice Vulkan::Devices::create_logical_device
     const std::vector<const char *> &required_extensions
 )
 {
-    log("Creating a logical device..");
+    Utils::Logs::log("Creating a logical device..");
 
     if (physical_device == VK_NULL_HANDLE)
-        fatal_error_log("Logical device creation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Logical device creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
     if (queues_create_info.size() < 1)
-        fatal_error_log("Logical device creation failed! No queues create info provided!");
+        Utils::Logs::crash_error_log("Logical device creation failed! No queues create info provided!");
 
     VkPhysicalDeviceFeatures device_features { .sampleRateShading = VK_TRUE };
     vkGetPhysicalDeviceFeatures(physical_device, &device_features);
@@ -59,9 +56,9 @@ VkDevice Vulkan::Devices::create_logical_device
     const VkResult device_creation = vkCreateDevice(physical_device, &create_info, nullptr, &logical_device);
 
     if (device_creation != VK_SUCCESS)
-        fatal_error_log("Logical device creation returned error code " + std::to_string(device_creation) + ".");
+        Utils::Logs::crash_error_log("Logical device creation returned error code " + std::to_string(device_creation) + ".");
 
-    log("Logical device " + force_string(logical_device) + " created successfully!");
+    Utils::Logs::log("Logical device " + Utils::Text::get_memory_address(logical_device) + " created successfully!");
     return logical_device;
 }
 
@@ -86,18 +83,18 @@ void Vulkan::Devices::destroy_logical_device
     VkDevice &logical_device
 )
 {
-    log("Destroying the " + force_string(logical_device) + " logical device..");
+    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(logical_device) + " logical device..");
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Logical device destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::error_log("Logical device destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
         return;
     }
 
     vkDestroyDevice(logical_device, nullptr);
     logical_device = VK_NULL_HANDLE;
 
-    log("Logical device destroyed successfully!");
+    Utils::Logs::log("Logical device destroyed successfully!");
 }
 
 ///////////////////////////////////////////////

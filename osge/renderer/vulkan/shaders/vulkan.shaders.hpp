@@ -1,9 +1,9 @@
 #ifndef VULKAN_SHADERS_HPP
 #define VULKAN_SHADERS_HPP
 
+#include <libraries/vulkan/vulkan.h>
 #include <string>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Structure ////////////////////

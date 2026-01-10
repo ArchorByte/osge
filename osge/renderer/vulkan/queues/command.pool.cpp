@@ -1,11 +1,8 @@
 #include "vulkan.queues.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 #include <string>
 #include <unistd.h>
-#include <vulkan/vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
@@ -32,13 +29,13 @@ VkCommandPool Vulkan::Queues::create_command_pool
     const VkDevice &logical_device
 )
 {
-    log("Creating a command pool..");
+    Utils::Logs::log("Creating a command pool..");
 
     if (graphics_family_index < 0)
-        fatal_error_log("Command pool creation failed! The graphics family index provided (" + std::to_string(graphics_family_index) + ") is not valid!");
+        Utils::Logs::crash_error_log("Command pool creation failed! The graphics family index provided (" + std::to_string(graphics_family_index) + ") is not valid!");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Command pool creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Command pool creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     const VkCommandPoolCreateInfo create_info
     {
@@ -51,9 +48,9 @@ VkCommandPool Vulkan::Queues::create_command_pool
     const VkResult pool_creation = vkCreateCommandPool(logical_device, &create_info, nullptr, &command_pool);
 
     if (pool_creation != VK_SUCCESS)
-        fatal_error_log("Command pool creation returned error code " + std::to_string(pool_creation) + ".");
+        Utils::Logs::crash_error_log("Command pool creation returned error code " + std::to_string(pool_creation) + ".");
 
-    log("Command pool " + force_string(command_pool) + " created successfully!");
+    Utils::Logs::log("Command pool " + Utils::Text::get_memory_address(command_pool) + " created successfully!");
     return command_pool;
 }
 
@@ -80,24 +77,24 @@ void Vulkan::Queues::destroy_command_pool
     const VkDevice &logical_device
 )
 {
-    log("Destroying the " + force_string(command_pool) + " command pool..");
+    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(command_pool) + " command pool..");
 
     if (command_pool == VK_NULL_HANDLE)
     {
-        error_log("Command pool destruction failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
+        Utils::Logs::error_log("Command pool destruction failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
         return;
     }
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Command pool destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::error_log("Command pool destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
         return;
     }
 
     vkDestroyCommandPool(logical_device, command_pool, nullptr);
     command_pool = VK_NULL_HANDLE;
 
-    log("Command pool destroyed successfully!");
+    Utils::Logs::log("Command pool destroyed successfully!");
 }
 
 ///////////////////////////////////////////////

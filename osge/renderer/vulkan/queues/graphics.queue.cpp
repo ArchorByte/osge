@@ -1,9 +1,7 @@
 #include "vulkan.queues.hpp"
-
-#include "../../logs/logs.handler.hpp"
-
-#include <vector>
+#include "osge/utils/utils.hpp"
 #include <vulkan/vulkan.h>
+#include <vector>
 
 /*
     Get the graphics queue family index.
@@ -23,10 +21,10 @@ uint32_t Vulkan::Queues::get_graphics_queue_family_index
     const std::vector<VkQueueFamilyProperties> &queue_families
 )
 {
-    log("Fetching the graphics queue family index..");
+    Utils::Logs::log("Fetching the graphics queue family index..");
 
     if (queue_families.size() < 1)
-        fatal_error_log("Graphics queue family index query failed! No queue families provided!");
+        Utils::Logs::crash_error_log("Graphics queue family index query failed! No queue families provided!");
 
     uint32_t output = -1;
     int i = 0;
@@ -43,8 +41,8 @@ uint32_t Vulkan::Queues::get_graphics_queue_family_index
     }
 
     if (output == -1)
-        fatal_error_log("Graphics queue family index query failed! Failed to find any graphics queue!");
+        Utils::Logs::crash_error_log("Graphics queue family index query failed! Failed to find any graphics queue!");
 
-    log("Graphics queue family index found: " + std::to_string(output) + ".");
+    Utils::Logs::log("Graphics queue family index found: " + std::to_string(output) + ".");
     return output;
 }

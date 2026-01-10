@@ -1,8 +1,8 @@
 #ifndef VULKAN_QUEUES_HPP
 #define VULKAN_QUEUES_HPP
 
+#include <libraries/vulkan/vulkan.h>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 namespace Vulkan::Queues
 {

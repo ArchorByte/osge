@@ -1,11 +1,8 @@
 #include "vulkan.descriptors.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 #include <string>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
@@ -33,13 +30,13 @@ VkDescriptorSetLayout Vulkan::Descriptors::create_descriptor_set_layout
     const std::vector<VkImageView> &texture_image_views
 )
 {
-    log("Creating a descriptor set layout..");
+    Utils::Logs::log("Creating a descriptor set layout..");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Descriptor set layout creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Descriptor set layout creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     if (texture_image_views.size() < 1)
-        fatal_error_log("Descriptor set layout creation failed! No texture image views provided!");
+        Utils::Logs::crash_error_log("Descriptor set layout creation failed! No texture image views provided!");
 
     const VkDescriptorSetLayoutBinding uniform_buffer_binding
     {
@@ -70,9 +67,9 @@ VkDescriptorSetLayout Vulkan::Descriptors::create_descriptor_set_layout
     const VkResult layout_creation = vkCreateDescriptorSetLayout(logical_device, &create_info, nullptr, &descriptor_set_layout);
 
     if (layout_creation != VK_SUCCESS)
-        fatal_error_log("Descriptor set layout creation returned error code " + std::to_string(layout_creation) + ".");
+        Utils::Logs::crash_error_log("Descriptor set layout creation returned error code " + std::to_string(layout_creation) + ".");
 
-    log("Descriptor set layout " + force_string(descriptor_set_layout) + " created successfully!");
+    Utils::Logs::log("Descriptor set layout " + Utils::Text::get_memory_address(descriptor_set_layout) + " created successfully!");
     return descriptor_set_layout;
 }
 
@@ -99,24 +96,24 @@ void Vulkan::Descriptors::destroy_descriptor_set_layout
     const VkDevice &logical_device
 )
 {
-    log("Destroying the " + force_string(descriptor_set_layout) + " descriptor set layout..");
+    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(descriptor_set_layout) + " descriptor set layout..");
 
     if (descriptor_set_layout == VK_NULL_HANDLE)
     {
-        error_log("Descriptor set layout destruction failed! The descriptor set layout provided (" + force_string(descriptor_set_layout) + ") is not valid!");
+        Utils::Logs::error_log("Descriptor set layout destruction failed! The descriptor set layout provided (" + Utils::Text::get_memory_address(descriptor_set_layout) + ") is not valid!");
         return;
     }
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Descriptor set layout destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::error_log("Descriptor set layout destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
         return;
     }
 
     vkDestroyDescriptorSetLayout(logical_device, descriptor_set_layout, nullptr);
     descriptor_set_layout = VK_NULL_HANDLE;
 
-    log("Descriptor set layout destroyed successfully!");
+    Utils::Logs::log("Descriptor set layout destroyed successfully!");
 }
 
 ///////////////////////////////////////////////

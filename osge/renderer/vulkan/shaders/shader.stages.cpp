@@ -1,11 +1,8 @@
 #include "vulkan.shaders.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 #include <map>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 /*
     Create a shader stage for each shader module.
@@ -26,10 +23,10 @@ std::vector<VkPipelineShaderStageCreateInfo> Vulkan::Shaders::create_shader_stag
     const std::vector<ShaderInfo> &shader_modules
 )
 {
-    log("Creating " + std::to_string(shader_modules.size()) + " shader stages..");
+    Utils::Logs::log("Creating " + std::to_string(shader_modules.size()) + " shader stages..");
 
     if (shader_modules.size() < 1)
-        fatal_error_log("Shader stages creation failed! No shaders modules provided!");
+        Utils::Logs::crash_error_log("Shader stages creation failed! No shaders modules provided!");
 
     std::vector<VkPipelineShaderStageCreateInfo> shader_stages;
     shader_stages.reserve(shader_modules.size());
@@ -44,7 +41,7 @@ std::vector<VkPipelineShaderStageCreateInfo> Vulkan::Shaders::create_shader_stag
 
         if (shader_module == VK_NULL_HANDLE)
         {
-            error_log("- Failed to create the shader stage #" + std::to_string(i) + "/" + std::to_string(shader_modules.size()) + "! The shader module provided (" + force_string(shader_module) + ") is not valid!");
+            Utils::Logs::error_log("- Failed to create the shader stage #" + std::to_string(i) + "/" + std::to_string(shader_modules.size()) + "! The shader module provided (" + Utils::Text::get_memory_address(shader_module) + ") is not valid!");
             continue;
         }
 
@@ -57,9 +54,9 @@ std::vector<VkPipelineShaderStageCreateInfo> Vulkan::Shaders::create_shader_stag
         };
 
         shader_stages.emplace_back(create_info);
-        log("- Shader stage #" + std::to_string(i) + "/" + std::to_string(shader_stages.size()) + " created successfully!");
+        Utils::Logs::log("- Shader stage #" + std::to_string(i) + "/" + std::to_string(shader_stages.size()) + " created successfully!");
     }
 
-    log(std::to_string(shader_stages.size()) + "/" + std::to_string(shader_modules.size()) + " shader stages created successfully!");
+    Utils::Logs::log(std::to_string(shader_stages.size()) + "/" + std::to_string(shader_modules.size()) + " shader stages created successfully!");
     return shader_stages;
 }

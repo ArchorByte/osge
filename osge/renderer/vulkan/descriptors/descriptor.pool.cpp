@@ -1,11 +1,8 @@
 #include "vulkan.descriptors.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 #include <string>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
@@ -35,16 +32,16 @@ VkDescriptorPool Vulkan::Descriptors::create_descriptor_pool
     const uint32_t &texture_image_count
 )
 {
-    log("Creating a descriptor pool..");
+    Utils::Logs::log("Creating a descriptor pool..");
 
     if (image_count < 1)
-        fatal_error_log("Descriptor pool creation failed! The images count provided (" + std::to_string(image_count) + ") is not valid!");
+        Utils::Logs::crash_error_log("Descriptor pool creation failed! The images count provided (" + std::to_string(image_count) + ") is not valid!");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Descriptor pool creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Descriptor pool creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     if (texture_image_count < 1)
-        fatal_error_log("Descriptor pool creation failed! The texture images count provided (" + std::to_string(texture_image_count) + ") is not valid!");
+        Utils::Logs::crash_error_log("Descriptor pool creation failed! The texture images count provided (" + std::to_string(texture_image_count) + ") is not valid!");
 
     std::vector<VkDescriptorPoolSize> pool_sizes(2);
     pool_sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -64,9 +61,9 @@ VkDescriptorPool Vulkan::Descriptors::create_descriptor_pool
     const VkResult pool_creation = vkCreateDescriptorPool(logical_device, &creation_info, nullptr, &descriptor_pool);
 
     if (pool_creation != VK_SUCCESS)
-        fatal_error_log("Descriptor pool creation returned error code " + std::to_string(pool_creation) + ".");
+        Utils::Logs::crash_error_log("Descriptor pool creation returned error code " + std::to_string(pool_creation) + ".");
 
-    log("Descriptor pool " + force_string(descriptor_pool) + " created successfully!");
+    Utils::Logs::log("Descriptor pool " + Utils::Text::get_memory_address(descriptor_pool) + " created successfully!");
     return descriptor_pool;
 }
 
@@ -93,24 +90,24 @@ void Vulkan::Descriptors::destroy_descriptor_pool
     const VkDevice &logical_device
 )
 {
-    log("Destroying the " + force_string(descriptor_pool) + " descriptor pool..");
+    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(descriptor_pool) + " descriptor pool..");
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Descriptor pool destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::error_log("Descriptor pool destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
         return;
     }
 
     if (descriptor_pool == VK_NULL_HANDLE)
     {
-        error_log("Descriptor pool destruction failed! The descriptor pool provided (" + force_string(descriptor_pool) + ") is not valid!");
+        Utils::Logs::error_log("Descriptor pool destruction failed! The descriptor pool provided (" + Utils::Text::get_memory_address(descriptor_pool) + ") is not valid!");
         return;
     }
 
     vkDestroyDescriptorPool(logical_device, descriptor_pool, nullptr);
     descriptor_pool = VK_NULL_HANDLE;
 
-    log("Descriptor pool destroyed successfully!");
+    Utils::Logs::log("Descriptor pool destroyed successfully!");
 }
 
 ///////////////////////////////////////////////

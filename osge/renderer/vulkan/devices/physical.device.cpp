@@ -1,11 +1,8 @@
 #include "vulkan.devices.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 #include <string>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 /*
     Check if a physical device meets our requirements.
@@ -28,7 +25,7 @@ bool Vulkan::Devices::is_valid_physical_device
 {
     if (physical_device == VK_NULL_HANDLE)
     {
-        error_log("Physical device validation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+        Utils::Logs::error_log("Physical device validation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
         return false;
     }
 
@@ -64,7 +61,7 @@ std::string Vulkan::Devices::get_physical_device_name
 {
     if (physical_device == VK_NULL_HANDLE)
     {
-        error_log("Invalid physical device provided (" + force_string(physical_device) + ")! Defaulted to \"Unknown GPU\".");
+        Utils::Logs::error_log("Invalid physical device provided (" + Utils::Text::get_memory_address(physical_device) + ")! Defaulted to \"Unknown GPU\".");
         return "Unknown GPU";
     }
 
@@ -98,23 +95,23 @@ VkPhysicalDevice Vulkan::Devices::select_physical_device
     const VkInstance &vulkan_instance
 )
 {
-    log("Looking for a usable physical device..");
+    Utils::Logs::log("Looking for a usable physical device..");
 
     if (vulkan_instance == VK_NULL_HANDLE)
-        fatal_error_log("Physical device selection failed! The Vulkan instance provided (" + force_string(vulkan_instance) + ") is not valid!");
+        Utils::Logs::crash_error_log("Physical device selection failed! The Vulkan instance provided (" + Utils::Text::get_memory_address(vulkan_instance) + ") is not valid!");
 
     uint32_t devices_count = 0;
     const VkResult first_query = vkEnumeratePhysicalDevices(vulkan_instance, &devices_count, nullptr);
 
     if (first_query != VK_SUCCESS)
-        fatal_error_log("Physical device selection failed! The physical device query 1/2 returned error code " + std::to_string(first_query) + ".");
+        Utils::Logs::crash_error_log("Physical device selection failed! The physical device query 1/2 returned error code " + std::to_string(first_query) + ".");
 
     if (devices_count == 0)
-        fatal_error_log("Physical device selection failed! Failed to find any physical device supporting Vulkan!");
+        Utils::Logs::crash_error_log("Physical device selection failed! Failed to find any physical device supporting Vulkan!");
 
     if (selected_device_index > devices_count)
     {
-        error_log("Warning: The selected device (" + std::to_string(selected_device_index) + ") is out of bounds! Defaulted to the first valid physical device found!");
+        Utils::Logs::error_log("Warning: The selected device (" + std::to_string(selected_device_index) + ") is out of bounds! Defaulted to the first valid physical device found!");
         selected_device_index = 1;
     }
 
@@ -122,10 +119,10 @@ VkPhysicalDevice Vulkan::Devices::select_physical_device
     const VkResult second_query = vkEnumeratePhysicalDevices(vulkan_instance, &devices_count, devices_list.data());
 
     if (second_query != VK_SUCCESS)
-        fatal_error_log("Physical device selection failed! Physical device query 2/2 returned error code " + std::to_string(second_query) + ".");
+        Utils::Logs::crash_error_log("Physical device selection failed! Physical device query 2/2 returned error code " + std::to_string(second_query) + ".");
 
     if (devices_list.size() < 1)
-        fatal_error_log("Physical device selection failed! No physical devices available!");
+        Utils::Logs::crash_error_log("Physical device selection failed! No physical devices available!");
 
     VkPhysicalDevice physical_device = VK_NULL_HANDLE;
     int i = 0;
@@ -142,8 +139,8 @@ VkPhysicalDevice Vulkan::Devices::select_physical_device
     }
 
     if (physical_device == VK_NULL_HANDLE)
-        fatal_error_log("Physical device selection failed! Failed to find any suitable physical device!");
+        Utils::Logs::crash_error_log("Physical device selection failed! Failed to find any suitable physical device!");
 
-    log("Physical device selected successfully! Selected device: " + get_physical_device_name(physical_device) + ".");
+    Utils::Logs::log("Physical device selected successfully! Selected device: " + get_physical_device_name(physical_device) + ".");
     return physical_device;
 }

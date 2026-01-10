@@ -1,10 +1,9 @@
 #ifndef VULKAN_DESCRIPTORS_HPP
 #define VULKAN_DESCRIPTORS_HPP
 
-#include "../buffers/vulkan.buffers.hpp"
-
+#include "osge/renderer/vulkan/buffers/vulkan.buffers.hpp"
+#include <libraries/vulkan/vulkan.h>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 namespace Vulkan::Descriptors
 {
