@@ -1,6 +1,7 @@
 #include "vulkan.buffers.hpp"
-#include <osge/utils/utils.hpp>
-#include <libraries/vulkan/vulkan.h>
+
+#include "libraries/vulkan/vulkan.h"
+#include "osge/utils/utils.hpp"
 
 /*
     Get the index of a specific memory type.
@@ -17,7 +18,7 @@
     Returns:
         The index of the memory type.
 */
-uint32_t Vulkan::Buffers::find_memory_type
+uint32_t Buffers::find_memory_type
 (
     const VkPhysicalDeviceMemoryProperties &memory_properties,
     const VkMemoryPropertyFlags &property_flags,
@@ -43,20 +44,20 @@ uint32_t Vulkan::Buffers::find_memory_type
     Warning: There is no class that will automatically free the memory, you have to set one up yourself for memory safety reasons.
 
     Tasks:
-        1) Verify the parameters.
-        2) Retrieve necessary information about the memory.
-        3) Allocate the memory.
+        1) Verify the function parameters.
+        2) Retrieve necessary information about the system memory.
+        3) Allocate the memory to the buffer.
         4) Bind the memory to the buffer.
 
     Parameters:
-        - buffer          / VkBuffer         / Targeted buffer.
+        - buffer          / VkBuffer         / Buffer to allocate memory to.
         - logical_device  / VkDevice         / Logical device of the Vulkan instance.
-        - physical_device / VkPhysicalDevice / Physical device used to run Vulkan.
+        - physical_device / VkPhysicalDevice / Physical device used to run the Vulkan instance.
 
     Returns:
-        The buffer memory.
+        The allocated buffer memory.
 */
-VkDeviceMemory Vulkan::Buffers::allocate_buffer_memory
+VkDeviceMemory Buffers::allocate_buffer_memory
 (
     const VkBuffer &buffer,
     const VkDevice &logical_device,
@@ -84,7 +85,7 @@ VkDeviceMemory Vulkan::Buffers::allocate_buffer_memory
     {
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
         .allocationSize = memory_requirements.size,
-        .memoryTypeIndex = Vulkan::Buffers::find_memory_type(memory_properties, memory_requirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+        .memoryTypeIndex = Buffers::find_memory_type(memory_properties, memory_requirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
     };
 
     VkDeviceMemory buffer_memory = VK_NULL_HANDLE;

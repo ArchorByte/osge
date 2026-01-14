@@ -1,7 +1,9 @@
 #include "vulkan.buffers.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
+
 #include <array>
-#include <libraries/vulkan/vulkan.h>
 #include <string>
 #include <vector>
 
@@ -14,21 +16,21 @@
     Note: You should use the pre-made class to handle the frame buffers rather than directly using this function for memory safety reasons.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify the function parameters.
         2) Create all frame buffers.
 
     Parameters:
-        - color_image_view / VkImageView         / View of the color image.
-        - depth_image_view / VkImageView         / View of the depth image.
+        - color_image_view / VkImageView         / Describes how to access and treat the color images.
+        - depth_image_view / VkImageView         / Describes how to access and treat the depth images.
         - extent           / VkExtent2D          / Resolution of the swap chain.
-        - image_views      / vector<VkImageView> / Targeted swap chain image views.
+        - image_views      / vector<VkImageView> / Amount of frame buffers to create. We create one for each swap chain image view.
         - logical_device   / VkDevice            / Logical device of the Vulkan instance.
-        - render_pass      / VkRenderPass        / Render pass of the Vulkan instance.
+        - render_pass      / VkRenderPass        / Organizes rendering tasks.
 
     Returns:
         A vector list containing all created frame buffers.
 */
-std::vector<VkFramebuffer> Vulkan::Buffers::create_frame_buffers
+std::vector<VkFramebuffer> Buffers::create_frame_buffers
 (
     const VkImageView &color_image_view,
     const VkImageView &depth_image_view,
@@ -90,10 +92,10 @@ std::vector<VkFramebuffer> Vulkan::Buffers::create_frame_buffers
 
 
 /*
-    Cleanly destroy all frame buffers.
+    Destroy some frame buffers.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify the function parameters.
         2) Destroy all valid frame buffers.
 
     Parameters:
@@ -103,7 +105,7 @@ std::vector<VkFramebuffer> Vulkan::Buffers::create_frame_buffers
     Returns:
         No object returned.
 */
-void Vulkan::Buffers::destroy_frame_buffers
+void Buffers::destroy_frame_buffers
 (
     std::vector<VkFramebuffer> &frame_buffers,
     const VkDevice &logical_device
@@ -154,7 +156,7 @@ void Vulkan::Buffers::destroy_frame_buffers
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Vulkan::Buffers::frame_buffers_handler::frame_buffers_handler
+Buffers::frame_buffers_handler::frame_buffers_handler
 (
     const VkImageView &color_image_view,
     const VkImageView &depth_image_view,
@@ -165,15 +167,15 @@ Vulkan::Buffers::frame_buffers_handler::frame_buffers_handler
 )
     : logical_device(logical_device)
 {
-    frame_buffers = Vulkan::Buffers::create_frame_buffers(color_image_view, depth_image_view, extent, image_views, logical_device, render_pass);
+    frame_buffers = Buffers::create_frame_buffers(color_image_view, depth_image_view, extent, image_views, logical_device, render_pass);
 }
 
-Vulkan::Buffers::frame_buffers_handler::~frame_buffers_handler()
+Buffers::frame_buffers_handler::~frame_buffers_handler()
 {
-    Vulkan::Buffers::destroy_frame_buffers(frame_buffers, logical_device);
+    Buffers::destroy_frame_buffers(frame_buffers, logical_device);
 }
 
-std::vector<VkFramebuffer> Vulkan::Buffers::frame_buffers_handler::get() const
+std::vector<VkFramebuffer> Buffers::frame_buffers_handler::get() const
 {
     return frame_buffers;
 }

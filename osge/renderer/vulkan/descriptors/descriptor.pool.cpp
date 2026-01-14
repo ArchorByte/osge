@@ -25,7 +25,7 @@
     Returns:
         The created descriptor pool.
 */
-VkDescriptorPool Vulkan::Descriptors::create_descriptor_pool
+VkDescriptorPool Descriptors::create_descriptor_pool
 (
     const uint32_t &image_count,
     const VkDevice &logical_device,
@@ -75,7 +75,7 @@ VkDescriptorPool Vulkan::Descriptors::create_descriptor_pool
     Tasks:
         1) Verify the parameters.
         2) Destroy the descriptor pool.
-        3) Replace the objects addressess.
+        3) Get rid of the objects memory addresses.
 
     Parameters:
         - descriptor_pool / VkDescriptorPool / Descriptor pool to destroy.
@@ -84,7 +84,7 @@ VkDescriptorPool Vulkan::Descriptors::create_descriptor_pool
     Returns:
         No object returned.
 */
-void Vulkan::Descriptors::destroy_descriptor_pool
+void Descriptors::destroy_descriptor_pool
 (
     VkDescriptorPool &descriptor_pool,
     const VkDevice &logical_device
@@ -114,7 +114,7 @@ void Vulkan::Descriptors::destroy_descriptor_pool
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Vulkan::Descriptors::descriptor_pool_handler::descriptor_pool_handler
+Descriptors::descriptor_pool_handler::descriptor_pool_handler
 (
     const uint32_t &image_count,
     const VkDevice &logical_device,
@@ -122,15 +122,15 @@ Vulkan::Descriptors::descriptor_pool_handler::descriptor_pool_handler
 )
     : logical_device(logical_device)
 {
-    descriptor_pool = Vulkan::Descriptors::create_descriptor_pool(image_count, logical_device, texture_image_count);
+    descriptor_pool = Descriptors::create_descriptor_pool(image_count, logical_device, texture_image_count);
 }
 
-Vulkan::Descriptors::descriptor_pool_handler::~descriptor_pool_handler()
+Descriptors::descriptor_pool_handler::~descriptor_pool_handler()
 {
-    Vulkan::Descriptors::destroy_descriptor_pool(descriptor_pool, logical_device);
+    Descriptors::destroy_descriptor_pool(descriptor_pool, logical_device);
 }
 
-VkDescriptorPool Vulkan::Descriptors::descriptor_pool_handler::get() const
+VkDescriptorPool Descriptors::descriptor_pool_handler::get() const
 {
     return descriptor_pool;
 }

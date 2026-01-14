@@ -18,7 +18,7 @@
     Returns:
         A vector list containing all shader stages.
 */
-std::vector<VkPipelineShaderStageCreateInfo> Vulkan::Shaders::create_shader_stages
+std::vector<VkPipelineShaderStageCreateInfo> Shaders::create_shader_stages
 (
     const std::vector<ShaderInfo> &shader_modules
 )

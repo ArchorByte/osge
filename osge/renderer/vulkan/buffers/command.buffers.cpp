@@ -1,7 +1,9 @@
 #include "vulkan.buffers.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
+
 #include <array>
-#include <libraries/vulkan/vulkan.h>
 #include <unistd.h>
 #include <vector>
 
@@ -9,18 +11,18 @@
     Create a command buffer for each swap chain image.
 
     Tasks:
-        1) Verify the parameters.
-        2) Allocate all necessary command buffers.
+        1) Verify the function parameters.
+        2) Allocate the command buffers using the command pool.
 
     Parameters:
-        - command_pool   / VkCommandPool / Command pool of the Vulkan instance.
-        - images_count   / uint32_t      / Amount of command buffers to create.
+        - command_pool   / VkCommandPool / Handles the memory allocation of the command buffers.
+        - images_count   / uint32_t      / Amount of command buffers to create. One for each swap chain image.
         - logical_device / VkDevice      / Logical device of the Vulkan instance.
 
     Returns:
         A vector list containing all created command buffers.
 */
-std::vector<VkCommandBuffer> Vulkan::Buffers::create_command_buffers
+std::vector<VkCommandBuffer> Buffers::create_command_buffers
 (
     const VkCommandPool &command_pool,
     const uint32_t &images_count,
@@ -40,7 +42,7 @@ std::vector<VkCommandBuffer> Vulkan::Buffers::create_command_buffers
 
     std::vector<VkCommandBuffer> command_buffers(images_count);
 
-    VkCommandBufferAllocateInfo allocation_info
+    const VkCommandBufferAllocateInfo allocation_info
     {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
         .commandPool = command_pool,
@@ -64,18 +66,18 @@ std::vector<VkCommandBuffer> Vulkan::Buffers::create_command_buffers
     Note: There is no class that will automatically destroy this buffer, you have to set one up yourself for safety reasons.
 
     Tasks:
-        1) Verify the parameters.
-        2) Allocate the buffer.
-        3) Create the buffer.
+        1) Verify the function parameters.
+        2) Allocate the buffer with the command pool.
+        3) Create the command buffer.
 
     Parameters:
-        - command_pool   / VkCommandPool / Command pool of the Vulkan instance.
+        - command_pool   / VkCommandPool / Handles the memory allocation of the command buffers.
         - logical_device / VkDevice      / Logical device of the Vulkan instance.
 
     Returns:
-        The one-time command buffer.
+        The one-time command buffer created.
 */
-VkCommandBuffer Vulkan::Buffers::create_one_time_command_buffer
+VkCommandBuffer Buffers::create_one_time_command_buffer
 (
     const VkCommandPool &command_pool,
     const VkDevice &logical_device
@@ -84,12 +86,12 @@ VkCommandBuffer Vulkan::Buffers::create_one_time_command_buffer
     Utils::Logs::log("Creating a one time command buffer..");
 
     if (logical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("One time command buffer beginning failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("One time command buffer creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     if (command_pool == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("One time command buffer beginning failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
+        Utils::Logs::crash_error_log("One time command buffer creation failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
 
-    VkCommandBufferAllocateInfo allocation_info
+    const VkCommandBufferAllocateInfo allocation_info
     {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
         .commandPool = command_pool,
@@ -103,7 +105,7 @@ VkCommandBuffer Vulkan::Buffers::create_one_time_command_buffer
     if (buffer_allocation != VK_SUCCESS)
         Utils::Logs::crash_error_log("One time command buffer creation failed! Command buffer allocation returned error code " + std::to_string(buffer_allocation) + ".");
 
-    VkCommandBufferBeginInfo buffer_begin_info
+    const VkCommandBufferBeginInfo buffer_begin_info
     {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
@@ -121,10 +123,10 @@ VkCommandBuffer Vulkan::Buffers::create_one_time_command_buffer
 
 
 /*
-    Record the command buffer and draw a frame.
+    Record a command buffer and draw a frame.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify the function parameters.
         2) Start a command buffer.
         3) Start the render pass.
         4) Bind all elements together for rendering.
@@ -132,41 +134,41 @@ VkCommandBuffer Vulkan::Buffers::create_one_time_command_buffer
         6) End the command buffer and render pass.
 
     Parameters:
-        - command_buffer      / VkCommandBuffer         / Command buffer of the Vulkan instance.
-        - descriptor_sets     / vector<VkDescriptorSet> / Descriptor sets of the Vulkan instance.
-        - extent              / VkExtent2D              / Extent of the swap chain.
-        - frame               / size_t                  / Current frame we are going to work on.
-        - framebuffers        / vector<VkFramebuffer>   / Frame buffers of the Vulkan instance.
-        - graphics_pipeline   / VkPipeline              / Graphics pipeline of the Vulkan instance.
+        - command_buffer      / VkCommandBuffer         / Records drawing commands to submit later.
+        - descriptor_sets     / vector<VkDescriptorSet> / Regroups data together.
+        - extent              / VkExtent2D              / Resolution of the swap chain.
+        - frame               / size_t                  / Current frame that we are going to work on.
+        - framebuffers        / vector<VkFramebuffer>   / Connects resources to the render pass.
+        - graphics_pipeline   / VkPipeline              / Converts 3D models into 2D frames.
         - image_index         / uint32_t                / Index of the image we are working on.
-        - index_buffer        / VkBuffer                / Index buffer of the Vulkan instance.
-        - indices             / vector<uint32_t>        / Vertex indices.
-        - pipeline_layout     / VkPipelineLayout        / Pipeline layout of the graphics pipeline.
-        - render_pass         / VkRenderPass            / Render pass of the Vulkan instance.
-        - scissor             / VkRect2D                / Scissor of the Vulkan instance.
-        - texture_image_views / vector<VkImageView>     / Textures.
-        - vertex_buffer       / VkBuffer                / Vertex buffer of the Vulkan instance.
-        - viewport            / VkViewport              / Viewport of the swap chain.
+        - index_buffer        / VkBuffer                / Enables us to reuse vertices to optimize renderings.
+        - pipeline_layout     / VkPipelineLayout        / Defines to the graphics pipeline what resources can be accessed.
+        - render_pass         / VkRenderPass            / Organizes rendering tasks.
+        - scissor             / VkRect2D                / Defines the area where we will put the pixels.
+        - texture_image_views / vector<VkImageView>     / Describes how to access and treat the texture images.
+        - vertex_buffer       / VkBuffer                / Contails all vertex data.
+        - vertex_indices      / vector<uint32_t>        / References vertices stored in the vertex buffer.
+        - viewport            / VkViewport              / Defines where the rendering occurs.
 
     Returns:
         No object returned.
 */
-void Vulkan::Buffers::record_command_buffer_and_draw
+void Buffers::record_command_buffer_and_draw
 (
     const VkCommandBuffer &command_buffer,
-    const std::vector<VkDescriptorSet> descriptor_sets,
+    const std::vector<VkDescriptorSet> &descriptor_sets,
     const VkExtent2D &extent,
     const size_t &frame,
     const std::vector<VkFramebuffer> &framebuffers,
     const VkPipeline &graphics_pipeline,
     const uint32_t &image_index,
     const VkBuffer &index_buffer,
-    std::vector<uint32_t> indices,
     const VkPipelineLayout &pipeline_layout,
     const VkRenderPass &render_pass,
     const VkRect2D &scissor,
-    const std::vector<VkImageView> texture_image_views,
+    const std::vector<VkImageView> &texture_image_views,
     const VkBuffer &vertex_buffer,
+    const std::vector<uint32_t> &vertex_indices,
     const VkViewport &viewport
 )
 {
@@ -212,9 +214,9 @@ void Vulkan::Buffers::record_command_buffer_and_draw
         return;
     }
 
-    if (indices.size() < 1)
+    if (vertex_indices.size() < 1)
     {
-        Utils::Logs::error_log("Failed to render a frame! No indices provided!");
+        Utils::Logs::error_log("Failed to render a frame! No vertex indices provided!");
         return;
     }
 
@@ -242,6 +244,8 @@ void Vulkan::Buffers::record_command_buffer_and_draw
         return;
     }
 
+    vkResetCommandBuffer(command_buffer, 0);
+
     VkCommandBufferBeginInfo begin_info { .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
     const VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &begin_info);
 
@@ -252,7 +256,7 @@ void Vulkan::Buffers::record_command_buffer_and_draw
     clear_values[0].color = {{ 0.0f, 0.0f, 0.0f, 1.0f }};
     clear_values[1].depthStencil = { 1.0f, 0 };
 
-    VkRenderPassBeginInfo render_pass_begin_info
+    const VkRenderPassBeginInfo render_pass_begin_info
     {
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
         .renderPass = render_pass,
@@ -270,22 +274,21 @@ void Vulkan::Buffers::record_command_buffer_and_draw
     const VkDeviceSize offsets[] = { 0 };
     int targeted_texture = 1;
 
-    if (targeted_texture < 0 || targeted_texture > texture_image_views.size())
+    if (targeted_texture < 0 || targeted_texture >= texture_image_views.size())
     {
         Utils::Logs::error_log("Texture #" + std::to_string(targeted_texture) + " not found!");
         targeted_texture = 0;
     }
 
+    vkCmdBeginRenderPass(command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphics_pipeline);
     vkCmdBindVertexBuffers(command_buffer, 0, 1, &vertex_buffers, offsets);
     vkCmdBindIndexBuffer(command_buffer, index_buffer, 0, VK_INDEX_TYPE_UINT32);
     vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout, 0, 1, &descriptor_sets[frame], 0, nullptr);
-    vkCmdPushConstants(command_buffer, pipeline_layout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(int), &targeted_texture); // Apply the texture.
-    vkCmdBeginRenderPass(command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdPushConstants(command_buffer, pipeline_layout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(int), &targeted_texture);
     vkCmdSetViewport(command_buffer, 0, 1, &viewport);
     vkCmdSetScissor(command_buffer, 0, 1, &scissor);
-    vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphics_pipeline);
-    vkCmdDrawIndexed(command_buffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+    vkCmdDrawIndexed(command_buffer, static_cast<uint32_t>(vertex_indices.size()), 1, 0, 0, 0);
     vkCmdEndRenderPass(command_buffer);
 
     const VkResult buffer_end = vkEndCommandBuffer(command_buffer);
@@ -300,21 +303,21 @@ void Vulkan::Buffers::record_command_buffer_and_draw
     Destroy a command buffer.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify the function parameters.
         2) Stop any buffer activity.
         3) End the command buffer.
-        4) Replace the object address.
+        4) Get rid of the object memory address.
 
     Parameters:
         - command_buffer / VkCommandBuffer / Command buffer to destroy.
-        - command_pool   / VkCommandPool   / Command pool of the Vulkan instance.
-        - graphics_queue / VkQueue         / Graphics queue of the Vulkan instance.
+        - command_pool   / VkCommandPool   / Handles the memory allocation of the command buffers.
+        - graphics_queue / VkQueue         / Handles all graphics commands and calls.
         - logical_device / VkDevice        / Logical device of the Vulkan instance.
 
     Returns:
         No object returned.
 */
-void Vulkan::Buffers::destroy_command_buffer
+void Buffers::destroy_command_buffer
 (
     VkCommandBuffer &command_buffer,
     const VkCommandPool &command_pool,
@@ -352,21 +355,9 @@ void Vulkan::Buffers::destroy_command_buffer
 
     if (buffer_end != VK_SUCCESS)
     {
-        Utils::Logs::error_log("Command buffer destruction failed with error code " + std::to_string(buffer_end) + ".");
+        Utils::Logs::error_log("Command buffer activity failed to stop with error code " + std::to_string(buffer_end) + ".");
         return;
     }
-
-    VkSubmitInfo submit_info
-    {
-        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-        .commandBufferCount = 1,
-        .pCommandBuffers = &command_buffer
-    };
-
-    const VkResult queue_submit = vkQueueSubmit(graphics_queue, 1, &submit_info, VK_NULL_HANDLE);
-
-    if (queue_submit != VK_SUCCESS)
-        Utils::Logs::crash_error_log("Command buffer destruction failed! The queue submit returned error code " + std::to_string(queue_submit) + ".");
 
     vkQueueWaitIdle(graphics_queue);
     vkFreeCommandBuffers(logical_device, command_pool, 1, &command_buffer);

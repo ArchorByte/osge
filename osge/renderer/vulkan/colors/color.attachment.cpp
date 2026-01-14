@@ -12,7 +12,7 @@
         - samples_count  / VkSampleCountFlagBits / Amount of samples to use for the MSAA.
         - surface_format / VkFormat              / Surface format of the Vulkan instance.
 */
-VkAttachmentDescription Vulkan::Colors::create_color_attachment
+VkAttachmentDescription Colors::create_color_attachment
 (
     const VkSampleCountFlagBits &samples_count,
     const VkFormat &surface_format

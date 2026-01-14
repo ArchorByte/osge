@@ -1,10 +1,12 @@
 #include "vulkan.buffers.hpp"
+
+#include "libraries/glm/glm.hpp"
+#include "libraries/glm/gtc/matrix_transform.hpp"
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
+
 #include <chrono>
 #include <cstring>
-#include <libraries/glm/glm.hpp>
-#include <libraries/glm/gtc/matrix_transform.hpp>
-#include <libraries/vulkan/vulkan.h>
 #include <string>
 #include <utility>
 #include <vector>
@@ -31,7 +33,7 @@
     Returns:
         A vector list containing all created uniform buffers.
 */
-std::vector<UniformBufferInfo> Vulkan::Buffers::create_uniform_buffers
+std::vector<UniformBufferInfo> Buffers::create_uniform_buffers
 (
     const VkCommandPool &command_pool,
     const VkQueue &graphics_queue,
@@ -67,7 +69,7 @@ std::vector<UniformBufferInfo> Vulkan::Buffers::create_uniform_buffers
         VkDeviceMemory buffer_memory = VK_NULL_HANDLE;
         void* data;
 
-        Vulkan::Buffers::create_buffer(buffer, buffer_memory, buffer_size, logical_device, physical_device, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        Buffers::create_buffer(buffer, buffer_memory, buffer_size, logical_device, physical_device, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
         vkMapMemory(logical_device, buffer_memory, 0, buffer_size, 0, &data);
 
         const UniformBufferInfo info = { buffer, buffer_memory, data };
@@ -85,18 +87,15 @@ std::vector<UniformBufferInfo> Vulkan::Buffers::create_uniform_buffers
 /*
     Update a uniform buffer.
 
-    Tasks:
-        1) 
-
     Parameters:
         - buffer_data / void*      / Data of the uniform buffer.
-        - extent      / VkExtent2D / Vulkan swap chain resolution.
+        - extent      / VkExtent2D / Resolution of the swap chain.
         - frame       / uint32_t   / Frame we are working on.
 
     Returns:
         No object returned.
 */
-void Vulkan::Buffers::update_uniform_buffer_data
+void Buffers::update_uniform_buffer_data
 (
     const void* buffer_data,
     const VkExtent2D extent,
@@ -123,11 +122,11 @@ void Vulkan::Buffers::update_uniform_buffer_data
 
 
 /*
-    Cleanly destroy uniform buffers.
+    Destroy some uniform buffers.
 
     Tasks:
-        1) Verify the parameters.
-        2) Try to destroy each uniform buffer. We don't stop the iteration even if a buffer "failed" to destroy.
+        1) Verify the function parameters.
+        2) Destroy all valid uniform buffers.
 
     Parameters:
         - logical_device  / VkDevice                  / Logical device of the Vulkan instance.
@@ -136,7 +135,7 @@ void Vulkan::Buffers::update_uniform_buffer_data
     Returns:
         No object returned.
 */
-void Vulkan::Buffers::destroy_uniform_buffers
+void Buffers::destroy_uniform_buffers
 (
     const VkDevice &logical_device,
     std::vector<UniformBufferInfo> &uniform_buffers
@@ -205,7 +204,7 @@ void Vulkan::Buffers::destroy_uniform_buffers
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Vulkan::Buffers::uniform_buffers_handler::uniform_buffers_handler
+Buffers::uniform_buffers_handler::uniform_buffers_handler
 (
     const VkCommandPool &command_pool,
     const VkQueue &graphics_queue,
@@ -215,15 +214,15 @@ Vulkan::Buffers::uniform_buffers_handler::uniform_buffers_handler
 )
     : logical_device(logical_device)
 {
-    uniform_buffers = Vulkan::Buffers::create_uniform_buffers(command_pool, graphics_queue, image_count, logical_device, physical_device);
+    uniform_buffers = Buffers::create_uniform_buffers(command_pool, graphics_queue, image_count, logical_device, physical_device);
 }
 
-Vulkan::Buffers::uniform_buffers_handler::~uniform_buffers_handler()
+Buffers::uniform_buffers_handler::~uniform_buffers_handler()
 {
-    Vulkan::Buffers::destroy_uniform_buffers(logical_device, uniform_buffers);
+    Buffers::destroy_uniform_buffers(logical_device, uniform_buffers);
 }
 
-std::vector<UniformBufferInfo> Vulkan::Buffers::uniform_buffers_handler::get() const
+std::vector<UniformBufferInfo> Buffers::uniform_buffers_handler::get() const
 {
     return uniform_buffers;
 }

@@ -16,7 +16,7 @@
     Returns:
         The created depth attachment.
 */
-VkAttachmentDescription create_depth_attachment
+VkAttachmentDescription Depth::create_depth_attachment
 (
     const VkPhysicalDevice &physical_device,
     const VkSampleCountFlagBits &samples_count
@@ -29,7 +29,7 @@ VkAttachmentDescription create_depth_attachment
 
     const VkAttachmentDescription depth_attachment
     {
-        .format = Vulkan::Depth::find_depth_format(physical_device),
+        .format = Depth::find_depth_format(physical_device),
         .samples = samples_count,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,

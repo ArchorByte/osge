@@ -28,7 +28,7 @@
     Returns:
         A vector list containing all created descriptor sets.
 */
-std::vector<VkDescriptorSet> Vulkan::Descriptors::create_descriptor_sets
+std::vector<VkDescriptorSet> Descriptors::create_descriptor_sets
 (
     const VkDescriptorSetLayout &descriptor_set_layout,
     const VkDescriptorPool &descriptor_pool,
@@ -139,7 +139,7 @@ std::vector<VkDescriptorSet> Vulkan::Descriptors::create_descriptor_sets
     Returns:
         No object returned.
 */
-void Vulkan::Descriptors::destroy_descriptor_sets
+void Descriptors::destroy_descriptor_sets
 (
     const VkDescriptorPool &descriptor_pool,
     std::vector<VkDescriptorSet> &descriptor_sets,
@@ -170,7 +170,7 @@ void Vulkan::Descriptors::destroy_descriptor_sets
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Vulkan::Descriptors::descriptor_sets_handler::descriptor_sets_handler
+Descriptors::descriptor_sets_handler::descriptor_sets_handler
 (
     const VkDescriptorSetLayout &descriptor_set_layout,
     const VkDescriptorPool &descriptor_pool,
@@ -182,15 +182,15 @@ Vulkan::Descriptors::descriptor_sets_handler::descriptor_sets_handler
 )
     : descriptor_pool(descriptor_pool), logical_device(logical_device)
 {
-    descriptor_sets = Vulkan::Descriptors::create_descriptor_sets(descriptor_set_layout, descriptor_pool, image_count, logical_device, texture_image_views, texture_sampler, uniform_buffers);
+    descriptor_sets = Descriptors::create_descriptor_sets(descriptor_set_layout, descriptor_pool, image_count, logical_device, texture_image_views, texture_sampler, uniform_buffers);
 }
 
-Vulkan::Descriptors::descriptor_sets_handler::~descriptor_sets_handler()
+Descriptors::descriptor_sets_handler::~descriptor_sets_handler()
 {
-    Vulkan::Descriptors::destroy_descriptor_sets(descriptor_pool, descriptor_sets, logical_device);
+    Descriptors::destroy_descriptor_sets(descriptor_pool, descriptor_sets, logical_device);
 }
 
-std::vector<VkDescriptorSet> Vulkan::Descriptors::descriptor_sets_handler::get() const
+std::vector<VkDescriptorSet> Descriptors::descriptor_sets_handler::get() const
 {
     return descriptor_sets;
 }

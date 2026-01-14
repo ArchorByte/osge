@@ -5,7 +5,7 @@
 #include <libraries/vulkan/vulkan.h>
 #include <vector>
 
-namespace Vulkan::Descriptors
+namespace Descriptors
 {
     ///////////////////////////////////////////////////
     //////////////////// Functions ////////////////////

@@ -20,7 +20,7 @@
     Returns:
         The created image view.
 */
-VkImageView Vulkan::Images::create_image_view
+VkImageView Images::create_image_view
 (
     const VkImageAspectFlags &aspect_flags,
     const VkFormat &format,

@@ -1,27 +1,28 @@
 #include "vulkan.buffers.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
 
 /*
     Create a buffer.
     Warning: There is no class that will automatically destroy this buffer, you have to set one up yourself for memory safety reasons.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify the function parameters.
         2) Create the buffer.
 
     Parameters:
-        - buffer                  / VkBuffer              / Buffer to create.
-        - buffer_memory           / VkDeviceMemory        / Memory of the buffer to create.
-        - buffer_size             / VkDeviceSize          / Size of the buffer to create.
+        - buffer                  / VkBuffer              / Buffer to create. Its value will be modified to contain the created buffer.
+        - buffer_memory           / VkDeviceMemory        / Memory of the buffer to create. Its value will be modified to contain the memory allocated to the created buffer.
+        - buffer_size             / VkDeviceSize          / Define the size of the buffer to create.
         - logical_device          / VkDevice              / Logical device of the Vulkan instance.
-        - physical_device         / VkPhysicalDevice      / Physical device used to run Vulkan.
-        - usage_flags             / VkBufferUsageFlags    / Usage flags of the buffer.
+        - physical_device         / VkPhysicalDevice      / Physical device used to run this Vulkan instance.
+        - usage_flags             / VkBufferUsageFlags    / Define to Vulkan what we are going to do with this buffer.
 
     Returns:
         No object returned.
 */
-void Vulkan::Buffers::create_buffer
+void Buffers::create_buffer
 (
     VkBuffer &buffer,
     VkDeviceMemory &buffer_memory,
@@ -56,30 +57,30 @@ void Vulkan::Buffers::create_buffer
     if (buffer_creation != VK_SUCCESS)
         Utils::Logs::crash_error_log("Buffer creation returned error code " + std::to_string(buffer_creation) + ".");
 
-    buffer_memory = Vulkan::Buffers::allocate_buffer_memory(buffer, logical_device, physical_device);
+    buffer_memory = Buffers::allocate_buffer_memory(buffer, logical_device, physical_device);
     Utils::Logs::log("Buffer " + Utils::Text::get_memory_address(buffer) + " created successfully!");
 }
 
 
 
 /*
-    Cleanly destroy a buffer and free its memory.
+    Destroy a buffer and free its memory.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify the function parameters.
         2) Destroy the buffer.
         3) Free memory.
-        4) Replace the objects' addressess.
+        4) Get rid of the objects memory addresses.
 
     Parameters:
         - buffer         / VkBuffer       / Buffer to destroy.
-        - buffer_memory  / VkDeviceMemory / Allocated memory of the buffer to destroy.
+        - buffer_memory  / VkDeviceMemory / Memory allocated to the buffer to destroy.
         - logical_device / VkDevice       / Logical device of the Vulkan instance.
 
     Returns:
         No object returned.
 */
-void Vulkan::Buffers::destroy_buffer
+void Buffers::destroy_buffer
 (
     VkBuffer &buffer,
     VkDeviceMemory &buffer_memory,

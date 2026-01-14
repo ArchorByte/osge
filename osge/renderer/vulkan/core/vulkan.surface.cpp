@@ -23,7 +23,7 @@
     Returns:
         The created Vulkan surface.
 */
-VkSurfaceKHR Vulkan::Core::create_vulkan_surface
+VkSurfaceKHR Core::create_vulkan_surface
 (
     const VkInstance &vulkan_instance,
     SDL_Window* &window
@@ -64,7 +64,7 @@ VkSurfaceKHR Vulkan::Core::create_vulkan_surface
     Returns:
         No object returned.
 */
-void Vulkan::Core::destroy_vulkan_surface
+void Core::destroy_vulkan_surface
 (
     const VkInstance &vulkan_instance,
     VkSurfaceKHR &vulkan_surface
@@ -94,22 +94,22 @@ void Vulkan::Core::destroy_vulkan_surface
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Vulkan::Core::vulkan_surface_handler::vulkan_surface_handler
+Core::vulkan_surface_handler::vulkan_surface_handler
 (
     const VkInstance &vulkan_instance,
     SDL_Window* &window
 )
     : vulkan_instance(vulkan_instance)
 {
-    vulkan_surface = Vulkan::Core::create_vulkan_surface(vulkan_instance, window);
+    vulkan_surface = Core::create_vulkan_surface(vulkan_instance, window);
 }
 
-Vulkan::Core::vulkan_surface_handler::~vulkan_surface_handler()
+Core::vulkan_surface_handler::~vulkan_surface_handler()
 {
-    Vulkan::Core::destroy_vulkan_surface(vulkan_instance, vulkan_surface);
+    Core::destroy_vulkan_surface(vulkan_instance, vulkan_surface);
 }
 
-VkSurfaceKHR Vulkan::Core::vulkan_surface_handler::get() const
+VkSurfaceKHR Core::vulkan_surface_handler::get() const
 {
     return vulkan_surface;
 }

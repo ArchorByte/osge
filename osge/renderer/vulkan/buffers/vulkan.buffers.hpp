@@ -1,8 +1,8 @@
 #ifndef VULKAN_BUFFERS_HPP
 #define VULKAN_BUFFERS_HPP
 
-#include <libraries/glm/glm.hpp>
-#include <libraries/vulkan/vulkan.h>
+#include "libraries/glm/glm.hpp"
+#include "libraries/vulkan/vulkan.h"
 
 #include <utility>
 #include <vector>
@@ -38,7 +38,7 @@ struct UniformBufferObject
 //////////////////// Namespace ////////////////////
 ///////////////////////////////////////////////////
 
-namespace Vulkan::Buffers
+namespace Buffers
 {
     ///////////////////////////////////////////////////
     //////////////////// Functions ////////////////////
@@ -83,29 +83,6 @@ namespace Vulkan::Buffers
         const VkPhysicalDevice &physical_device
     );
 
-    ///////////////////////////////////////
-    ///// command.buffer.recorder.cpp /////
-    ///////////////////////////////////////
-
-    void record_command_buffer_and_draw
-    (
-        const VkCommandBuffer &command_buffer,
-        const std::vector<VkDescriptorSet> descriptor_sets,
-        const VkExtent2D &extent,
-        const size_t &frame,
-        const std::vector<VkFramebuffer> &framebuffers,
-        const VkPipeline &graphics_pipeline,
-        const uint32_t &image_index,
-        const VkBuffer &index_buffer,
-        std::vector<uint32_t> indices,
-        const VkPipelineLayout &pipeline_layout,
-        const VkRenderPass &render_pass,
-        const VkRect2D &scissor,
-        const std::vector<VkImageView> texture_image_views,
-        const VkBuffer &vertex_buffer,
-        const VkViewport &viewport
-    );
-
     ///////////////////////////////
     ///// command.buffers.cpp /////
     ///////////////////////////////
@@ -121,6 +98,25 @@ namespace Vulkan::Buffers
     (
         const VkCommandPool &command_pool,
         const VkDevice &logical_device
+    );
+
+    void record_command_buffer_and_draw
+    (
+        const VkCommandBuffer &command_buffer,
+        const std::vector<VkDescriptorSet> &descriptor_sets,
+        const VkExtent2D &extent,
+        const size_t &frame,
+        const std::vector<VkFramebuffer> &framebuffers,
+        const VkPipeline &graphics_pipeline,
+        const uint32_t &image_index,
+        const VkBuffer &index_buffer,
+        const VkPipelineLayout &pipeline_layout,
+        const VkRenderPass &render_pass,
+        const VkRect2D &scissor,
+        const std::vector<VkImageView> &texture_image_views,
+        const VkBuffer &vertex_buffer,
+        const std::vector<uint32_t> &vertex_indices,
+        const VkViewport &viewport
     );
 
     void destroy_command_buffer
@@ -179,14 +175,14 @@ namespace Vulkan::Buffers
     ///// index.buffer.cpp /////
     ////////////////////////////
 
-    std::pair<VkBuffer, VkDeviceMemory> create_index_buffer
+    std::pair<VkBuffer, VkDeviceMemory> Buffers::create_index_buffer
     (
         const VkCommandPool &command_pool,
         const VkQueue &graphics_queue,
-        std::vector<uint32_t> &indices,
         const VkDevice &logical_device,
         const VkPhysicalDevice &physical_device,
-        std::vector<Vertex> &vertices
+        const std::vector<uint32_t> &vertex_indices,
+        const std::vector<Vertex> &vertices
     );
 
     void destroy_index_buffer
@@ -302,10 +298,10 @@ namespace Vulkan::Buffers
             (
                 const VkCommandPool &command_pool,
                 const VkQueue &graphics_queue,
-                std::vector<uint32_t> &indices,
                 const VkDevice &logical_device,
                 const VkPhysicalDevice &physical_device,
-                std::vector<Vertex> &vertices
+                const std::vector<uint32_t> &vertex_indices,
+                const std::vector<Vertex> &vertices
             );
 
             ~index_buffer_handler();

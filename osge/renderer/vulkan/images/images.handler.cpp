@@ -1,5 +1,5 @@
 #include "vulkan.images.hpp"
-#include "osge/renderer/vulkan/buffers/vulkan.buffers.hpp"
+#include "osge/renderer/vulkan/vulkan.renderer.hpp"
 #include "osge/utils/utils.hpp"
 #include <libraries/vulkan/vulkan.h>
 #include <utility>
@@ -25,7 +25,7 @@
     Returns:
         A pair containing the created image and its memory.
 */
-std::pair<VkImage, VkDeviceMemory> Vulkan::Images::create_image
+std::pair<VkImage, VkDeviceMemory> Images::create_image
 (
     const VkFormat &format,
     const int &height,

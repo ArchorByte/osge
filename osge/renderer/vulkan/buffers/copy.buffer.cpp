@@ -1,6 +1,7 @@
 #include "vulkan.buffers.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
 
 #include "../textures/texture.images.loader.hpp"
 
@@ -8,24 +9,24 @@
     Copy the data of a buffer to another one.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify the function parameters.
         2) Create a temporary command buffer to transfer the data.
-        3) Select the copy region (what we want to copy, in this case, the whole buffer).
+        3) Select the copy region (what we want to copy, in this function, the whole buffer).
         4) Copy the data from the source buffer to the destination one.
         5) End the command buffer.
 
     Parameters:
         - buffer_size        / VkDeviceSize  / Size of the source buffer.
-        - command_pool       / VkCommandPool / Command pool of the Vulkan instance.
+        - command_pool       / VkCommandPool / Handles the memory allocation of the command buffers.
         - destination_buffer / VkBuffer      / Buffer in which we will put the source buffer data.
-        - graphics_queue     / VkQueue       / Graphics queue of the Vulkan instance.
+        - graphics_queue     / VkQueue       / Handles all graphics commands and calls.
         - logical_device     / VkDevice      / Logical device of the Vulkan instance.
         - source_buffer      / VkBuffer      / Source buffer that we will copy the data from.
 
     Returns:
         No object returned.
 */
-void Vulkan::Buffers::copy_buffer_data
+void Buffers::copy_buffer_data
 (
     const VkDeviceSize &buffer_size,
     const VkCommandPool &command_pool,
@@ -55,9 +56,9 @@ void Vulkan::Buffers::copy_buffer_data
     if (source_buffer == VK_NULL_HANDLE)
         Utils::Logs::crash_error_log("Buffer copy failed! The source buffer provided is not valid!");
 
-    VkCommandBuffer command_buffer = Vulkan::Buffers::create_one_time_command_buffer(command_pool, logical_device);
+    VkCommandBuffer command_buffer = Buffers::create_one_time_command_buffer(command_pool, logical_device);
 
-    VkBufferCopy copy_region
+    const VkBufferCopy copy_region
     {
         .srcOffset = 0,
         .dstOffset = 0,
@@ -65,7 +66,7 @@ void Vulkan::Buffers::copy_buffer_data
     };
 
     vkCmdCopyBuffer(command_buffer, source_buffer, destination_buffer, 1, &copy_region);
-    Vulkan::Buffers::destroy_command_buffer(command_buffer, command_pool, graphics_queue, logical_device);
+    Buffers::destroy_command_buffer(command_buffer, command_pool, graphics_queue, logical_device);
 
     Utils::Logs::log("Buffer data copied successfully!");
 }
@@ -76,24 +77,24 @@ void Vulkan::Buffers::copy_buffer_data
     Copy the data of a buffer to a texture image.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify the function parameters.
         2) Create a temporary command buffer to transfer the data.
-        3) Select the copy region (what we want to copy, in this case, the whole buffer).
+        3) Select the copy region (what we want to copy, in this function, the whole buffer).
         4) Copy the data from the source buffer to the texture image.
         5) End the command buffer.
 
     Parameters:
-        - command_pool       / VkCommandPool    / Command pool of the Vulkan instance.
-        - graphics_queue     / VkQueue          / Graphics queue of the Vulkan instance.
+        - command_pool       / VkCommandPool    / Handles the memory allocation of the command buffers.
+        - graphics_queue     / VkQueue          / Handles all graphics commands and calls.
         - logical_device     / VkDevice         / Logical device of the Vulkan instance.
         - source_buffer      / VkBuffer         / Source buffer that we will copy the data from.
-        - texture_image      / VkImage          / Targeted texture image.
+        - texture_image      / VkImage          / Texture image to write the source buffer data into.
         - texture_image_info / TextureImageInfo / All necessary information about the texture image.
 
     Returns:
         No object returned.
 */
-void Vulkan::Buffers::copy_buffer_to_texture_image
+void Buffers::copy_buffer_to_texture_image
 (
     const VkCommandPool &command_pool,
     const VkQueue &graphics_queue,
@@ -103,7 +104,7 @@ void Vulkan::Buffers::copy_buffer_to_texture_image
     const TextureImageInfo &texture_image_info
 )
 {
-    Utils::Logs::log(" > Copying the " + Utils::Text::get_memory_address(source_buffer) + " buffer data to the " + Utils::Text::get_memory_address(texture_image) + " texture image..");
+    Utils::Logs::log("Copying the " + Utils::Text::get_memory_address(source_buffer) + " buffer data to the " + Utils::Text::get_memory_address(texture_image) + " texture image..");
 
     if (command_pool == VK_NULL_HANDLE)
         Utils::Logs::crash_error_log("Buffer copy failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
@@ -126,7 +127,7 @@ void Vulkan::Buffers::copy_buffer_to_texture_image
     if (texture_image_info.height < 1)
         Utils::Logs::crash_error_log("Buffer copy failed! The texture image height provided (" + std::to_string(texture_image_info.height) + ") is not valid!");
 
-    VkCommandBuffer command_buffer = Vulkan::Buffers::create_one_time_command_buffer(command_pool, logical_device);
+    VkCommandBuffer command_buffer = Buffers::create_one_time_command_buffer(command_pool, logical_device);
 
     const uint32_t image_width = static_cast<uint32_t>(texture_image_info.width);
     const uint32_t image_height = static_cast<uint32_t>(texture_image_info.height);
@@ -138,9 +139,9 @@ void Vulkan::Buffers::copy_buffer_to_texture_image
         .bufferImageHeight = 0,
         .imageSubresource =
         {
-            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, // Target the color aspect.
+            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
             .mipLevel = 0,
-            .baseArrayLayer = 0, // Target the first layer of the texture image.
+            .baseArrayLayer = 0,
             .layerCount = 1
         },
         .imageOffset = { 0, 0, 0 },
@@ -148,7 +149,7 @@ void Vulkan::Buffers::copy_buffer_to_texture_image
     };
 
     vkCmdCopyBufferToImage(command_buffer, source_buffer, texture_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copy_region);
-    Vulkan::Buffers::destroy_command_buffer(command_buffer, command_pool, graphics_queue, logical_device);
+    Buffers::destroy_command_buffer(command_buffer, command_pool, graphics_queue, logical_device);
 
-    Utils::Logs::log(" > Buffer data copied to texture image successfully!");
+    Utils::Logs::log("Buffer data copied to texture image successfully!");
 }

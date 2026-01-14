@@ -18,7 +18,7 @@
     Returns:
         The index of the present queue family.
 */
-uint32_t Vulkan::Queues::get_present_queue_family_index
+uint32_t Queues::get_present_queue_family_index
 (
     const VkPhysicalDevice &physical_device,
     const std::vector<VkQueueFamilyProperties> &queue_families,

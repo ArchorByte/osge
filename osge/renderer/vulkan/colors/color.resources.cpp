@@ -27,7 +27,7 @@
     Returns:
         A structure containing the color resources.
 */
-ColorResources Vulkan::Colors::create_color_resources
+ColorResources Colors::create_color_resources
 (
     const VkDevice &logical_device,
     const VkPhysicalDevice &physical_device,
@@ -74,7 +74,7 @@ ColorResources Vulkan::Colors::create_color_resources
     Returns:
         No object returned.
 */
-void Vulkan::Colors::destroy_color_resources
+void Colors::destroy_color_resources
 (
     ColorResources &color_resources,
     const VkDevice &logical_device
@@ -119,7 +119,7 @@ void Vulkan::Colors::destroy_color_resources
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Vulkan::Colors::color_resources_handler::color_resources_handler
+Colors::color_resources_handler::color_resources_handler
 (
     const VkDevice &logical_device,
     const VkPhysicalDevice &physical_device,
@@ -129,15 +129,15 @@ Vulkan::Colors::color_resources_handler::color_resources_handler
 )
     : logical_device(logical_device)
 {
-    color_resources = Vulkan::Colors::create_color_resources(logical_device, physical_device, samples_count, swapchain_extent, swapchain_image_format);
+    color_resources = Colors::create_color_resources(logical_device, physical_device, samples_count, swapchain_extent, swapchain_image_format);
 }
 
-Vulkan::Colors::color_resources_handler::~color_resources_handler()
+Colors::color_resources_handler::~color_resources_handler()
 {
-    Vulkan::Colors::destroy_color_resources(color_resources, logical_device);
+    Colors::destroy_color_resources(color_resources, logical_device);
 }
 
-ColorResources Vulkan::Colors::color_resources_handler::get() const
+ColorResources Colors::color_resources_handler::get() const
 {
     return color_resources;
 }

@@ -5,7 +5,7 @@
 #include <SDL3/SDL.h>
 #include <vector>
 
-namespace Vulkan::Core
+namespace Core
 {
     //////////////////////////////////
     ///// extensions.support.cpp /////

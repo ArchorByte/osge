@@ -27,7 +27,7 @@
     Returns:
         The created Vulkan instance.
 */
-VkInstance Vulkan::Core::create_vulkan_instance
+VkInstance Core::create_vulkan_instance
 (
     const std::vector<const char*> &layers
 )
@@ -100,7 +100,7 @@ VkInstance Vulkan::Core::create_vulkan_instance
     Returns:
         No object returned.
 */
-void Vulkan::Core::destroy_vulkan_instance
+void Core::destroy_vulkan_instance
 (
     VkInstance &vulkan_instance
 )
@@ -123,20 +123,20 @@ void Vulkan::Core::destroy_vulkan_instance
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Vulkan::Core::instance_handler::instance_handler
+Core::instance_handler::instance_handler
 (
     const std::vector<const char*> &layers
 )
 {
-    vulkan_instance = Vulkan::Core::create_vulkan_instance(layers);
+    vulkan_instance = Core::create_vulkan_instance(layers);
 }
 
-Vulkan::Core::instance_handler::~instance_handler()
+Core::instance_handler::~instance_handler()
 {
-    Vulkan::Core::destroy_vulkan_instance(vulkan_instance);
+    Core::destroy_vulkan_instance(vulkan_instance);
 }
 
-VkInstance Vulkan::Core::instance_handler::get() const
+VkInstance Core::instance_handler::get() const
 {
     return vulkan_instance;
 }

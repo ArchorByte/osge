@@ -28,7 +28,7 @@
     Returns:
         The created shader module.
 */
-VkShaderModule Vulkan::Shaders::create_shader_module
+VkShaderModule Shaders::create_shader_module
 (
     const std::string &file_name,
     const VkDevice &logical_device,
@@ -77,7 +77,7 @@ VkShaderModule Vulkan::Shaders::create_shader_module
     Returns:
         A vector list containing all created shader modules.
 */
-std::vector<ShaderInfo> Vulkan::Shaders::create_all_shader_modules
+std::vector<ShaderInfo> Shaders::create_all_shader_modules
 (
     const VkDevice &logical_device
 )
@@ -114,7 +114,7 @@ std::vector<ShaderInfo> Vulkan::Shaders::create_all_shader_modules
         const std::string type = file_extension == ".vert" ? "vert" : "frag";
         const std::vector<char> shader_binaries = Utils::Files::read_binary_file("./shaders/" + file_name);
 
-        const VkShaderModule shader_module = Vulkan::Shaders::create_shader_module(file_name, logical_device, shader_binaries);
+        const VkShaderModule shader_module = Shaders::create_shader_module(file_name, logical_device, shader_binaries);
         const ShaderInfo shader_info = { type, shader_module };
 
         shader_modules.emplace_back(shader_info);
@@ -144,7 +144,7 @@ std::vector<ShaderInfo> Vulkan::Shaders::create_all_shader_modules
     Returns:
         No object returned.
 */
-void Vulkan::Shaders::destroy_shader_modules
+void Shaders::destroy_shader_modules
 (
     const VkDevice &logical_device,
     std::vector<ShaderInfo> &shader_modules
@@ -196,21 +196,21 @@ void Vulkan::Shaders::destroy_shader_modules
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Vulkan::Shaders::shader_modules_handler::shader_modules_handler
+Shaders::shader_modules_handler::shader_modules_handler
 (
     const VkDevice &logical_device
 )
     : logical_device(logical_device)
 {
-    shader_modules = Vulkan::Shaders::create_all_shader_modules(logical_device);
+    shader_modules = Shaders::create_all_shader_modules(logical_device);
 }
 
-Vulkan::Shaders::shader_modules_handler::~shader_modules_handler()
+Shaders::shader_modules_handler::~shader_modules_handler()
 {
-    Vulkan::Shaders::destroy_shader_modules(logical_device, shader_modules);
+    Shaders::destroy_shader_modules(logical_device, shader_modules);
 }
 
-std::vector<ShaderInfo> Vulkan::Shaders::shader_modules_handler::get() const
+std::vector<ShaderInfo> Shaders::shader_modules_handler::get() const
 {
     return shader_modules;
 }

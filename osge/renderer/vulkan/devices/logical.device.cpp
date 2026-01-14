@@ -24,7 +24,7 @@
     Returns:
         The created logical device.
 */
-VkDevice Vulkan::Devices::create_logical_device
+VkDevice Devices::create_logical_device
 (
     const VkPhysicalDevice &physical_device,
     const std::vector<VkDeviceQueueCreateInfo> &queues_create_info,
@@ -70,7 +70,7 @@ VkDevice Vulkan::Devices::create_logical_device
     Tasks:
         1) Verify the parameters.
         2) Destroy the logical device.
-        3) Replace the object address.
+        3) Get rid of the object memory address.
 
     Parameters:
         - logical_device / VkDevice / The logical device to destroy.
@@ -78,7 +78,7 @@ VkDevice Vulkan::Devices::create_logical_device
     Returns:
         No object returned.
 */
-void Vulkan::Devices::destroy_logical_device
+void Devices::destroy_logical_device
 (
     VkDevice &logical_device
 )
@@ -101,22 +101,22 @@ void Vulkan::Devices::destroy_logical_device
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Vulkan::Devices::logical_device_handler::logical_device_handler
+Devices::logical_device_handler::logical_device_handler
 (
     const VkPhysicalDevice &physical_device,
     const std::vector<VkDeviceQueueCreateInfo> &queues_create_info,
     const std::vector<const char *> &required_extensions
 )
 {
-    logical_device = Vulkan::Devices::create_logical_device(physical_device, queues_create_info, required_extensions);
+    logical_device = Devices::create_logical_device(physical_device, queues_create_info, required_extensions);
 }
 
-Vulkan::Devices::logical_device_handler::~logical_device_handler()
+Devices::logical_device_handler::~logical_device_handler()
 {
-    Vulkan::Devices::destroy_logical_device(logical_device);
+    Devices::destroy_logical_device(logical_device);
 }
 
-VkDevice Vulkan::Devices::logical_device_handler::get() const
+VkDevice Devices::logical_device_handler::get() const
 {
     return logical_device;
 }

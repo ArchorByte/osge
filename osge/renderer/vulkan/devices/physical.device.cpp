@@ -18,7 +18,7 @@
     Returns:
         A boolean informing whether the device meets the requirements or not.
 */
-bool Vulkan::Devices::is_valid_physical_device
+bool Devices::is_valid_physical_device
 (
     const VkPhysicalDevice &physical_device
 )
@@ -54,7 +54,7 @@ bool Vulkan::Devices::is_valid_physical_device
     Returns:
         A string containing the physical device name.
 */
-std::string Vulkan::Devices::get_physical_device_name
+std::string Devices::get_physical_device_name
 (
     const VkPhysicalDevice &physical_device
 )
@@ -89,7 +89,7 @@ std::string Vulkan::Devices::get_physical_device_name
     Returns:
         The selected physical device.
 */
-VkPhysicalDevice Vulkan::Devices::select_physical_device
+VkPhysicalDevice Devices::select_physical_device
 (
     int &selected_device_index,
     const VkInstance &vulkan_instance

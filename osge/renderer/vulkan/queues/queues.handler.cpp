@@ -17,7 +17,7 @@
     Returns:
         A vector list containing all queue families.
 */
-std::vector<VkQueueFamilyProperties> Vulkan::Queues::get_queue_families
+std::vector<VkQueueFamilyProperties> Queues::get_queue_families
 (
     const VkPhysicalDevice &physical_device
 )
@@ -60,7 +60,7 @@ std::vector<VkQueueFamilyProperties> Vulkan::Queues::get_queue_families
     Returns:
         A vector list containing all queues create info.
 */
-std::vector<VkDeviceQueueCreateInfo> Vulkan::Queues::make_queues_create_info
+std::vector<VkDeviceQueueCreateInfo> Queues::make_queues_create_info
 (
     const VkPhysicalDevice &physical_device,
     const float &queue_priority,

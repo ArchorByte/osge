@@ -1,6 +1,6 @@
 #include "vulkan.images.hpp"
 #include "osge/utils/utils.hpp"
-#include "osge/renderer/vulkan/buffers/vulkan.buffers.hpp"
+#include "osge/renderer/vulkan/vulkan.renderer.hpp"
 #include <libraries/vulkan/vulkan.h>
 
 /*
@@ -22,7 +22,7 @@
     Returns:
         No object returned.
 */
-void Vulkan::Images::transition_image_layout
+void Images::transition_image_layout
 (
     const VkCommandPool &command_pool,
     const VkFormat &format,

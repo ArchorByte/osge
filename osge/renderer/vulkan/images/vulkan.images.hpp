@@ -1,10 +1,10 @@
 #ifndef VULKAN_IMAGES_HPP
 #define VULKAN_IMAGES_HPP
 
-#include <utility>
 #include <libraries/vulkan/vulkan.h>
+#include <utility>
 
-namespace Vulkan::Images
+namespace Images
 {
     /////////////////////////////////
     ///// image.transitions.cpp /////

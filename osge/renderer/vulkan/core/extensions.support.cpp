@@ -21,7 +21,7 @@
     Returns:
         A boolean that either confirms the extensions are supported or not.
 */
-bool Vulkan::Core::check_extensions_support
+bool Core::check_extensions_support
 (
     const VkPhysicalDevice &physical_device,
     const std::vector<const char *> &required_extensions

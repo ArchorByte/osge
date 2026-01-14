@@ -17,7 +17,7 @@
     Returns:
         The depth format.
 */
-VkFormat Vulkan::Depth::find_depth_format
+VkFormat Depth::find_depth_format
 (
     const VkPhysicalDevice &physical_device
 )

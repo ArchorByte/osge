@@ -16,7 +16,7 @@
     Returns:
         The index of the graphics queue family.
 */
-uint32_t Vulkan::Queues::get_graphics_queue_family_index
+uint32_t Queues::get_graphics_queue_family_index
 (
     const std::vector<VkQueueFamilyProperties> &queue_families
 )

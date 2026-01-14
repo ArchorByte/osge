@@ -19,7 +19,7 @@
     Returns:
         A boolean that either confirms the layers are supported or not.
 */
-bool Vulkan::Core::check_layers_support
+bool Core::check_layers_support
 (
     const std::vector<const char*> &layers
 )

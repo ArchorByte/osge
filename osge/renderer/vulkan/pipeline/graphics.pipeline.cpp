@@ -1,69 +1,77 @@
-#include "graphics.pipeline.hpp"
-
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
-
-#include <vulkan/vulkan.h>
+#include "vulkan.pipeline.hpp"
+#include "osge/utils/utils.hpp"
+#include <libraries/vulkan/vulkan.h>
 #include <vector>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
 ///////////////////////////////////////////////////
 
-// Create a graphics pipeline.
-VkPipeline create_vulkan_graphics_pipeline
+/*
+    Create a graphics pipeline.
+    Note: You should use the pre-made class to handle the graphics pipeline rather than directly using this function for memory safety reasons.
+
+    Tasks:
+        1) Verify the parameters.
+
+    Parameters:
+        - assembly_input_state    / VkPipelineInputAssemblyStateCreateInfo  / 
+        - dynamic_state           / VkPipelineDynamicStateCreateInfo        / 
+        - logical_device          / VkDevice                                / Logical device of the Vulkan instance.
+        - multisampling_state     / VkPipelineMultisampleStateCreateInfo    / 
+        - pipeline_layout         / VkPipelineLayout                        / Pipeline layout of the Vulkan instance.
+        - pipeline_shader_stages  / vector<VkPipelineShaderStageCreateInfo> / Loaded shaders.
+        - rasterization_state     / VkPipelineRasterizationStateCreateInfo  / 
+        - render_pass             / VkRenderPass                            / Render pass of the Vulkan instance.
+        - vertex_input_state      / VkPipelineVertexInputStateCreateInfo    / 
+        - viewport_state          / VkPipelineViewportStateCreateInfo       / 
+
+    Returns:
+        The created graphics pipeline.
+*/
+VkPipeline Pipeline::create_graphics_pipeline
 (
-    const VkDevice &logical_device,
-    const std::vector<VkPipelineShaderStageCreateInfo> &pipeline_shaders_stages,
-    const VkPipelineVertexInputStateCreateInfo &vertex_input_state,
     const VkPipelineInputAssemblyStateCreateInfo &assembly_input_state,
-    const VkPipelineViewportStateCreateInfo &viewport_state,
-    const VkPipelineRasterizationStateCreateInfo &rasterization_state,
+    const VkPipelineDynamicStateCreateInfo &dynamic_state,
+    const VkDevice &logical_device,
     const VkPipelineMultisampleStateCreateInfo &multisampling_state,
     const VkPipelineLayout &pipeline_layout,
+    const std::vector<VkPipelineShaderStageCreateInfo> &pipeline_shader_stages,
+    const VkPipelineRasterizationStateCreateInfo &rasterization_state,
     const VkRenderPass &render_pass,
-    const VkPipelineDynamicStateCreateInfo &dynamic_state
+    const VkPipelineVertexInputStateCreateInfo &vertex_input_state,
+    const VkPipelineViewportStateCreateInfo &viewport_state
 )
 {
-    log("Creating a graphics pipeline..");
+    Utils::Logs::log("Creating a graphics pipeline..");
 
     if (logical_device == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Graphics pipeline creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
-    }
+        Utils::Logs::crash_error_log("Graphics pipeline creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
-    if (pipeline_shaders_stages.size() < 1)
-    {
-        fatal_error_log("Graphics pipeline creation failed! No pipeline shaders stages were provided!");
-    }
+    if (pipeline_shader_stages.size() < 1)
+        Utils::Logs::crash_error_log("Graphics pipeline creation failed! No pipeline shaders stages were provided!");
 
     if (pipeline_layout == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Graphics pipeline creation failed! The pipeline layout provided (" + force_string(pipeline_layout) + ") is not valid!");
-    }
+        Utils::Logs::crash_error_log("Graphics pipeline creation failed! The pipeline layout provided (" + Utils::Text::get_memory_address(pipeline_layout) + ") is not valid!");
 
     if (render_pass == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Graphics pipeline creation failed! The render pass provided (" + force_string(render_pass) + ") is not valid!");
-    }
+        Utils::Logs::crash_error_log("Graphics pipeline creation failed! The render pass provided (" + Utils::Text::get_memory_address(render_pass) + ") is not valid!");
 
-    // Attachment for the color blend state.
-    VkPipelineColorBlendAttachmentState color_blend_attachment_state
+    const VkPipelineColorBlendAttachmentState color_blend_attachment_state
     {
-        .blendEnable = VK_FALSE, // Disable the blend.
+        .blendEnable = VK_FALSE,
         .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
     };
 
-    // Create info for the color blend state.
     const VkPipelineColorBlendStateCreateInfo color_blend_create_info
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
         .logicOpEnable = VK_FALSE, // Disable logical operations.
-        .attachmentCount = 1,      // Amount of attachments to pass.
+        .attachmentCount = 1,
         .pAttachments = &color_blend_attachment_state
     };
 
-    VkPipelineDepthStencilStateCreateInfo depth_stencil
+    const VkPipelineDepthStencilStateCreateInfo depth_stencil
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
         .depthTestEnable = VK_TRUE,
@@ -76,8 +84,8 @@ VkPipeline create_vulkan_graphics_pipeline
     const VkGraphicsPipelineCreateInfo pipeline_create_info
     {
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-        .stageCount = static_cast<uint32_t>(pipeline_shaders_stages.size()), // Amount of shader stages to pass.
-        .pStages = pipeline_shaders_stages.data(),
+        .stageCount = static_cast<uint32_t>(pipeline_shader_stages.size()),
+        .pStages = pipeline_shader_stages.data(),
         .pVertexInputState = &vertex_input_state,
         .pInputAssemblyState = &assembly_input_state,
         .pViewportState = &viewport_state,
@@ -94,75 +102,82 @@ VkPipeline create_vulkan_graphics_pipeline
     const VkResult pipeline_creation = vkCreateGraphicsPipelines(logical_device, VK_NULL_HANDLE, 1, &pipeline_create_info, nullptr, &graphics_pipeline);
 
     if (pipeline_creation != VK_SUCCESS)
-    {
-        fatal_error_log("Graphics pipeline creation returned error code " + std::to_string(pipeline_creation) + ".");
-    }
+        Utils::Logs::crash_error_log("Graphics pipeline creation returned error code " + std::to_string(pipeline_creation) + ".");
 
-    if (graphics_pipeline == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Graphics pipeline creation output \"" + force_string(graphics_pipeline) + "\" is not valid!");
-    }
-
-    log("Graphics pipeline " + force_string(graphics_pipeline) + " created successfully!");
+    Utils::Logs::log("Graphics pipeline " + Utils::Text::get_memory_address(graphics_pipeline) + " created successfully!");
     return graphics_pipeline;
 }
 
-// Destroy a graphics pipeline.
-void destroy_vulkan_graphics_pipeline
+
+
+/*
+    Cleanly destroy a graphics pipeline.
+
+    Tasks:
+        1) Verify the parameters.
+        2) Destroy the graphics pipeline.
+        3) Get rid of the object memory address.
+
+    Parameters:
+        - graphics_pipeline / VkPipeline / Graphics pipeline to destroy.
+        - logical_device    / VkDevice   / Logical device of the Vulkan instance.
+
+    Returns:
+        No object returned.
+*/
+void Pipeline::destroy_graphics_pipeline
 (
-    const VkDevice &logical_device,
-    VkPipeline &graphics_pipeline
+    VkPipeline &graphics_pipeline,
+    const VkDevice &logical_device
 )
 {
-    log("Destroying the " + force_string(graphics_pipeline) + " graphics pipeline..");
-
-    if (logical_device == VK_NULL_HANDLE)
-    {
-        error_log("Graphics pipeline destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
-        return;
-    }
+    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(graphics_pipeline) + " graphics pipeline..");
 
     if (graphics_pipeline == VK_NULL_HANDLE)
     {
-        error_log("Graphics pipeline destruction failed! The graphics pipeline provided (" + force_string(graphics_pipeline) + ") is not valid!");
+        Utils::Logs::error_log("Graphics pipeline destruction failed! The graphics pipeline provided (" + Utils::Text::get_memory_address(graphics_pipeline) + ") is not valid!");
+        return;
+    }
+
+    if (logical_device == VK_NULL_HANDLE)
+    {
+        Utils::Logs::error_log("Graphics pipeline destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
         return;
     }
 
     vkDestroyPipeline(logical_device, graphics_pipeline, nullptr);
     graphics_pipeline = VK_NULL_HANDLE;
 
-    log("Graphics pipeline destroyed successfully!");
+    Utils::Logs::log("Graphics pipeline destroyed successfully!");
 }
 
 ///////////////////////////////////////////////
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-// Constructor.
-Vulkan_GraphicsPipeline::Vulkan_GraphicsPipeline
+Pipeline::graphics_pipeline_handler::graphics_pipeline_handler
 (
-    const VkDevice &logical_device,
-    const std::vector<VkPipelineShaderStageCreateInfo> &pipeline_shaders_stages,
-    const VkPipelineVertexInputStateCreateInfo &vertex_input_state,
     const VkPipelineInputAssemblyStateCreateInfo &assembly_input_state,
-    const VkPipelineViewportStateCreateInfo &viewport_state,
-    const VkPipelineRasterizationStateCreateInfo &rasterization_state,
+    const VkPipelineDynamicStateCreateInfo &dynamic_state,
+    const VkDevice &logical_device,
     const VkPipelineMultisampleStateCreateInfo &multisampling_state,
     const VkPipelineLayout &pipeline_layout,
+    const std::vector<VkPipelineShaderStageCreateInfo> &pipeline_shaders_stages,
+    const VkPipelineRasterizationStateCreateInfo &rasterization_state,
     const VkRenderPass &render_pass,
-    const VkPipelineDynamicStateCreateInfo &dynamic_state
+    const VkPipelineVertexInputStateCreateInfo &vertex_input_state,
+    const VkPipelineViewportStateCreateInfo &viewport_state
 ) : logical_device(logical_device)
 {
-    graphics_pipeline = create_vulkan_graphics_pipeline(logical_device, pipeline_shaders_stages, vertex_input_state, assembly_input_state, viewport_state, rasterization_state, multisampling_state, pipeline_layout, render_pass, dynamic_state);
+    graphics_pipeline = Pipeline::create_graphics_pipeline(assembly_input_state, dynamic_state, logical_device, multisampling_state, pipeline_layout, pipeline_shaders_stages, rasterization_state, render_pass, vertex_input_state, viewport_state);
 }
 
-// Destructor.
-Vulkan_GraphicsPipeline::~Vulkan_GraphicsPipeline()
+Pipeline::graphics_pipeline_handler::~graphics_pipeline_handler()
 {
-    destroy_vulkan_graphics_pipeline(logical_device, graphics_pipeline);
+    Pipeline::destroy_graphics_pipeline(graphics_pipeline, logical_device);
 }
 
-VkPipeline Vulkan_GraphicsPipeline::get() const
+VkPipeline Pipeline::graphics_pipeline_handler::get() const
 {
     return graphics_pipeline;
 }

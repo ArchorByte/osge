@@ -23,7 +23,7 @@
     Returns:
         The created command pool.
 */
-VkCommandPool Vulkan::Queues::create_command_pool
+VkCommandPool Queues::create_command_pool
 (
     const uint32_t &graphics_family_index,
     const VkDevice &logical_device
@@ -71,7 +71,7 @@ VkCommandPool Vulkan::Queues::create_command_pool
     Returns:
         No object returned.
 */
-void Vulkan::Queues::destroy_command_pool
+void Queues::destroy_command_pool
 (
     VkCommandPool &command_pool,
     const VkDevice &logical_device
@@ -101,21 +101,21 @@ void Vulkan::Queues::destroy_command_pool
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Vulkan::Queues::command_pool_handler::command_pool_handler
+Queues::command_pool_handler::command_pool_handler
 (
     const uint32_t &graphics_family_index,
     const VkDevice &logical_device
 ) : logical_device(logical_device)
 {
-    command_pool = Vulkan::Queues::create_command_pool(graphics_family_index, logical_device);
+    command_pool = Queues::create_command_pool(graphics_family_index, logical_device);
 }
 
-Vulkan::Queues::command_pool_handler::~command_pool_handler()
+Queues::command_pool_handler::~command_pool_handler()
 {
-    Vulkan::Queues::destroy_command_pool(command_pool, logical_device);
+    Queues::destroy_command_pool(command_pool, logical_device);
 }
 
-VkCommandPool Vulkan::Queues::command_pool_handler::get() const
+VkCommandPool Queues::command_pool_handler::get() const
 {
     return command_pool;
 }

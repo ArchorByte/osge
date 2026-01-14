@@ -30,7 +30,7 @@
     Returns:
         The created depth resources.
 */
-DepthResources Vulkan::Depth::create_depth_resources
+DepthResources Depth::create_depth_resources
 (
     const VkCommandPool &command_pool,
     const VkExtent2D &extent,
@@ -54,7 +54,7 @@ DepthResources Vulkan::Depth::create_depth_resources
     if (physical_device == VK_NULL_HANDLE)
         Utils::Logs::crash_error_log("Depth resources creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
-    const VkFormat depth_format = Vulkan::Depth::find_depth_format(physical_device);
+    const VkFormat depth_format = Depth::find_depth_format(physical_device);
     const std::pair<VkImage, VkDeviceMemory> depth_image = Vulkan::Images::create_image(depth_format, extent.height, VK_IMAGE_TILING_OPTIMAL, logical_device, 1, physical_device, samples_count, extent.width, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
     const VkImageView image_view = Vulkan::Images::create_image_view(VK_IMAGE_ASPECT_DEPTH_BIT, depth_format, depth_image.first, logical_device, 1);
     Vulkan::Images::transition_image_layout(command_pool, depth_format, graphics_queue, depth_image.first, logical_device, 1, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
@@ -79,7 +79,7 @@ DepthResources Vulkan::Depth::create_depth_resources
     Returns:
         No object returned.
 */
-void Vulkan::Depth::destroy_depth_resources
+void Depth::destroy_depth_resources
 (
     DepthResources &depth_resources,
     const VkDevice &logical_device
@@ -128,7 +128,7 @@ void Vulkan::Depth::destroy_depth_resources
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Vulkan::Depth::depth_resources_handler::depth_resources_handler
+Depth::depth_resources_handler::depth_resources_handler
 (
     const VkCommandPool &command_pool,
     const VkExtent2D &extent,
@@ -139,15 +139,15 @@ Vulkan::Depth::depth_resources_handler::depth_resources_handler
 )
     : logical_device(logical_device)
 {
-    depth_resources = Vulkan::Depth::create_depth_resources(command_pool, extent, graphics_queue, logical_device, physical_device, samples_count);
+    depth_resources = Depth::create_depth_resources(command_pool, extent, graphics_queue, logical_device, physical_device, samples_count);
 }
 
-Vulkan::Depth::depth_resources_handler::~depth_resources_handler()
+Depth::depth_resources_handler::~depth_resources_handler()
 {
-    Vulkan::Depth::destroy_depth_resources(depth_resources, logical_device);
+    Depth::destroy_depth_resources(depth_resources, logical_device);
 }
 
-DepthResources Vulkan::Depth::depth_resources_handler::get() const
+DepthResources Depth::depth_resources_handler::get() const
 {
     return depth_resources;
 }

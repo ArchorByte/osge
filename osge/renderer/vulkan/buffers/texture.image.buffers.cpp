@@ -1,5 +1,7 @@
 #include "vulkan.buffers.hpp"
+
 #include "osge/utils/utils.hpp"
+
 #include <cstring>
 #include <string>
 #include <utility>
@@ -16,17 +18,18 @@
     Note: You should use the pre-made class to handle the texture image buffers rather than directly using this function for memory safety reasons.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify the function parameters.
+        2) Create a buffer for each texture image in which we put the texture image data.
 
     Parameters:
         - logical_device     / VkDevice                 / Logical device of the Vulkan instance.
-        - physical_device    / VkPhysicalDevice         / Physical device used to run Vulkan.
-        - texture_image_info / vector<TextureImageInfo> / Information of the targeted texture images.
+        - physical_device    / VkPhysicalDevice         / Physical device used to run this Vulkan.
+        - texture_image_info / vector<TextureImageInfo> / All necessary information about the texture images.
 
     Returns:
         A vector list containing all created texture image buffers.
 */
-std::vector<Buffer> Vulkan::Buffers::create_texture_image_buffers
+std::vector<Buffer> Buffers::create_texture_image_buffers
 (
     const VkDevice &logical_device,
     const VkPhysicalDevice &physical_device,
@@ -71,7 +74,7 @@ std::vector<Buffer> Vulkan::Buffers::create_texture_image_buffers
         VkBuffer buffer = VK_NULL_HANDLE;
         VkDeviceMemory buffer_memory = VK_NULL_HANDLE;
 
-        Vulkan::Buffers::create_buffer(buffer, buffer_memory, image_size, logical_device, physical_device, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        Buffers::create_buffer(buffer, buffer_memory, image_size, logical_device, physical_device, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
         void* data;
 
         vkMapMemory(logical_device, buffer_memory, 0, image_size, 0, &data);
@@ -91,10 +94,10 @@ std::vector<Buffer> Vulkan::Buffers::create_texture_image_buffers
 
 
 /*
-    Cleanly destroy the texture image buffers.
+    Destroy some texture image buffers.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify the function parameters.
         2) Destroy all valid texture image buffers.
 
     Parameters:
@@ -104,7 +107,7 @@ std::vector<Buffer> Vulkan::Buffers::create_texture_image_buffers
     Returns:
         No object returned.
 */
-void Vulkan::Buffers::destroy_texture_image_buffers
+void Buffers::destroy_texture_image_buffers
 (
     const VkDevice &logical_device,
     std::vector<Buffer> &texture_image_buffers
@@ -148,7 +151,7 @@ void Vulkan::Buffers::destroy_texture_image_buffers
             continue;
         }
 
-        Vulkan::Buffers::destroy_buffer(buffer, buffer_memory, logical_device);
+        Buffers::destroy_buffer(buffer, buffer_memory, logical_device);
         Utils::Logs::log("- Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_buffers.size()) + " destroyed successfully!");
     }
 
@@ -163,7 +166,7 @@ void Vulkan::Buffers::destroy_texture_image_buffers
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Vulkan::Buffers::texture_image_buffers_handler::texture_image_buffers_handler
+Buffers::texture_image_buffers_handler::texture_image_buffers_handler
 (
     const VkDevice &logical_device,
     const VkPhysicalDevice &physical_device,
@@ -171,15 +174,15 @@ Vulkan::Buffers::texture_image_buffers_handler::texture_image_buffers_handler
 )
     : logical_device(logical_device)
 {
-    texture_image_buffers = Vulkan::Buffers::create_texture_image_buffers(logical_device, physical_device, texture_image_info);
+    texture_image_buffers = Buffers::create_texture_image_buffers(logical_device, physical_device, texture_image_info);
 }
 
-Vulkan::Buffers::texture_image_buffers_handler::~texture_image_buffers_handler()
+Buffers::texture_image_buffers_handler::~texture_image_buffers_handler()
 {
-    Vulkan::Buffers::destroy_texture_image_buffers(logical_device, texture_image_buffers);
+    Buffers::destroy_texture_image_buffers(logical_device, texture_image_buffers);
 }
 
-std::vector<Buffer> Vulkan::Buffers::texture_image_buffers_handler::get() const
+std::vector<Buffer> Buffers::texture_image_buffers_handler::get() const
 {
     return texture_image_buffers;
 }

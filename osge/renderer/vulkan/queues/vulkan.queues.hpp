@@ -4,7 +4,7 @@
 #include <libraries/vulkan/vulkan.h>
 #include <vector>
 
-namespace Vulkan::Queues
+namespace Queues
 {
     //////////////////////////////
     ///// command.pool.cpp /////

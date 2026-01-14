@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace Vulkan::Devices
+namespace Devices
 {
     //////////////////////////////
     ///// logical.device.cpp /////

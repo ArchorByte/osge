@@ -24,7 +24,7 @@
     Returns:
         The created descriptor set layout.
 */
-VkDescriptorSetLayout Vulkan::Descriptors::create_descriptor_set_layout
+VkDescriptorSetLayout Descriptors::create_descriptor_set_layout
 (
     const VkDevice &logical_device,
     const std::vector<VkImageView> &texture_image_views
@@ -81,7 +81,7 @@ VkDescriptorSetLayout Vulkan::Descriptors::create_descriptor_set_layout
     Tasks:
         1) Verify the parameters.
         2) Destroy the descriptor set layout.
-        3) Replace the objects addressess.
+        3) Get rid of the objects memory addresses.
 
     Parameters:
         - descriptor_set_layout / VkDescriptorSetLayout / Descriptor set layout to destroy.
@@ -90,7 +90,7 @@ VkDescriptorSetLayout Vulkan::Descriptors::create_descriptor_set_layout
     Returns:
         No object returned.
 */
-void Vulkan::Descriptors::destroy_descriptor_set_layout
+void Descriptors::destroy_descriptor_set_layout
 (
     VkDescriptorSetLayout &descriptor_set_layout,
     const VkDevice &logical_device
@@ -120,22 +120,22 @@ void Vulkan::Descriptors::destroy_descriptor_set_layout
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Vulkan::Descriptors::descriptor_set_layout_handler::descriptor_set_layout_handler
+Descriptors::descriptor_set_layout_handler::descriptor_set_layout_handler
 (
     const VkDevice &logical_device,
     const std::vector<VkImageView> &texture_image_views
 )
     : logical_device(logical_device)
 {
-    descriptor_set_layout = Vulkan::Descriptors::create_descriptor_set_layout(logical_device, texture_image_views);
+    descriptor_set_layout = Descriptors::create_descriptor_set_layout(logical_device, texture_image_views);
 }
 
-Vulkan::Descriptors::descriptor_set_layout_handler::~descriptor_set_layout_handler()
+Descriptors::descriptor_set_layout_handler::~descriptor_set_layout_handler()
 {
-    Vulkan::Descriptors::destroy_descriptor_set_layout(descriptor_set_layout, logical_device);
+    Descriptors::destroy_descriptor_set_layout(descriptor_set_layout, logical_device);
 }
 
-VkDescriptorSetLayout Vulkan::Descriptors::descriptor_set_layout_handler::get() const
+VkDescriptorSetLayout Descriptors::descriptor_set_layout_handler::get() const
 {
     return descriptor_set_layout;
 }
