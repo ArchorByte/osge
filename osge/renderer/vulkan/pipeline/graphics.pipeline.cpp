@@ -57,20 +57,6 @@ VkPipeline Pipeline::create_graphics_pipeline
     if (render_pass == VK_NULL_HANDLE)
         Utils::Logs::crash_error_log("Graphics pipeline creation failed! The render pass provided (" + Utils::Text::get_memory_address(render_pass) + ") is not valid!");
 
-    const VkPipelineColorBlendAttachmentState color_blend_attachment_state
-    {
-        .blendEnable = VK_FALSE,
-        .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
-    };
-
-    const VkPipelineColorBlendStateCreateInfo color_blend_create_info
-    {
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
-        .logicOpEnable = VK_FALSE, // Disable logical operations.
-        .attachmentCount = 1,
-        .pAttachments = &color_blend_attachment_state
-    };
-
     const VkPipelineDepthStencilStateCreateInfo depth_stencil
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
@@ -81,7 +67,7 @@ VkPipeline Pipeline::create_graphics_pipeline
         .stencilTestEnable = VK_FALSE
     };
 
-    const VkGraphicsPipelineCreateInfo pipeline_create_info
+    const VkGraphicsPipelineCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
         .stageCount = static_cast<uint32_t>(pipeline_shader_stages.size()),

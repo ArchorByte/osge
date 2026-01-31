@@ -20,25 +20,26 @@
     Note: You should use the pre-made class to handle the uniform buffers rather than directly using this function for memory safety reasons.
 
     Tasks:
-        1) Verify the parameters.
-        2) Create a uniform buffer for each image.
+        1) Verify function parameters.
+        2) Create a uniform buffer for each swap chain image.
+        3) Get the created buffer information.
 
     Parameters:
-        - command_pool    / VkCommandPool    / Command pool of the Vulkan instance.
-        - graphics_queue  / VkQueue          / Graphics queue of the Vulkan instance.
+        - command_pool    / VkCommandPool    / Handles memory allocation of command buffers.
+        - graphics_queue  / VkQueue          / Handles all graphics commands and calls.
         - image_count     / uint32_t         / Amount of uniform buffers to create.
         - logical_device  / VkDevice         / Logical device of the Vulkan instance.
-        - physical_device / VkPhysicalDevice / Physical device used to run Vulkan.
+        - physical_device / VkPhysicalDevice / Physical device used to run this Vulkan instance.
 
     Returns:
         A vector list containing all created uniform buffers.
 */
 std::vector<UniformBufferInfo> Buffers::create_uniform_buffers
 (
-    const VkCommandPool &command_pool,
-    const VkQueue &graphics_queue,
-    const uint32_t &image_count,
-    const VkDevice &logical_device,
+    const VkCommandPool    &command_pool,
+    const VkQueue          &graphics_queue,
+    const uint32_t         &image_count,
+    const VkDevice         &logical_device,
     const VkPhysicalDevice &physical_device
 )
 {
@@ -70,7 +71,7 @@ std::vector<UniformBufferInfo> Buffers::create_uniform_buffers
         void* data;
 
         Buffers::create_buffer(buffer, buffer_memory, buffer_size, logical_device, physical_device, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-        vkMapMemory(logical_device, buffer_memory, 0, buffer_size, 0, &data);
+        vkMapMemory(logical_device, buffer_memory, 0, buffer_size, 0, &data); // Retrieve the buffer data.
 
         const UniformBufferInfo info = { buffer, buffer_memory, data };
         output.emplace_back(info);
@@ -97,9 +98,9 @@ std::vector<UniformBufferInfo> Buffers::create_uniform_buffers
 */
 void Buffers::update_uniform_buffer_data
 (
-    const void* buffer_data,
-    const VkExtent2D extent,
-    const uint32_t &frame
+    const void*      buffer_data,
+    const VkExtent2D &extent,
+    const uint32_t   &frame
 )
 {
     const static auto start_time = std::chrono::high_resolution_clock::now();
@@ -125,8 +126,9 @@ void Buffers::update_uniform_buffer_data
     Destroy some uniform buffers.
 
     Tasks:
-        1) Verify the function parameters.
-        2) Destroy all valid uniform buffers.
+        1) Verify function parameters.
+        2) Destroy all valid uniform buffers and free their allocated memory.
+        3) Set objects to null.
 
     Parameters:
         - logical_device  / VkDevice                  / Logical device of the Vulkan instance.
@@ -137,7 +139,7 @@ void Buffers::update_uniform_buffer_data
 */
 void Buffers::destroy_uniform_buffers
 (
-    const VkDevice &logical_device,
+    const VkDevice                 &logical_device,
     std::vector<UniformBufferInfo> &uniform_buffers
 )
 {
@@ -180,9 +182,6 @@ void Buffers::destroy_uniform_buffers
             continue;
         }
 
-        if (!buffer_data)
-            Utils::Logs::error_log("- Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer data provided (" + Utils::Text::get_memory_address(buffer_data) + ") is not valid!");
-
         vkDestroyBuffer(logical_device, buffer, nullptr);
         vkFreeMemory(logical_device, buffer_memory, nullptr);
 
@@ -206,10 +205,10 @@ void Buffers::destroy_uniform_buffers
 
 Buffers::uniform_buffers_handler::uniform_buffers_handler
 (
-    const VkCommandPool &command_pool,
-    const VkQueue &graphics_queue,
-    const uint32_t &image_count,
-    const VkDevice &logical_device,
+    const VkCommandPool    &command_pool,
+    const VkQueue          &graphics_queue,
+    const uint32_t         &image_count,
+    const VkDevice         &logical_device,
     const VkPhysicalDevice &physical_device
 )
     : logical_device(logical_device)

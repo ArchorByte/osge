@@ -23,7 +23,7 @@
         6) End the staging buffer.
 
     Parameters:
-        - command_pool    / VkCommandPool    / Handles the memory allocation of the command buffers.
+        - command_pool    / VkCommandPool    / Handles memory allocation of command buffers.
         - graphics_queue  / VkQueue          / Handles all graphics commands and calls.
         - logical_device  / VkDevice         / Logical device of the Vulkan instance.
         - physical_device / VkPhysicalDevice / Physical device used to run this Vulkan instance.
@@ -35,12 +35,12 @@
 */
 std::pair<VkBuffer, VkDeviceMemory> Buffers::create_index_buffer
 (
-    const VkCommandPool &command_pool,
-    const VkQueue &graphics_queue,
-    const VkDevice &logical_device,
-    const VkPhysicalDevice &physical_device,
+    const VkCommandPool         &command_pool,
+    const VkQueue               &graphics_queue,
+    const VkDevice              &logical_device,
+    const VkPhysicalDevice      &physical_device,
     const std::vector<uint32_t> &vertex_indices,
-    const std::vector<Vertex> &vertices
+    const std::vector<Vertex>   &vertices
 )
 {
     Utils::Logs::log("Creating an index buffer..");
@@ -93,7 +93,7 @@ std::pair<VkBuffer, VkDeviceMemory> Buffers::create_index_buffer
     Tasks:
         1) Verify the parameters.
         2) Destroy the index buffer.
-        3) Get rid of the objects memory addresses.
+        3) Set objects to null.
 
     Parameters:
         - buffer_memory  / VkDeviceMemory / Memory allocated to the index buffer to destroy.
@@ -106,7 +106,7 @@ std::pair<VkBuffer, VkDeviceMemory> Buffers::create_index_buffer
 void Buffers::destroy_index_buffer
 (
     VkDeviceMemory &buffer_memory,
-    VkBuffer &index_buffer,
+    VkBuffer       &index_buffer,
     const VkDevice &logical_device
 )
 {
@@ -143,12 +143,12 @@ void Buffers::destroy_index_buffer
 
 Buffers::index_buffer_handler::index_buffer_handler
 (
-    const VkCommandPool &command_pool,
-    const VkQueue &graphics_queue,
-    const VkDevice &logical_device,
-    const VkPhysicalDevice &physical_device,
+    const VkCommandPool         &command_pool,
+    const VkQueue               &graphics_queue,
+    const VkDevice              &logical_device,
+    const VkPhysicalDevice      &physical_device,
     const std::vector<uint32_t> &vertex_indices,
-    const std::vector<Vertex> &vertices
+    const std::vector<Vertex>   &vertices
 )
     : logical_device(logical_device)
 {

@@ -15,7 +15,7 @@
         2) Allocate the command buffers using the command pool.
 
     Parameters:
-        - command_pool   / VkCommandPool / Handles the memory allocation of the command buffers.
+        - command_pool   / VkCommandPool / Handles memory allocation of command buffers.
         - images_count   / uint32_t      / Amount of command buffers to create. One for each swap chain image.
         - logical_device / VkDevice      / Logical device of the Vulkan instance.
 
@@ -25,8 +25,8 @@
 std::vector<VkCommandBuffer> Buffers::create_command_buffers
 (
     const VkCommandPool &command_pool,
-    const uint32_t &images_count,
-    const VkDevice &logical_device
+    const uint32_t      &images_count,
+    const VkDevice      &logical_device
 )
 {
     Utils::Logs::log("Creating " + std::to_string(images_count) + " command buffers..");
@@ -42,6 +42,12 @@ std::vector<VkCommandBuffer> Buffers::create_command_buffers
 
     std::vector<VkCommandBuffer> command_buffers(images_count);
 
+    /*
+        - sType              / Defines the type of the structure. Here, we define it as a command buffer allocate info.
+        - commandPool        / Defines which command pool we are going to use.
+        - level              / Defines the level of the command buffers: primary or secondary.
+        - commandBufferCount / Amount of command buffers to make.
+    */
     const VkCommandBufferAllocateInfo allocation_info
     {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -71,7 +77,7 @@ std::vector<VkCommandBuffer> Buffers::create_command_buffers
         3) Create the command buffer.
 
     Parameters:
-        - command_pool   / VkCommandPool / Handles the memory allocation of the command buffers.
+        - command_pool   / VkCommandPool / Handles memory allocation of command buffers.
         - logical_device / VkDevice      / Logical device of the Vulkan instance.
 
     Returns:
@@ -80,7 +86,7 @@ std::vector<VkCommandBuffer> Buffers::create_command_buffers
 VkCommandBuffer Buffers::create_one_time_command_buffer
 (
     const VkCommandPool &command_pool,
-    const VkDevice &logical_device
+    const VkDevice      &logical_device
 )
 {
     Utils::Logs::log("Creating a one time command buffer..");
@@ -91,6 +97,12 @@ VkCommandBuffer Buffers::create_one_time_command_buffer
     if (command_pool == VK_NULL_HANDLE)
         Utils::Logs::crash_error_log("One time command buffer creation failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
 
+    /*
+        - sType              / Defines the type of the structure. Here, we define it as a command buffer allocate info.
+        - commandPool        / Defines which command pool we are going to use.
+        - level              / Defines the level of the command buffer: primary or secondary.
+        - commandBufferCount / Amount of command buffers to make.
+    */
     const VkCommandBufferAllocateInfo allocation_info
     {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -105,13 +117,17 @@ VkCommandBuffer Buffers::create_one_time_command_buffer
     if (buffer_allocation != VK_SUCCESS)
         Utils::Logs::crash_error_log("One time command buffer creation failed! Command buffer allocation returned error code " + std::to_string(buffer_allocation) + ".");
 
-    const VkCommandBufferBeginInfo buffer_begin_info
+    /*
+        - sType / Defines the type of the structure. Here, we define it as a command buffer begin info.
+        - flags / Defines to Vulkan what we are going to do with this command buffer.
+    */
+    const VkCommandBufferBeginInfo begin_info
     {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
     };
 
-    const VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &buffer_begin_info);
+    const VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &begin_info);
 
     if (buffer_launch != VK_SUCCESS)
         Utils::Logs::crash_error_log("The one time command buffer creation returned error code " + std::to_string(buffer_launch) + ".");
@@ -155,21 +171,21 @@ VkCommandBuffer Buffers::create_one_time_command_buffer
 */
 void Buffers::record_command_buffer_and_draw
 (
-    const VkCommandBuffer &command_buffer,
+    const VkCommandBuffer              &command_buffer,
     const std::vector<VkDescriptorSet> &descriptor_sets,
-    const VkExtent2D &extent,
-    const size_t &frame,
-    const std::vector<VkFramebuffer> &framebuffers,
-    const VkPipeline &graphics_pipeline,
-    const uint32_t &image_index,
-    const VkBuffer &index_buffer,
-    const VkPipelineLayout &pipeline_layout,
-    const VkRenderPass &render_pass,
-    const VkRect2D &scissor,
-    const std::vector<VkImageView> &texture_image_views,
-    const VkBuffer &vertex_buffer,
-    const std::vector<uint32_t> &vertex_indices,
-    const VkViewport &viewport
+    const VkExtent2D                   &extent,
+    const size_t                       &frame,
+    const std::vector<VkFramebuffer>   &framebuffers,
+    const VkPipeline                   &graphics_pipeline,
+    const uint32_t                     &image_index,
+    const VkBuffer                     &index_buffer,
+    const VkPipelineLayout             &pipeline_layout,
+    const VkRenderPass                 &render_pass,
+    const VkRect2D                     &scissor,
+    const std::vector<VkImageView>     &texture_image_views,
+    const VkBuffer                     &vertex_buffer,
+    const std::vector<uint32_t>        &vertex_indices,
+    const VkViewport                   &viewport
 )
 {
     if (command_buffer == VK_NULL_HANDLE)
@@ -244,19 +260,39 @@ void Buffers::record_command_buffer_and_draw
         return;
     }
 
-    vkResetCommandBuffer(command_buffer, 0);
+    /*
+        sType / Defines the type of the structure. Here, we define it as a command buffer begin info.
+    */
+    VkCommandBufferBeginInfo buffer_begin_info
+    {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO
+    };
 
-    VkCommandBufferBeginInfo begin_info { .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
-    const VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &begin_info);
+    vkResetCommandBuffer(command_buffer, 0);
+    const VkResult buffer_launch = vkBeginCommandBuffer(command_buffer, &buffer_begin_info);
 
     if (buffer_launch != VK_SUCCESS)
         Utils::Logs::crash_error_log("Failed to render a frame! The command buffer start returned error code " + std::to_string(buffer_launch) + ".");
 
+    /*
+        color        / Defines which color to use when clearing a color image/attachment.
+        depthStencil / Defines which color to use when clearing a depth or stencil image/attachment.
+    */
     std::array<VkClearValue, 2> clear_values {};
     clear_values[0].color = {{ 0.0f, 0.0f, 0.0f, 1.0f }};
     clear_values[1].depthStencil = { 1.0f, 0 };
 
-    const VkRenderPassBeginInfo render_pass_begin_info
+    /*
+        sType           / Defines the type of the structure. Here, we define it as render pass begin info.
+        renderPass      / Defines which render pass we are going to start.
+        framebuffer     / Defines which frame buffer we are going to work with.
+        renderArea      / Defines the area where the render pass is going to work.
+            - offset    / Defines the (x;y) starting position for the render pass.
+            - extent    / Defines the resolution of the render pass. In this case, we use the swap chain resolution.
+        clearValueCount / Amount of clear values to pass.
+        pClearValues    / Passes the clear values.
+    */
+    const VkRenderPassBeginInfo pass_begin_info
     {
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
         .renderPass = render_pass,
@@ -280,7 +316,7 @@ void Buffers::record_command_buffer_and_draw
         targeted_texture = 0;
     }
 
-    vkCmdBeginRenderPass(command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass(command_buffer, &pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphics_pipeline);
     vkCmdBindVertexBuffers(command_buffer, 0, 1, &vertex_buffers, offsets);
     vkCmdBindIndexBuffer(command_buffer, index_buffer, 0, VK_INDEX_TYPE_UINT32);
@@ -303,14 +339,14 @@ void Buffers::record_command_buffer_and_draw
     Destroy a command buffer.
 
     Tasks:
-        1) Verify the function parameters.
+        1) Verify function parameters.
         2) Stop any buffer activity.
         3) End the command buffer.
-        4) Get rid of the object memory address.
+        4) Set object to null.
 
     Parameters:
         - command_buffer / VkCommandBuffer / Command buffer to destroy.
-        - command_pool   / VkCommandPool   / Handles the memory allocation of the command buffers.
+        - command_pool   / VkCommandPool   / Handles memory allocation of command buffers.
         - graphics_queue / VkQueue         / Handles all graphics commands and calls.
         - logical_device / VkDevice        / Logical device of the Vulkan instance.
 
@@ -319,10 +355,10 @@ void Buffers::record_command_buffer_and_draw
 */
 void Buffers::destroy_command_buffer
 (
-    VkCommandBuffer &command_buffer,
+    VkCommandBuffer     &command_buffer,
     const VkCommandPool &command_pool,
-    const VkQueue &graphics_queue,
-    const VkDevice &logical_device
+    const VkQueue       &graphics_queue,
+    const VkDevice      &logical_device
 )
 {
     Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(command_buffer) + " command buffer..");

@@ -1,7 +1,7 @@
 #ifndef VULKAN_COLORS_HPP
 #define VULKAN_COLORS_HPP
 
-#include <libraries/vulkan/vulkan.h>
+#include "libraries/vulkan/vulkan.h"
 
 ///////////////////////////////////////////////////
 //////////////////// Structure ////////////////////
@@ -9,9 +9,9 @@
 
 struct ColorResources
 {
-    VkImage color_image;
+    VkImage        color_image;
     VkDeviceMemory color_image_memory;
-    VkImageView color_image_view;
+    VkImageView    color_image_view;
 };
 
 ///////////////////////////////////////////////////
@@ -27,8 +27,14 @@ namespace Colors
     VkAttachmentDescription create_color_attachment
     (
         const VkSampleCountFlagBits &samples_count,
-        const VkFormat &surface_format
+        const VkFormat              &surface_format
     );
+
+    ///////////////////////////
+    ///// color.blend.cpp /////
+    ///////////////////////////
+
+    VkPipelineColorBlendStateCreateInfo create_color_blend_state();
 
     ///////////////////////////////
     ///// color.resources.cpp /////
@@ -36,11 +42,11 @@ namespace Colors
 
     ColorResources create_color_resources
     (
-        const VkDevice &logical_device,
-        const VkPhysicalDevice &physical_device,
+        const VkDevice              &logical_device,
+        const VkPhysicalDevice      &physical_device,
         const VkSampleCountFlagBits &samples_count,
-        const VkExtent2D &swapchain_extent,
-        const VkFormat &swapchain_image_format
+        const VkExtent2D            &swapchain_extent,
+        const VkFormat              &swapchain_image_format
     );
 
     void destroy_color_resources
@@ -58,11 +64,11 @@ namespace Colors
         public:
             color_resources_handler
             (
-                const VkDevice &logical_device,
-                const VkPhysicalDevice &physical_device,
+                const VkDevice              &logical_device,
+                const VkPhysicalDevice      &physical_device,
                 const VkSampleCountFlagBits &samples_count,
-                const VkExtent2D &swapchain_extent,
-                const VkFormat &swapchain_image_format
+                const VkExtent2D            &swapchain_extent,
+                const VkFormat              &swapchain_image_format
             );
 
             ~color_resources_handler();

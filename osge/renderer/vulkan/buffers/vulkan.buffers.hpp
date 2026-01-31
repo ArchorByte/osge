@@ -7,24 +7,21 @@
 #include <utility>
 #include <vector>
 
-#include "../textures/texture.images.loader.hpp"
-#include "../vertex/vertex.handler.hpp"
-
 ////////////////////////////////////////////////////
 //////////////////// Structures ////////////////////
 ////////////////////////////////////////////////////
 
 struct Buffer
 {
-    VkBuffer buffer;
+    VkBuffer       buffer;
     VkDeviceMemory buffer_memory;
 };
 
 struct UniformBufferInfo
 {
-    VkBuffer buffer;
+    VkBuffer       buffer;
     VkDeviceMemory buffer_memory;
-    void* data;
+    void*          data;
 };
 
 struct UniformBufferObject
@@ -50,17 +47,17 @@ namespace Buffers
 
     void create_buffer
     (
-        VkBuffer &buffer,
-        VkDeviceMemory &buffer_memory,
-        const VkDeviceSize &buffer_size,
-        const VkDevice &logical_device,
-        const VkPhysicalDevice &physical_device,
+        VkBuffer                 &buffer,
+        VkDeviceMemory           &buffer_memory,
+        const VkDeviceSize       &buffer_size,
+        const VkDevice           &logical_device,
+        const VkPhysicalDevice   &physical_device,
         const VkBufferUsageFlags &usage_flags
     );
 
     void destroy_buffer
     (
-        VkBuffer &buffer,
+        VkBuffer       &buffer,
         VkDeviceMemory &buffer_memory,
         const VkDevice &logical_device
     );
@@ -72,14 +69,14 @@ namespace Buffers
     uint32_t find_memory_type
     (
         const VkPhysicalDeviceMemoryProperties &memory_properties,
-        const VkMemoryPropertyFlags &property_flags,
-        const uint32_t &type_filter
+        const VkMemoryPropertyFlags            &property_flags,
+        const uint32_t                         &type_filter
     );
 
     VkDeviceMemory allocate_buffer_memory
     (
-        const VkBuffer &buffer,
-        const VkDevice &logical_device,
+        const VkBuffer         &buffer,
+        const VkDevice         &logical_device,
         const VkPhysicalDevice &physical_device
     );
 
@@ -90,41 +87,41 @@ namespace Buffers
     std::vector<VkCommandBuffer> create_command_buffers
     (
         const VkCommandPool &command_pool,
-        const uint32_t &images_count,
-        const VkDevice &logical_device
+        const uint32_t      &images_count,
+        const VkDevice      &logical_device
     );
 
     VkCommandBuffer create_one_time_command_buffer
     (
         const VkCommandPool &command_pool,
-        const VkDevice &logical_device
+        const VkDevice      &logical_device
     );
 
     void record_command_buffer_and_draw
     (
-        const VkCommandBuffer &command_buffer,
+        const VkCommandBuffer              &command_buffer,
         const std::vector<VkDescriptorSet> &descriptor_sets,
-        const VkExtent2D &extent,
-        const size_t &frame,
-        const std::vector<VkFramebuffer> &framebuffers,
-        const VkPipeline &graphics_pipeline,
-        const uint32_t &image_index,
-        const VkBuffer &index_buffer,
-        const VkPipelineLayout &pipeline_layout,
-        const VkRenderPass &render_pass,
-        const VkRect2D &scissor,
-        const std::vector<VkImageView> &texture_image_views,
-        const VkBuffer &vertex_buffer,
-        const std::vector<uint32_t> &vertex_indices,
-        const VkViewport &viewport
+        const VkExtent2D                   &extent,
+        const size_t                       &frame,
+        const std::vector<VkFramebuffer>   &framebuffers,
+        const VkPipeline                   &graphics_pipeline,
+        const uint32_t                     &image_index,
+        const VkBuffer                     &index_buffer,
+        const VkPipelineLayout             &pipeline_layout,
+        const VkRenderPass                 &render_pass,
+        const VkRect2D                     &scissor,
+        const std::vector<VkImageView>     &texture_image_views,
+        const VkBuffer                     &vertex_buffer,
+        const std::vector<uint32_t>        &vertex_indices,
+        const VkViewport                   &viewport
     );
 
     void destroy_command_buffer
     (
-        VkCommandBuffer &command_buffer,
+        VkCommandBuffer     &command_buffer,
         const VkCommandPool &command_pool,
-        const VkQueue &graphics_queue,
-        const VkDevice &logical_device
+        const VkQueue       &graphics_queue,
+        const VkDevice      &logical_device
     );
 
     ///////////////////////////
@@ -133,21 +130,21 @@ namespace Buffers
 
     void copy_buffer_data
     (
-        const VkDeviceSize &buffer_size,
+        const VkDeviceSize  &buffer_size,
         const VkCommandPool &command_pool,
-        const VkBuffer &destination_buffer,
-        const VkQueue &graphics_queue,
-        const VkDevice &logical_device,
-        const VkBuffer &source_buffer
+        const VkBuffer      &destination_buffer,
+        const VkQueue       &graphics_queue,
+        const VkDevice      &logical_device,
+        const VkBuffer      &source_buffer
     );
 
     void copy_buffer_to_texture_image
     (
-        const VkCommandPool &command_pool,
-        const VkQueue &graphics_queue,
-        const VkDevice &logical_device,
-        const VkBuffer &source_buffer,
-        const VkImage &texture_image,
+        const VkCommandPool    &command_pool,
+        const VkQueue          &graphics_queue,
+        const VkDevice         &logical_device,
+        const VkBuffer         &source_buffer,
+        const VkImage          &texture_image,
         const TextureImageInfo &texture_image_info
     );
 
@@ -157,18 +154,18 @@ namespace Buffers
 
     std::vector<VkFramebuffer> create_frame_buffers
     (
-        const VkImageView &color_image_view,
-        const VkImageView &depth_image_view,
-        const VkExtent2D &extent,
+        const VkImageView              &color_image_view,
+        const VkImageView              &depth_image_view,
+        const VkExtent2D               &extent,
         const std::vector<VkImageView> &image_views,
-        const VkDevice &logical_device,
-        const VkRenderPass &render_pass
+        const VkDevice                 &logical_device,
+        const VkRenderPass             &render_pass
     );
 
     void destroy_frame_buffers
     (
         std::vector<VkFramebuffer> &framebuffers,
-        const VkDevice &logical_device
+        const VkDevice             &logical_device
     );
 
     ////////////////////////////
@@ -177,18 +174,18 @@ namespace Buffers
 
     std::pair<VkBuffer, VkDeviceMemory> Buffers::create_index_buffer
     (
-        const VkCommandPool &command_pool,
-        const VkQueue &graphics_queue,
-        const VkDevice &logical_device,
-        const VkPhysicalDevice &physical_device,
+        const VkCommandPool         &command_pool,
+        const VkQueue               &graphics_queue,
+        const VkDevice              &logical_device,
+        const VkPhysicalDevice      &physical_device,
         const std::vector<uint32_t> &vertex_indices,
-        const std::vector<Vertex> &vertices
+        const std::vector<Vertex>   &vertices
     );
 
     void destroy_index_buffer
     (
         VkDeviceMemory &buffer_memory,
-        VkBuffer &index_buffer,
+        VkBuffer       &index_buffer,
         const VkDevice &logical_device
     );
 
@@ -198,14 +195,14 @@ namespace Buffers
 
     std::vector<Buffer> create_texture_image_buffers
     (
-        const VkDevice &logical_device,
-        const VkPhysicalDevice &physical_device,
+        const VkDevice                      &logical_device,
+        const VkPhysicalDevice              &physical_device,
         const std::vector<TextureImageInfo> &texture_image_info
     );
 
     void destroy_texture_image_buffers
     (
-        const VkDevice &logical_device,
+        const VkDevice      &logical_device,
         std::vector<Buffer> &texture_image_buffers
     );
 
@@ -215,23 +212,23 @@ namespace Buffers
 
     std::vector<UniformBufferInfo> create_uniform_buffers
     (
-        const VkCommandPool &command_pool,
-        const VkQueue &graphics_queue,
-        const uint32_t &image_count,
-        const VkDevice &logical_device,
+        const VkCommandPool    &command_pool,
+        const VkQueue          &graphics_queue,
+        const uint32_t         &image_count,
+        const VkDevice         &logical_device,
         const VkPhysicalDevice &physical_device
     );
 
     void update_uniform_buffer_data
     (
-        const void* buffer_data,
-        const VkExtent2D extent,
-        const uint32_t &frame
+        const void*      buffer_data,
+        const VkExtent2D &extent,
+        const uint32_t   &frame
     );
 
     void destroy_uniform_buffers
     (
-        const VkDevice &logical_device,
+        const VkDevice                 &logical_device,
         std::vector<UniformBufferInfo> &uniform_buffers
     );
 
@@ -241,17 +238,17 @@ namespace Buffers
 
     std::pair<VkBuffer, VkDeviceMemory> create_vertex_buffer
     (
-        const VkCommandPool &command_pool,
-        const VkQueue &graphics_queue,
-        const VkDevice &logical_device,
+        const VkCommandPool    &command_pool,
+        const VkQueue          &graphics_queue,
+        const VkDevice         &logical_device,
         const VkPhysicalDevice &physical_device,
-        std::vector<Vertex> &vertices
+        std::vector<Vertex>    &vertices
     );
 
     void destroy_vertex_buffer
     (
         const VkDevice &logical_device,
-        VkBuffer &vertex_buffer,
+        VkBuffer       &vertex_buffer,
         VkDeviceMemory &vertex_buffer_memory
     );
 
@@ -268,12 +265,12 @@ namespace Buffers
         public:
             frame_buffers_handler
             (
-                const VkImageView &color_image_view,
-                const VkImageView &depth_image_view,
-                const VkExtent2D &extent,
+                const VkImageView              &color_image_view,
+                const VkImageView              &depth_image_view,
+                const VkExtent2D               &extent,
                 const std::vector<VkImageView> &image_views,
-                const VkDevice &logical_device,
-                const VkRenderPass &render_pass
+                const VkDevice                 &logical_device,
+                const VkRenderPass             &render_pass
             );
 
             ~frame_buffers_handler();
@@ -296,12 +293,12 @@ namespace Buffers
         public:
             index_buffer_handler
             (
-                const VkCommandPool &command_pool,
-                const VkQueue &graphics_queue,
-                const VkDevice &logical_device,
-                const VkPhysicalDevice &physical_device,
+                const VkCommandPool         &command_pool,
+                const VkQueue               &graphics_queue,
+                const VkDevice              &logical_device,
+                const VkPhysicalDevice      &physical_device,
                 const std::vector<uint32_t> &vertex_indices,
-                const std::vector<Vertex> &vertices
+                const std::vector<Vertex>   &vertices
             );
 
             ~index_buffer_handler();
@@ -325,8 +322,8 @@ namespace Buffers
         public:
             texture_image_buffers_handler
             (
-                const VkDevice &logical_device,
-                const VkPhysicalDevice &physical_device,
+                const VkDevice                      &logical_device,
+                const VkPhysicalDevice              &physical_device,
                 const std::vector<TextureImageInfo> &texture_image_info
             );
 
@@ -350,10 +347,10 @@ namespace Buffers
         public:
             uniform_buffers_handler
             (
-                const VkCommandPool &command_pool,
-                const VkQueue &graphics_queue,
-                const uint32_t &image_count,
-                const VkDevice &logical_device,
+                const VkCommandPool    &command_pool,
+                const VkQueue          &graphics_queue,
+                const uint32_t         &image_count,
+                const VkDevice         &logical_device,
                 const VkPhysicalDevice &physical_device
             );
 
@@ -377,11 +374,11 @@ namespace Buffers
         public:
             vertex_buffer_handler
             (
-                const VkCommandPool &command_pool,
-                const VkQueue &graphics_queue,
-                const VkDevice &logical_device,
+                const VkCommandPool    &command_pool,
+                const VkQueue          &graphics_queue,
+                const VkDevice         &logical_device,
                 const VkPhysicalDevice &physical_device,
-                std::vector<Vertex> &vertices
+                std::vector<Vertex>    &vertices
             );
 
             ~vertex_buffer_handler();

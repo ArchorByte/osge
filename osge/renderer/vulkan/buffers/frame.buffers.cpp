@@ -16,7 +16,7 @@
     Note: You should use the pre-made class to handle the frame buffers rather than directly using this function for memory safety reasons.
 
     Tasks:
-        1) Verify the function parameters.
+        1) Verify function parameters.
         2) Create all frame buffers.
 
     Parameters:
@@ -32,12 +32,12 @@
 */
 std::vector<VkFramebuffer> Buffers::create_frame_buffers
 (
-    const VkImageView &color_image_view,
-    const VkImageView &depth_image_view,
-    const VkExtent2D &extent,
+    const VkImageView              &color_image_view,
+    const VkImageView              &depth_image_view,
+    const VkExtent2D               &extent,
     const std::vector<VkImageView> &image_views,
-    const VkDevice &logical_device,
-    const VkRenderPass &render_pass
+    const VkDevice                 &logical_device,
+    const VkRenderPass             &render_pass
 )
 {
     Utils::Logs::log("Creating " + std::to_string(image_views.size()) + " frame buffers..");
@@ -64,6 +64,15 @@ std::vector<VkFramebuffer> Buffers::create_frame_buffers
     {
         const std::array<VkImageView, 3> attachments = { color_image_view, depth_image_view, image_views[i] };
 
+        /*
+            - sType           / Define of the type of the structure. Here, we declare this structure as a frame buffer create info.
+            - renderPass      / Define which render pass the frame buffer will be working with.
+            - attachmentCount / Amount of attachments to pass.
+            - pAttachments    / Pass the attachments to use. In this case, we pass the color image view, depth image view and all swap chain image views as attachments.
+            - width           / Define the width of the frame buffer. Here, we use the swap chain resolution.
+            - height          / Define the height of the frame buffer.
+            - layers          / Depth of the frame buffer.
+        */
         const VkFramebufferCreateInfo create_info
         {
             .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
@@ -95,8 +104,9 @@ std::vector<VkFramebuffer> Buffers::create_frame_buffers
     Destroy some frame buffers.
 
     Tasks:
-        1) Verify the function parameters.
+        1) Verify function parameters.
         2) Destroy all valid frame buffers.
+        3) Set objects to null.
 
     Parameters:
         - frame_buffers  / vector<VkFramebuffer> / Frame buffers to destroy.
@@ -108,7 +118,7 @@ std::vector<VkFramebuffer> Buffers::create_frame_buffers
 void Buffers::destroy_frame_buffers
 (
     std::vector<VkFramebuffer> &frame_buffers,
-    const VkDevice &logical_device
+    const VkDevice             &logical_device
 )
 {
     Utils::Logs::log("Destroying " + std::to_string(frame_buffers.size()) + " frame buffers..");
@@ -158,12 +168,12 @@ void Buffers::destroy_frame_buffers
 
 Buffers::frame_buffers_handler::frame_buffers_handler
 (
-    const VkImageView &color_image_view,
-    const VkImageView &depth_image_view,
-    const VkExtent2D &extent,
+    const VkImageView              &color_image_view,
+    const VkImageView              &depth_image_view,
+    const VkExtent2D               &extent,
     const std::vector<VkImageView> &image_views,
-    const VkDevice &logical_device,
-    const VkRenderPass &render_pass
+    const VkDevice                 &logical_device,
+    const VkRenderPass             &render_pass
 )
     : logical_device(logical_device)
 {

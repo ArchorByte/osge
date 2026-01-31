@@ -8,27 +8,28 @@
     Warning: There is no class that will automatically destroy this buffer, you have to set one up yourself for memory safety reasons.
 
     Tasks:
-        1) Verify the function parameters.
+        1) Verify function parameters.
         2) Create the buffer.
+        3) Allocate memory to the buffer.
 
     Parameters:
         - buffer                  / VkBuffer              / Buffer to create. Its value will be modified to contain the created buffer.
         - buffer_memory           / VkDeviceMemory        / Memory of the buffer to create. Its value will be modified to contain the memory allocated to the created buffer.
-        - buffer_size             / VkDeviceSize          / Define the size of the buffer to create.
+        - buffer_size             / VkDeviceSize          / Defines the size of the buffer to create.
         - logical_device          / VkDevice              / Logical device of the Vulkan instance.
         - physical_device         / VkPhysicalDevice      / Physical device used to run this Vulkan instance.
-        - usage_flags             / VkBufferUsageFlags    / Define to Vulkan what we are going to do with this buffer.
+        - usage_flags             / VkBufferUsageFlags    / Defines to Vulkan what we are going to do with this buffer.
 
     Returns:
         No object returned.
 */
 void Buffers::create_buffer
 (
-    VkBuffer &buffer,
-    VkDeviceMemory &buffer_memory,
-    const VkDeviceSize &buffer_size,
-    const VkDevice &logical_device,
-    const VkPhysicalDevice &physical_device,
+    VkBuffer                 &buffer,
+    VkDeviceMemory           &buffer_memory,
+    const VkDeviceSize       &buffer_size,
+    const VkDevice           &logical_device,
+    const VkPhysicalDevice   &physical_device,
     const VkBufferUsageFlags &usage_flags
 )
 {
@@ -43,12 +44,18 @@ void Buffers::create_buffer
     if (physical_device == VK_NULL_HANDLE)
         Utils::Logs::crash_error_log("Buffer creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
+    /*
+        - sType       / Defines the type of the structure. Here, we declare this structure as a buffer create info.
+        - size        / Size of the buffer to create.
+        - usage       / Defines what we are going to do with this buffer.
+        - sharingMode / Defines if this buffer may be shared or not. In this case, we set it as not sharable.
+    */
     const VkBufferCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
         .size = buffer_size,
         .usage = usage_flags,
-        .sharingMode = VK_SHARING_MODE_EXCLUSIVE // Disallow buffer sharing.
+        .sharingMode = VK_SHARING_MODE_EXCLUSIVE
     };
 
     buffer = VK_NULL_HANDLE;
@@ -67,10 +74,10 @@ void Buffers::create_buffer
     Destroy a buffer and free its memory.
 
     Tasks:
-        1) Verify the function parameters.
+        1) Verify function parameters.
         2) Destroy the buffer.
         3) Free memory.
-        4) Get rid of the objects memory addresses.
+        4) Set objects to null.
 
     Parameters:
         - buffer         / VkBuffer       / Buffer to destroy.
@@ -82,7 +89,7 @@ void Buffers::create_buffer
 */
 void Buffers::destroy_buffer
 (
-    VkBuffer &buffer,
+    VkBuffer       &buffer,
     VkDeviceMemory &buffer_memory,
     const VkDevice &logical_device
 )

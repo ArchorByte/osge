@@ -1,7 +1,9 @@
 #include "vulkan.colors.hpp"
-#include "osge/renderer/vulkan/images/vulkan.images.hpp"
+
+#include "libraries/vulkan/vulkan.h"
+#include "osge/renderer/vulkan/vulkan.renderer.hpp"
 #include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
+
 #include <utility>
 
 ///////////////////////////////////////////////////
@@ -20,7 +22,7 @@
     Parameters:
         - logical_device         / VkDevice              / Logical device of the Vulkan instance.
         - physical_device        / VkPhysicalDevice      / Physical device used to run the Vulkan instance.
-        - samples_count          / VkSampleCountFlagBits / Amount of samples to generate for each frame for the MSAA.
+        - samples_count          / VkSampleCountFlagBits / Amount of samples to generate for each frame for the multisampling.
         - swapchain_extent       / VkExtent2D            / Resolution of the swap chain.
         - swapchain_image_format / VkFormat              / Format of the swap chain images.
 
@@ -29,11 +31,11 @@
 */
 ColorResources Colors::create_color_resources
 (
-    const VkDevice &logical_device,
-    const VkPhysicalDevice &physical_device,
+    const VkDevice              &logical_device,
+    const VkPhysicalDevice      &physical_device,
     const VkSampleCountFlagBits &samples_count,
-    const VkExtent2D &swapchain_extent,
-    const VkFormat &swapchain_image_format
+    const VkExtent2D            &swapchain_extent,
+    const VkFormat              &swapchain_image_format
 )
 {
     Utils::Logs::log("Creating color resources..");
@@ -64,8 +66,9 @@ ColorResources Colors::create_color_resources
     Cleanly destroy all color resources.
 
     Tasks:
-        1) Verify the parameters.
-        2) Destroy the objects and get rid their memory addresses if possible.
+        1) Verify function parameters.
+        2) Destroy the objects.
+        3) Set objects to null.
 
     Parameters:
         - color_resources / ColorResources / Color resources to destroy.
@@ -121,11 +124,11 @@ void Colors::destroy_color_resources
 
 Colors::color_resources_handler::color_resources_handler
 (
-    const VkDevice &logical_device,
-    const VkPhysicalDevice &physical_device,
+    const VkDevice              &logical_device,
+    const VkPhysicalDevice      &physical_device,
     const VkSampleCountFlagBits &samples_count,
-    const VkExtent2D &swapchain_extent,
-    const VkFormat &swapchain_image_format
+    const VkExtent2D            &swapchain_extent,
+    const VkFormat              &swapchain_image_format
 )
     : logical_device(logical_device)
 {

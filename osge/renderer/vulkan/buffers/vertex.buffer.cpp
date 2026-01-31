@@ -1,6 +1,7 @@
 #include "vulkan.buffers.hpp"
 
 #include "libraries/vulkan/vulkan.h"
+#include "osge/utils/utils.hpp"
 
 #include <cstring>
 #include <vector>
@@ -14,7 +15,7 @@
     Note: You should use the pre-made class to handle the vertex buffer rather than directly using this function for memory safety reasons.
 
     Tasks:
-        1) Verify the function parameters.
+        1) Verify function parameters.
         2) Create a staging buffer for the data transfer.
         3) Map the memory to put the vertices into the staging buffer.
         4) Create the vertex buffer.
@@ -22,7 +23,7 @@
         6) End the staging buffer.
 
     Parameters:
-        - command_pool    / VkCommandPool    / Handles the memory allocation of the command buffers.
+        - command_pool    / VkCommandPool    / Handles memory allocation of command buffers.
         - graphics_queue  / VkQueue          / Handles all graphics commands and calls.
         - logical_device  / VkDevice         / Logical device of the Vulkan instance.
         - physical_device / VkPhysicalDevice / Physical device used to run this Vulkan instance.
@@ -33,29 +34,29 @@
 */
 std::pair<VkBuffer, VkDeviceMemory> Buffers::create_vertex_buffer
 (
-    const VkCommandPool &command_pool,
-    const VkQueue &graphics_queue,
-    const VkDevice &logical_device,
+    const VkCommandPool    &command_pool,
+    const VkQueue          &graphics_queue,
+    const VkDevice         &logical_device,
     const VkPhysicalDevice &physical_device,
-    std::vector<Vertex> &vertices
+    std::vector<Vertex>    &vertices
 )
 {
-    log("Creating a vertex buffer..");
+    Utils::Logs::log("Creating a vertex buffer..");
 
     if (command_pool == VK_NULL_HANDLE)
-        fatal_error_log("Vertex buffer creation failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
+        Utils::Logs::crash_error_log("Vertex buffer creation failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
 
     if (graphics_queue == VK_NULL_HANDLE)
-        fatal_error_log("Vertex buffer creation failed! The graphics queue provided (" + force_string(graphics_queue) + ") is not valid!");
+        Utils::Logs::crash_error_log("Vertex buffer creation failed! The graphics queue provided (" + Utils::Text::get_memory_address(graphics_queue) + ") is not valid!");
 
     if (logical_device == VK_NULL_HANDLE)
-        fatal_error_log("Vertex buffer creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Vertex buffer creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
 
     if (physical_device == VK_NULL_HANDLE)
-        fatal_error_log("Vertex buffer creation failed! The physical device provided (" + force_string(physical_device) + ") is not valid!");
+        Utils::Logs::crash_error_log("Vertex buffer creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
     if (vertices.size() < 1)
-        fatal_error_log("Vertex buffer creation failed! No vertices provided!");
+        Utils::Logs::crash_error_log("Vertex buffer creation failed! No vertices provided!");
 
     VkBuffer staging_vertex_buffer = VK_NULL_HANDLE;
     VkDeviceMemory staging_buffer_memory = VK_NULL_HANDLE;
@@ -75,7 +76,7 @@ std::pair<VkBuffer, VkDeviceMemory> Buffers::create_vertex_buffer
     Buffers::copy_buffer_data(buffer_size, command_pool, vertex_buffer,  graphics_queue, logical_device, staging_vertex_buffer);
     Buffers::destroy_buffer(staging_vertex_buffer, staging_buffer_memory, logical_device);
 
-    log("Vertex buffer " + force_string(vertex_buffer) + " created successfully!");
+    Utils::Logs::log("Vertex buffer " + Utils::Text::get_memory_address(vertex_buffer) + " created successfully!");
     return { vertex_buffer, buffer_memory };
 }
 
@@ -85,8 +86,9 @@ std::pair<VkBuffer, VkDeviceMemory> Buffers::create_vertex_buffer
     Cleanly destroy a vertex buffer.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Destroy the vertex buffer and free its memory.
+        3) Set objects to null.
 
     Parameters:
         - logical_device       / VkDevice       / Logical device of the Vulkan instance.
@@ -99,27 +101,27 @@ std::pair<VkBuffer, VkDeviceMemory> Buffers::create_vertex_buffer
 void Buffers::destroy_vertex_buffer
 (
     const VkDevice &logical_device,
-    VkBuffer &vertex_buffer,
+    VkBuffer       &vertex_buffer,
     VkDeviceMemory &vertex_buffer_memory
 )
 {
-    log("Destroying the " + force_string(vertex_buffer) + " vertex buffer..");
+    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(vertex_buffer) + " vertex buffer..");
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Vertex buffer destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::error_log("Vertex buffer destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
         return;
     }
 
     if (vertex_buffer == VK_NULL_HANDLE)
     {
-        error_log("Vertex buffer destruction failed! The vertex buffer provided (" + force_string(vertex_buffer) + ") is not valid!");
+        Utils::Logs::error_log("Vertex buffer destruction failed! The vertex buffer provided (" + Utils::Text::get_memory_address(vertex_buffer) + ") is not valid!");
         return;
     }
 
     if (vertex_buffer_memory == VK_NULL_HANDLE)
     {
-        error_log("Vertex buffer destruction failed! The vertex buffer memory provided (" + force_string(vertex_buffer_memory) + ") is not valid!");
+        Utils::Logs::error_log("Vertex buffer destruction failed! The vertex buffer memory provided (" + Utils::Text::get_memory_address(vertex_buffer_memory) + ") is not valid!");
         return;
     }
 
@@ -127,7 +129,7 @@ void Buffers::destroy_vertex_buffer
     vertex_buffer = VK_NULL_HANDLE;
     vertex_buffer_memory = VK_NULL_HANDLE;
 
-    log("Vertex buffer destroyed successfully!");
+    Utils::Logs::log("Vertex buffer destroyed successfully!");
 }
 
 ///////////////////////////////////////////////
@@ -136,11 +138,11 @@ void Buffers::destroy_vertex_buffer
 
 Buffers::vertex_buffer_handler::vertex_buffer_handler
 (
-    const VkCommandPool &command_pool,
-    const VkQueue &graphics_queue,
-    const VkDevice &logical_device,
+    const VkCommandPool    &command_pool,
+    const VkQueue          &graphics_queue,
+    const VkDevice         &logical_device,
     const VkPhysicalDevice &physical_device,
-    std::vector<Vertex> &vertices
+    std::vector<Vertex>    &vertices
 ) : logical_device(logical_device)
 {
     const std::pair buffer_data = Buffers::create_vertex_buffer(command_pool, graphics_queue, logical_device, physical_device, vertices);

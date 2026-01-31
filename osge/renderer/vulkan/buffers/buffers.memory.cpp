@@ -4,16 +4,16 @@
 #include "osge/utils/utils.hpp"
 
 /*
-    Get the index of a specific memory type.
+    Get the index of a specific memory type from the memory properties.
 
     Tasks:
         1) Check each memory type available.
-        2) Return the index if our requirements are satisfied.
+        2) Return the index of the first memory type that our requirements are satisfied.
 
     Parameters:
-        - memory_properties / VkPhysicalDeviceMemoryProperties / Properties of the memory.
-        - property_flags    / VkMemoryPropertyFlags            / Targeted property flags.
-        - type_filter       / uint32_t                         / Targeted memory types.
+        - memory_properties / VkPhysicalDeviceMemoryProperties / Memory properties of the physical device used to run this Vulkan instance.
+        - property_flags    / VkMemoryPropertyFlags            / Defines what properties the type shall have.
+        - type_filter       / uint32_t                         / Defines which type(s) is/are allowed to be selected.
 
     Returns:
         The index of the memory type.
@@ -21,20 +21,16 @@
 uint32_t Buffers::find_memory_type
 (
     const VkPhysicalDeviceMemoryProperties &memory_properties,
-    const VkMemoryPropertyFlags &property_flags,
-    const uint32_t &type_filter
+    const VkMemoryPropertyFlags            &property_flags,
+    const uint32_t                         &type_filter
 )
 {
     for (uint32_t i = 0; i < memory_properties.memoryTypeCount; i++)
-    {
         if ((type_filter & (1 << i)) && (memory_properties.memoryTypes[i].propertyFlags & property_flags))
-        {
             return i;
-        }
-    }
 
     Utils::Logs::crash_error_log("Failed to get the memory type index! Failed to find any suitable memory type!");
-    return -1; // Avoid compiler warnings.
+    return -1; // Unnecessary but avoids compiler warnings.
 }
 
 
@@ -44,10 +40,10 @@ uint32_t Buffers::find_memory_type
     Warning: There is no class that will automatically free the memory, you have to set one up yourself for memory safety reasons.
 
     Tasks:
-        1) Verify the function parameters.
+        1) Verify function parameters.
         2) Retrieve necessary information about the system memory.
-        3) Allocate the memory to the buffer.
-        4) Bind the memory to the buffer.
+        3) Allocate memory to the buffer.
+        4) Bind this allocated memory to the buffer.
 
     Parameters:
         - buffer          / VkBuffer         / Buffer to allocate memory to.
@@ -59,8 +55,8 @@ uint32_t Buffers::find_memory_type
 */
 VkDeviceMemory Buffers::allocate_buffer_memory
 (
-    const VkBuffer &buffer,
-    const VkDevice &logical_device,
+    const VkBuffer         &buffer,
+    const VkDevice         &logical_device,
     const VkPhysicalDevice &physical_device
 )
 {
@@ -81,11 +77,16 @@ VkDeviceMemory Buffers::allocate_buffer_memory
     VkPhysicalDeviceMemoryProperties memory_properties;
     vkGetPhysicalDeviceMemoryProperties(physical_device, &memory_properties);
 
+    /*
+        - sType           / Defines the type of the structure. Here, we define it as a memory allocate info.
+        - allocationSize  / Amount of bytes to allocate.
+        - memoryTypeIndex / Index identifying a memory type from the memory properties.
+    */
     VkMemoryAllocateInfo allocation_info
     {
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
         .allocationSize = memory_requirements.size,
-        .memoryTypeIndex = Buffers::find_memory_type(memory_properties, memory_requirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+        .memoryTypeIndex = Buffers::find_memory_type(memory_properties, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memory_requirements.memoryTypeBits)
     };
 
     VkDeviceMemory buffer_memory = VK_NULL_HANDLE;

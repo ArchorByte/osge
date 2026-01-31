@@ -18,8 +18,9 @@
     Note: You should use the pre-made class to handle the texture image buffers rather than directly using this function for memory safety reasons.
 
     Tasks:
-        1) Verify the function parameters.
-        2) Create a buffer for each texture image in which we put the texture image data.
+        1) Verify function parameters.
+        2) Create a buffer for each texture image.
+        3) Insert the texture image data into the buffers.
 
     Parameters:
         - logical_device     / VkDevice                 / Logical device of the Vulkan instance.
@@ -31,8 +32,8 @@
 */
 std::vector<Buffer> Buffers::create_texture_image_buffers
 (
-    const VkDevice &logical_device,
-    const VkPhysicalDevice &physical_device,
+    const VkDevice                      &logical_device,
+    const VkPhysicalDevice              &physical_device,
     const std::vector<TextureImageInfo> &texture_image_info
 )
 {
@@ -97,8 +98,9 @@ std::vector<Buffer> Buffers::create_texture_image_buffers
     Destroy some texture image buffers.
 
     Tasks:
-        1) Verify the function parameters.
+        1) Verify function parameters.
         2) Destroy all valid texture image buffers.
+        3) Set objects to null.
 
     Parameters:
         - logical_device        / VkDevice       / Logical device of the Vulkan instance.
@@ -109,7 +111,7 @@ std::vector<Buffer> Buffers::create_texture_image_buffers
 */
 void Buffers::destroy_texture_image_buffers
 (
-    const VkDevice &logical_device,
+    const VkDevice      &logical_device,
     std::vector<Buffer> &texture_image_buffers
 )
 {
@@ -152,6 +154,9 @@ void Buffers::destroy_texture_image_buffers
         }
 
         Buffers::destroy_buffer(buffer, buffer_memory, logical_device);
+        buffer_data.buffer = VK_NULL_HANDLE;
+        buffer_data.buffer_memory = VK_NULL_HANDLE;
+
         Utils::Logs::log("- Texture image buffer #" + std::to_string(i) + "/" + std::to_string(texture_image_buffers.size()) + " destroyed successfully!");
     }
 
@@ -168,8 +173,8 @@ void Buffers::destroy_texture_image_buffers
 
 Buffers::texture_image_buffers_handler::texture_image_buffers_handler
 (
-    const VkDevice &logical_device,
-    const VkPhysicalDevice &physical_device,
+    const VkDevice                      &logical_device,
+    const VkPhysicalDevice              &physical_device,
     const std::vector<TextureImageInfo> &texture_image_info
 )
     : logical_device(logical_device)

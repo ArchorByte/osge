@@ -9,7 +9,7 @@
     Copy the data of a buffer to another one.
 
     Tasks:
-        1) Verify the function parameters.
+        1) Verify function parameters.
         2) Create a temporary command buffer to transfer the data.
         3) Select the copy region (what we want to copy, in this function, the whole buffer).
         4) Copy the data from the source buffer to the destination one.
@@ -17,7 +17,7 @@
 
     Parameters:
         - buffer_size        / VkDeviceSize  / Size of the source buffer.
-        - command_pool       / VkCommandPool / Handles the memory allocation of the command buffers.
+        - command_pool       / VkCommandPool / Handles memory allocation of command buffers.
         - destination_buffer / VkBuffer      / Buffer in which we will put the source buffer data.
         - graphics_queue     / VkQueue       / Handles all graphics commands and calls.
         - logical_device     / VkDevice      / Logical device of the Vulkan instance.
@@ -28,12 +28,12 @@
 */
 void Buffers::copy_buffer_data
 (
-    const VkDeviceSize &buffer_size,
+    const VkDeviceSize  &buffer_size,
     const VkCommandPool &command_pool,
-    const VkBuffer &destination_buffer,
-    const VkQueue &graphics_queue,
-    const VkDevice &logical_device,
-    const VkBuffer &source_buffer
+    const VkBuffer      &destination_buffer,
+    const VkQueue       &graphics_queue,
+    const VkDevice      &logical_device,
+    const VkBuffer      &source_buffer
 )
 {
     Utils::Logs::log("Copying data from the " + Utils::Text::get_memory_address(source_buffer) + " buffer to the " + Utils::Text::get_memory_address(destination_buffer) + " buffer..");
@@ -58,6 +58,11 @@ void Buffers::copy_buffer_data
 
     VkCommandBuffer command_buffer = Buffers::create_one_time_command_buffer(command_pool, logical_device);
 
+    /*
+        srcOffset / Defines the starting position for reading.
+        dstOffset / Defines the starting position for writing.
+        size      / Amount of bytes to copy.
+    */
     const VkBufferCopy copy_region
     {
         .srcOffset = 0,
@@ -84,7 +89,7 @@ void Buffers::copy_buffer_data
         5) End the command buffer.
 
     Parameters:
-        - command_pool       / VkCommandPool    / Handles the memory allocation of the command buffers.
+        - command_pool       / VkCommandPool    / Handles memory allocation of the command buffers.
         - graphics_queue     / VkQueue          / Handles all graphics commands and calls.
         - logical_device     / VkDevice         / Logical device of the Vulkan instance.
         - source_buffer      / VkBuffer         / Source buffer that we will copy the data from.
@@ -96,11 +101,11 @@ void Buffers::copy_buffer_data
 */
 void Buffers::copy_buffer_to_texture_image
 (
-    const VkCommandPool &command_pool,
-    const VkQueue &graphics_queue,
-    const VkDevice &logical_device,
-    const VkBuffer &source_buffer,
-    const VkImage &texture_image,
+    const VkCommandPool    &command_pool,
+    const VkQueue          &graphics_queue,
+    const VkDevice         &logical_device,
+    const VkBuffer         &source_buffer,
+    const VkImage          &texture_image,
     const TextureImageInfo &texture_image_info
 )
 {
@@ -132,6 +137,18 @@ void Buffers::copy_buffer_to_texture_image
     const uint32_t image_width = static_cast<uint32_t>(texture_image_info.width);
     const uint32_t image_height = static_cast<uint32_t>(texture_image_info.height);
 
+    /*
+        bufferOffset         / Defines the starting position for reading.
+        bufferRowLength      / Defines how many texels per row. Here, we set "0" to force Vulkan to use the image width.
+        bufferImageHeight    / Defines the "height" of the buffer memory. Here, we set "0" to force Vulkan to use the image height.
+        imageSubresource     / Defines which part of the image we want to copy.
+            - aspectMask     / Defines which aspect of the image we want to copy.
+            - mipLevel       / Defines which mip level we want to copy.
+            - baseArrayLayer / Defines the starting layer.
+            - layerCount     / Defines how many layers we want to copy.
+        imageOffset          / Defines the starting position for writing.
+        imageExtent          / Defines the image resolution and depth.
+    */
     VkBufferImageCopy copy_region
     {
         .bufferOffset = 0,
