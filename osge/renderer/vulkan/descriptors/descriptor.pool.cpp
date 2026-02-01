@@ -1,6 +1,8 @@
 #include "vulkan.descriptors.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
+
 #include <string>
 #include <vector>
 
@@ -13,12 +15,12 @@
     Note: You should use the pre-made class to handle the descriptor pool rather than directly using this function for memory safety reasons.
 
     Tasks:
-        1) Verify the parameters.
-        2) Make the pool sizes.
+        1) Verify function parameters.
+        2) Make pool sizes.
         3) Create the descriptor pool.
 
     Parameters:
-        - image_count         / uint32_t / Amount of descriptors to make.
+        - image_count         / uint32_t / Defines the maximum amount of descriptor sets that we can create with this pool.
         - logical_device      / VkDevice / Logical device of the Vulkan instance.
         - texture_image_count / uint32_t / Amount of texture images to work with.
 
@@ -43,13 +45,23 @@ VkDescriptorPool Descriptors::create_descriptor_pool
     if (texture_image_count < 1)
         Utils::Logs::crash_error_log("Descriptor pool creation failed! The texture images count provided (" + std::to_string(texture_image_count) + ") is not valid!");
 
+    /*
+        - type            / Defines the type of the structure.
+        - descriptorCount / Defines the maximum amount of descriptors that we can handle.
+    */
     std::vector<VkDescriptorPoolSize> pool_sizes(2);
     pool_sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     pool_sizes[0].descriptorCount = static_cast<uint32_t>(image_count);
     pool_sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     pool_sizes[1].descriptorCount = static_cast<uint32_t>(image_count * texture_image_count);
 
-    const VkDescriptorPoolCreateInfo creation_info
+    /*
+        - sType         / Defines the type of the structure.
+        - maxSets       / Defines the maximum amount of descriptor sets that we can handle.
+        - poolSizeCount / Defines the amount of pool sizes to pass.
+        - pPoolSizes    / Passes the pool sizes.
+    */
+    const VkDescriptorPoolCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
         .maxSets = static_cast<uint32_t>(image_count),
@@ -58,7 +70,7 @@ VkDescriptorPool Descriptors::create_descriptor_pool
     };
 
     VkDescriptorPool descriptor_pool = VK_NULL_HANDLE;
-    const VkResult pool_creation = vkCreateDescriptorPool(logical_device, &creation_info, nullptr, &descriptor_pool);
+    const VkResult pool_creation = vkCreateDescriptorPool(logical_device, &create_info, nullptr, &descriptor_pool);
 
     if (pool_creation != VK_SUCCESS)
         Utils::Logs::crash_error_log("Descriptor pool creation returned error code " + std::to_string(pool_creation) + ".");
@@ -73,9 +85,9 @@ VkDescriptorPool Descriptors::create_descriptor_pool
     Cleanly destroy a descriptor pool.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Destroy the descriptor pool.
-        3) Get rid of the objects memory addresses.
+        3) Set object to null.
 
     Parameters:
         - descriptor_pool / VkDescriptorPool / Descriptor pool to destroy.
@@ -87,7 +99,7 @@ VkDescriptorPool Descriptors::create_descriptor_pool
 void Descriptors::destroy_descriptor_pool
 (
     VkDescriptorPool &descriptor_pool,
-    const VkDevice &logical_device
+    const VkDevice   &logical_device
 )
 {
     Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(descriptor_pool) + " descriptor pool..");

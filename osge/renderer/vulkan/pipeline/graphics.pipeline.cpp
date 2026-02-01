@@ -57,16 +57,6 @@ VkPipeline Pipeline::create_graphics_pipeline
     if (render_pass == VK_NULL_HANDLE)
         Utils::Logs::crash_error_log("Graphics pipeline creation failed! The render pass provided (" + Utils::Text::get_memory_address(render_pass) + ") is not valid!");
 
-    const VkPipelineDepthStencilStateCreateInfo depth_stencil
-    {
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-        .depthTestEnable = VK_TRUE,
-        .depthWriteEnable = VK_TRUE,
-        .depthCompareOp = VK_COMPARE_OP_LESS,
-        .depthBoundsTestEnable = VK_FALSE,
-        .stencilTestEnable = VK_FALSE
-    };
-
     const VkGraphicsPipelineCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,

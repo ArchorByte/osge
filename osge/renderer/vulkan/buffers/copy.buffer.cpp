@@ -138,16 +138,16 @@ void Buffers::copy_buffer_to_texture_image
     const uint32_t image_height = static_cast<uint32_t>(texture_image_info.height);
 
     /*
-        bufferOffset         / Defines the starting position for reading.
-        bufferRowLength      / Defines how many texels per row. Here, we set "0" to force Vulkan to use the image width.
-        bufferImageHeight    / Defines the "height" of the buffer memory. Here, we set "0" to force Vulkan to use the image height.
-        imageSubresource     / Defines which part of the image we want to copy.
-            - aspectMask     / Defines which aspect of the image we want to copy.
-            - mipLevel       / Defines which mip level we want to copy.
-            - baseArrayLayer / Defines the starting layer.
-            - layerCount     / Defines how many layers we want to copy.
-        imageOffset          / Defines the starting position for writing.
-        imageExtent          / Defines the image resolution and depth.
+        - bufferOffset         / Defines the starting position for reading.
+        - bufferRowLength      / Defines how many texels per row. Here, we set "0" to force Vulkan to use the image width.
+        - bufferImageHeight    / Defines the "height" of the buffer memory. Here, we set "0" to force Vulkan to use the image height.
+        - imageSubresource     / Defines which part of the image we want to copy.
+            - aspectMask       / Defines which aspect of the image we want to copy.
+            - mipLevel         / Defines which mip level we want to copy.
+            - baseArrayLayer   / Defines the starting layer.
+            - layerCount       / Defines how many layers we want to copy.
+        - imageOffset          / Defines the starting position for writing.
+        - imageExtent          / Defines the image resolution and depth.
     */
     VkBufferImageCopy copy_region
     {

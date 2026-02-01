@@ -43,7 +43,7 @@ std::vector<VkCommandBuffer> Buffers::create_command_buffers
     std::vector<VkCommandBuffer> command_buffers(images_count);
 
     /*
-        - sType              / Defines the type of the structure. Here, we define it as a command buffer allocate info.
+        - sType              / Defines the type of the structure.
         - commandPool        / Defines which command pool we are going to use.
         - level              / Defines the level of the command buffers: primary or secondary.
         - commandBufferCount / Amount of command buffers to make.
@@ -98,7 +98,7 @@ VkCommandBuffer Buffers::create_one_time_command_buffer
         Utils::Logs::crash_error_log("One time command buffer creation failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
 
     /*
-        - sType              / Defines the type of the structure. Here, we define it as a command buffer allocate info.
+        - sType              / Defines the type of the structure.
         - commandPool        / Defines which command pool we are going to use.
         - level              / Defines the level of the command buffer: primary or secondary.
         - commandBufferCount / Amount of command buffers to make.
@@ -118,7 +118,7 @@ VkCommandBuffer Buffers::create_one_time_command_buffer
         Utils::Logs::crash_error_log("One time command buffer creation failed! Command buffer allocation returned error code " + std::to_string(buffer_allocation) + ".");
 
     /*
-        - sType / Defines the type of the structure. Here, we define it as a command buffer begin info.
+        - sType / Defines the type of the structure.
         - flags / Defines to Vulkan what we are going to do with this command buffer.
     */
     const VkCommandBufferBeginInfo begin_info
@@ -261,7 +261,7 @@ void Buffers::record_command_buffer_and_draw
     }
 
     /*
-        sType / Defines the type of the structure. Here, we define it as a command buffer begin info.
+        sType / Defines the type of the structure.
     */
     VkCommandBufferBeginInfo buffer_begin_info
     {
@@ -283,14 +283,14 @@ void Buffers::record_command_buffer_and_draw
     clear_values[1].depthStencil = { 1.0f, 0 };
 
     /*
-        sType           / Defines the type of the structure. Here, we define it as render pass begin info.
-        renderPass      / Defines which render pass we are going to start.
-        framebuffer     / Defines which frame buffer we are going to work with.
-        renderArea      / Defines the area where the render pass is going to work.
-            - offset    / Defines the (x;y) starting position for the render pass.
-            - extent    / Defines the resolution of the render pass. In this case, we use the swap chain resolution.
-        clearValueCount / Amount of clear values to pass.
-        pClearValues    / Passes the clear values.
+        - sType           / Defines the type of the structure.
+        - renderPass      / Defines which render pass we are going to start.
+        - framebuffer     / Defines which frame buffer we are going to work with.
+        - renderArea      / Defines the area where the render pass is going to work.
+            - offset      / Defines the (x;y) starting position for the render pass.
+            - extent      / Defines the resolution of the render pass. In this case, we use the swap chain resolution.
+        - clearValueCount / Amount of clear values to pass.
+        - pClearValues    / Passes the clear values.
     */
     const VkRenderPassBeginInfo pass_begin_info
     {

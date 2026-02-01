@@ -1,6 +1,8 @@
 #include "vulkan.core.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
+
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
 
@@ -13,12 +15,12 @@
     Note: You should use the pre-made class to handle the Vulkan surface rather than directly using this function for memory safety reasons.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Create the Vulkan surface.
 
     Parameters:
-        - vulkan_instance / VkInstance  / Instance of Vulkan.
-        - window          / SDL_Window* / Targeted window.
+        - vulkan_instance / VkInstance  / Current instance of Vulkan.
+        - window          / SDL_Window* / Window of the game.
 
     Returns:
         The created Vulkan surface.
@@ -53,12 +55,12 @@ VkSurfaceKHR Core::create_vulkan_surface
     Destroy a Vulkan surface.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Destroy the Vulkan surface.
-        3) Get rid of the object memory address.
+        3) Set object to null.
 
     Parameters:
-        - vulkan_instance / VkInstance   / Instance of Vulkan.
+        - vulkan_instance / VkInstance   / Current instance of Vulkan.
         - vulkan_surface  / VkSurfaceKHR / Vulkan surface to destroy.
 
     Returns:

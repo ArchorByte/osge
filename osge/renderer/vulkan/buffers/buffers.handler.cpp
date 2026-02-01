@@ -45,7 +45,7 @@ void Buffers::create_buffer
         Utils::Logs::crash_error_log("Buffer creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
 
     /*
-        - sType       / Defines the type of the structure. Here, we declare this structure as a buffer create info.
+        - sType       / Defines the type of the structure.
         - size        / Size of the buffer to create.
         - usage       / Defines what we are going to do with this buffer.
         - sharingMode / Defines if this buffer may be shared or not. In this case, we set it as not sharable.

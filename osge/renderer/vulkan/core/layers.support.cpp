@@ -9,12 +9,12 @@
     Check if some requested layers are supported by the device.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Register all available layers.
-        3) Verify the requested layers are within the supported layers list.
+        3) Verify if the requested layers are within the supported layers list.
 
     Parameters:
-        - layers / vector<const char*> / Requested layers to check.
+        - layers / vector<const char*> / Layers to check.
 
     Returns:
         A boolean that either confirms the layers are supported or not.

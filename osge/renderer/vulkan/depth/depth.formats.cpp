@@ -1,6 +1,8 @@
 #include "vulkan.depth.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
+
 #include <string>
 #include <vector>
 
@@ -8,11 +10,11 @@
     Find and return the depth format.
 
     Tasks:
-        1) Verify the parameters.
-        2) Find a format that handles the depth format properties.
+        1) Verify function parameters.
+        2) Find a format that handles depth format properties.
 
     Parameters:
-        - physical_device / VkPhysicalDevice / Physical device used to run Vulkan.
+        - physical_device / VkPhysicalDevice / Physical device used to run this Vulkan instance.
 
     Returns:
         The depth format.

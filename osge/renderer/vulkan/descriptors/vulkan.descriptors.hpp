@@ -1,8 +1,9 @@
 #ifndef VULKAN_DESCRIPTORS_HPP
 #define VULKAN_DESCRIPTORS_HPP
 
+#include "libraries/vulkan/vulkan.h"
 #include "osge/renderer/vulkan/buffers/vulkan.buffers.hpp"
-#include <libraries/vulkan/vulkan.h>
+
 #include <vector>
 
 namespace Descriptors
@@ -25,7 +26,7 @@ namespace Descriptors
     void destroy_descriptor_pool
     (
         VkDescriptorPool &descriptor_pool,
-        const VkDevice &logical_device
+        const VkDevice   &logical_device
     );
 
     /////////////////////////////////////
@@ -34,14 +35,14 @@ namespace Descriptors
 
     VkDescriptorSetLayout create_descriptor_set_layout
     (
-        const VkDevice &logical_device,
+        const VkDevice                 &logical_device,
         const std::vector<VkImageView> &texture_image_views
     );
 
     void destroy_descriptor_set_layout
     (
         VkDescriptorSetLayout &descriptor_set_layout,
-        const VkDevice &logical_device
+        const VkDevice        &logical_device
     );
 
     ///////////////////////////////
@@ -50,20 +51,20 @@ namespace Descriptors
 
     std::vector<VkDescriptorSet> create_descriptor_sets
     (
-        const VkDescriptorSetLayout &descriptor_set_layout,
-        const VkDescriptorPool &descriptor_pool,
-        const uint32_t &image_count,
-        const VkDevice &logical_device,
-        const std::vector<VkImageView> &texture_image_views,
-        const VkSampler &texture_sampler,
+        const VkDescriptorSetLayout          &descriptor_set_layout,
+        const VkDescriptorPool               &descriptor_pool,
+        const uint32_t                       &image_count,
+        const VkDevice                       &logical_device,
+        const std::vector<VkImageView>       &texture_image_views,
+        const VkSampler                      &texture_sampler,
         const std::vector<UniformBufferInfo> &uniform_buffers
     );
 
     void destroy_descriptor_sets
     (
-        const VkDescriptorPool &descriptor_pool,
+        const VkDescriptorPool       &descriptor_pool,
         std::vector<VkDescriptorSet> &descriptor_sets,
-        const VkDevice &logical_device
+        const VkDevice               &logical_device
     );
 
     /////////////////////////////////////////////////
@@ -104,7 +105,7 @@ namespace Descriptors
         public:
             descriptor_set_layout_handler
             (
-                const VkDevice &logical_device,
+                const VkDevice                 &logical_device,
                 const std::vector<VkImageView> &texture_image_views
             );
 
@@ -128,12 +129,12 @@ namespace Descriptors
         public:
             descriptor_sets_handler
             (
-                const VkDescriptorSetLayout &descriptor_set_layout,
-                const VkDescriptorPool &descriptor_pool,
-                const uint32_t &image_count,
-                const VkDevice &logical_device,
-                const std::vector<VkImageView> &texture_image_views,
-                const VkSampler &texture_sampler,
+                const VkDescriptorSetLayout          &descriptor_set_layout,
+                const VkDescriptorPool               &descriptor_pool,
+                const uint32_t                       &image_count,
+                const VkDevice                       &logical_device,
+                const std::vector<VkImageView>       &texture_image_views,
+                const VkSampler                      &texture_sampler,
                 const std::vector<UniformBufferInfo> &uniform_buffers
             );
 

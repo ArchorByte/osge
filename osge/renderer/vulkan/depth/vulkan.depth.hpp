@@ -1,7 +1,7 @@
 #ifndef VULKAN_DEPTH_HPP
 #define VULKAN_DEPTH_HPP
 
-#include <libraries/vulkan/vulkan.h>
+#include "libraries/vulkan/vulkan.h"
 #include <vector>
 
 ///////////////////////////////////////////////////
@@ -10,9 +10,9 @@
 
 struct DepthResources
 {
-    VkImage depth_image;
+    VkImage        depth_image;
     VkDeviceMemory image_memory;
-    VkImageView image_view;
+    VkImageView    image_view;
 };
 
 ///////////////////////////////////////////////////
@@ -31,7 +31,7 @@ namespace Depth
 
     VkAttachmentDescription create_depth_attachment
     (
-        const VkPhysicalDevice &physical_device,
+        const VkPhysicalDevice      &physical_device,
         const VkSampleCountFlagBits &samples_count
     );
 
@@ -44,17 +44,17 @@ namespace Depth
         const VkPhysicalDevice &physical_device
     );
 
-    /////////////////////////////
+    ///////////////////////////////
     ///// depth.resources.cpp /////
-    /////////////////////////////
+    ///////////////////////////////
 
     DepthResources create_depth_resources
     (
-        const VkCommandPool &command_pool,
-        const VkExtent2D &extent,
-        const VkQueue &graphics_queue,
-        const VkDevice &logical_device,
-        const VkPhysicalDevice &physical_device,
+        const VkCommandPool         &command_pool,
+        const VkExtent2D            &extent,
+        const VkQueue               &graphics_queue,
+        const VkDevice              &logical_device,
+        const VkPhysicalDevice      &physical_device,
         const VkSampleCountFlagBits &samples_count
     );
 
@@ -63,6 +63,12 @@ namespace Depth
         DepthResources &depth_resources,
         const VkDevice &logical_device
     );
+
+    /////////////////////////////
+    ///// depth.stencil.cpp /////
+    /////////////////////////////
+
+    VkPipelineDepthStencilStateCreateInfo create_depth_stencil();
 
     ///////////////////////////////////////////////
     //////////////////// Class ////////////////////
@@ -73,11 +79,11 @@ namespace Depth
         public:
             depth_resources_handler
             (
-                const VkCommandPool &command_pool,
-                const VkExtent2D &extent,
-                const VkQueue &graphics_queue,
-                const VkDevice &logical_device,
-                const VkPhysicalDevice &physical_device,
+                const VkCommandPool         &command_pool,
+                const VkExtent2D            &extent,
+                const VkQueue               &graphics_queue,
+                const VkDevice              &logical_device,
+                const VkPhysicalDevice      &physical_device,
                 const VkSampleCountFlagBits &samples_count
             );
 

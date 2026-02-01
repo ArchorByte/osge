@@ -65,7 +65,7 @@ std::vector<VkFramebuffer> Buffers::create_frame_buffers
         const std::array<VkImageView, 3> attachments = { color_image_view, depth_image_view, image_views[i] };
 
         /*
-            - sType           / Define of the type of the structure. Here, we declare this structure as a frame buffer create info.
+            - sType           / Define of the type of the structure.
             - renderPass      / Define which render pass the frame buffer will be working with.
             - attachmentCount / Amount of attachments to pass.
             - pAttachments    / Pass the attachments to use. In this case, we pass the color image view, depth image view and all swap chain image views as attachments.

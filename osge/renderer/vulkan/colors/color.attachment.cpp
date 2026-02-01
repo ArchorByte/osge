@@ -25,14 +25,14 @@ VkAttachmentDescription Colors::create_color_attachment
     Utils::Logs::log("Creating a color attachment description..");
 
     /*
-        format         / Defines the format of the image view that will be used for the attachment.
-        samples        / Defines how many samples we are going to use for the image. Enables multisampling.
-        loadOp         / Defines how the content of the attachment will be used by the subpass. Here, we forces the render area to be cleared.
-        storeOp        / Defines what happens to the content of the attachment once the subpass ended. Here, we just ignore the content.
-        stencilLoadOp  / Defines how the content of the stencil components will be used by the subpass. Here, we just ignore the previous data and overwrite it.
-        stencilStoreOp / Defines what happens to the content of the stencil components once the subpass ended. Here, we just ignore the content.
-        initialLayout  / Defines the initial layout of the attachment.
-        finalLayout    / Defines the layout to transition to once the render pass ended.
+        - format         / Defines the format of the image view that will be used for the attachment.
+        - samples        / Defines how many samples we are going to use for the image. Enables multisampling.
+        - loadOp         / Defines how the content of the attachment will be used by the subpass. Here, we forces the render area to be cleared.
+        - storeOp        / Defines what happens to the content of the attachment once the subpass ended. Here, we just ignore the content.
+        - stencilLoadOp  / Defines how the content of the stencil components will be used by the subpass. Here, we just ignore the previous data and overwrite it.
+        - stencilStoreOp / Defines what happens to the content of the stencil components once the subpass ended. Here, we just ignore the content.
+        - initialLayout  / Defines the initial layout of the attachment.
+        - finalLayout    / Defines the layout to transition to once the render pass ended.
     */
     const VkAttachmentDescription attachment
     {

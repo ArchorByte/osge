@@ -1,9 +1,11 @@
 #include "vulkan.core.hpp"
+
 #include "config/game.config.hpp"
 #include "config/engine.config.hpp"
 #include "config/engine.version.hpp"
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
+
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
 #include <vector>
@@ -17,7 +19,7 @@
     Note: You should use the pre-made class to handle the Vulkan instance rather than directly using this function for memory safety reasons.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Retrieve and enable all required SDL3 extensions.
         3) Create the Vulkan instance.
 
@@ -48,6 +50,14 @@ VkInstance Core::create_vulkan_instance
     const int engine_version_minor = EngineVersion::ENGINE_VERSION_MINOR;
     const int engine_version_patch = EngineVersion::ENGINE_VERSION_PATCH;
 
+    /*
+        - sType              / Defines the type of the structure.
+        - pApplicationName   / Defines the name of the application. We use the game name defined in the game.config.hpp file.
+        - applicationVersion / Defines the version of the application. We use the game version numbers defined in the game.config.hpp file.
+        - pEngineName        / Defines the name of the game engine.
+        - engineVersion      / Defines the version of the game engine.
+        - apiVersion         / Defines the version of the Vulkan API we are using.
+    */
     const VkApplicationInfo app_info
     {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -55,7 +65,7 @@ VkInstance Core::create_vulkan_instance
         .applicationVersion = VK_MAKE_API_VERSION(game_version_variant, game_version_major, game_version_minor, game_version_patch),
         .pEngineName = "OSGE - Open Source Game Engine",
         .engineVersion = VK_MAKE_API_VERSION(engine_version_variant, engine_version_major, engine_version_minor, engine_version_patch),
-        .apiVersion = VK_API_VERSION_1_4 // We use Vulkan 1.4.XXX.
+        .apiVersion = VK_API_VERSION_1_4
     };
 
     Uint32 extensions_count = 0;
@@ -64,6 +74,14 @@ VkInstance Core::create_vulkan_instance
     if (!extensions_list || !extensions_count)
         Utils::Logs::crash_error_log("Vulkan instance creation failed! Failed to retrieve the required SDL3 extensions!");
 
+    /*
+        - sType                   / Defines the type of the structure.
+        - pApplicationInfo        / Provides some information about the application.
+        - enabledLayerCount       / Amount of layers to enable.
+        - ppEnabledLayerNames     / Passes the name of all layers to enable.
+        - enabledExtensionCount   / Amount of extensions to enable.
+        - ppEnabledExtensionNames / Passes the name of all extensions to enable.
+    */
     const VkInstanceCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
@@ -90,9 +108,9 @@ VkInstance Core::create_vulkan_instance
     Destroy a Vulkan instance.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Destroy the Vulkan instance.
-        3) Get rid of the object memory address.
+        3) Set object to null.
 
     Parameters:
         - vulkan_instance / VkInstance / Vulkan instance to destroy.

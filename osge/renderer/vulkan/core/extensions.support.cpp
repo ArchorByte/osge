@@ -1,6 +1,8 @@
 #include "vulkan.core.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
+
 #include <set>
 #include <string>
 #include <vector>
@@ -9,14 +11,14 @@
     Check if some requested extensions are supported by the device.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Register all available extensions.
         3) Convert the extensions name from char to string.
-        4) Verify the requested extensions are supported, and display all unsupported extensions if there are any.
+        4) Verify if the requested extensions are supported, and display all unsupported extensions if there are any.
 
     Parameters:
-        - physical_device     / VkPhysicalDevice     / Physical device used to run Vulkan.
-        - required_extensions / vector<const char *> / Requested extensions to check.
+        - physical_device     / VkPhysicalDevice     / Physical device used to run this Vulkan instance.
+        - required_extensions / vector<const char *> / Extensions to check.
 
     Returns:
         A boolean that either confirms the extensions are supported or not.

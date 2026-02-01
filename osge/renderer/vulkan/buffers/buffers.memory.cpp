@@ -78,7 +78,7 @@ VkDeviceMemory Buffers::allocate_buffer_memory
     vkGetPhysicalDeviceMemoryProperties(physical_device, &memory_properties);
 
     /*
-        - sType           / Defines the type of the structure. Here, we define it as a memory allocate info.
+        - sType           / Defines the type of the structure.
         - allocationSize  / Amount of bytes to allocate.
         - memoryTypeIndex / Index identifying a memory type from the memory properties.
     */

@@ -1,42 +1,44 @@
 #include "vulkan.depth.hpp"
-#include "osge/renderer/vulkan/images/vulkan.images.hpp"
+
+#include "libraries/vulkan/vulkan.h"
+#include "osge/renderer/vulkan/vulkan.renderer.hpp"
 #include "osge/utils/utils.hpp"
+
 #include <utility>
-#include <vulkan/vulkan.h>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
 ///////////////////////////////////////////////////
 
 /*
-    Create the depth image, depth image memory and depth image view.
+    Create depth image, depth image memory and depth image view.
     Note: You should use the pre-made class to handle the depth resources rather than directly using this function for memory safety reasons.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Get the depth format.
         3) Create the depth image (image + image memory).
         4) Create the depth image view.
         5) Change the image layout from undefined to VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL.
 
     Parameters:
-        - command_pool    / VkCommandPool         / Command pool of the Vulkan instance.
+        - command_pool    / VkCommandPool         / Handles memory allocation of command buffers.
         - extent          / VkExtent2D            / Resolution of the swap chain.
-        - graphics_queue  / VkQueue               / Graphics queue of the Vulkan instance.
+        - graphics_queue  / VkQueue               / Handles all graphics commands and calls.
         - logical_device  / VkDevice              / Logical device of the Vulkan instance.
-        - physical_device / VkPhysicalDevice      / Physical device used to run Vulkan.
+        - physical_device / VkPhysicalDevice      / Physical device used to run this Vulkan instance.
         - samples_count   / VkSampleCountFlagBits / Amount of samples to render at the same time for multisampling.
 
     Returns:
-        The created depth resources.
+        All created depth resources.
 */
 DepthResources Depth::create_depth_resources
 (
-    const VkCommandPool &command_pool,
-    const VkExtent2D &extent,
-    const VkQueue &graphics_queue,
-    const VkDevice &logical_device,
-    const VkPhysicalDevice &physical_device,
+    const VkCommandPool         &command_pool,
+    const VkExtent2D            &extent,
+    const VkQueue               &graphics_queue,
+    const VkDevice              &logical_device,
+    const VkPhysicalDevice      &physical_device,
     const VkSampleCountFlagBits &samples_count
 )
 {
@@ -66,11 +68,11 @@ DepthResources Depth::create_depth_resources
 
 
 /*
-    Cleanly destroy the depth resources.
+    Destroy depth resources.
 
     Tasks:
-        1) Verify the parameters.
-        2) Destroy the objects and get rid their memory addresses if possible.
+        1) Verify function parameters.
+        2) Set objects to null.
 
     Parameters:
         - depth_resources / DepthResources / Depth resources to destroy.
@@ -130,11 +132,11 @@ void Depth::destroy_depth_resources
 
 Depth::depth_resources_handler::depth_resources_handler
 (
-    const VkCommandPool &command_pool,
-    const VkExtent2D &extent,
-    const VkQueue &graphics_queue,
-    const VkDevice &logical_device,
-    const VkPhysicalDevice &physical_device,
+    const VkCommandPool         &command_pool,
+    const VkExtent2D            &extent,
+    const VkQueue               &graphics_queue,
+    const VkDevice              &logical_device,
+    const VkPhysicalDevice      &physical_device,
     const VkSampleCountFlagBits &samples_count
 )
     : logical_device(logical_device)

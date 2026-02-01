@@ -1,6 +1,8 @@
 #include "vulkan.descriptors.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
+
 #include <string>
 #include <vector>
 
@@ -13,20 +15,20 @@
     Note: You should use the pre-made class to handle the descriptor set layout rather than directly using this function for memory safety reasons.
 
     Tasks:
-        1) Verify the parameters.
-        2) Make the bindings for the shaders.
+        1) Verify function parameters.
+        2) Make bindings for the shaders.
         3) Create the descriptor set layout.
 
     Parameters:
         - logical_device      / VkDevice            / Logical device of the Vulkan instance.
-        - texture_image_views / vector<VkImageView> / Image views of the textures.
+        - texture_image_views / vector<VkImageView> / Describes how to access and treat the texture images.
 
     Returns:
         The created descriptor set layout.
 */
 VkDescriptorSetLayout Descriptors::create_descriptor_set_layout
 (
-    const VkDevice &logical_device,
+    const VkDevice                 &logical_device,
     const std::vector<VkImageView> &texture_image_views
 )
 {
@@ -38,14 +40,26 @@ VkDescriptorSetLayout Descriptors::create_descriptor_set_layout
     if (texture_image_views.size() < 1)
         Utils::Logs::crash_error_log("Descriptor set layout creation failed! No texture image views provided!");
 
+    /*
+        - binding         / Defines the number identifying this binding.
+        - descriptorType  / Defines which type of resource descriptors are used for the binding. Here, it's for uniform buffers.
+        - descriptorCount / Defines the amount of descriptors in the binding.
+        - stageFlags      / Defines which shader stage can access to this binding.
+    */
     const VkDescriptorSetLayoutBinding uniform_buffer_binding
     {
-        .binding = 0, // Index in the shader.
+        .binding = 0,
         .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
         .descriptorCount = 1,
         .stageFlags = VK_SHADER_STAGE_VERTEX_BIT
     };
 
+    /*
+        - binding         / Defines the number identifying this binding.
+        - descriptorType  / Defines which type of resource descriptors are used for the binding. Here, it's for an image sampler.
+        - descriptorCount / Defines the amount of descriptors in the binding.
+        - stageFlags      / Defines which shader stage can access to this binding.
+    */
     const VkDescriptorSetLayoutBinding sampler_binding
     {
         .binding = 1,
@@ -56,6 +70,11 @@ VkDescriptorSetLayout Descriptors::create_descriptor_set_layout
 
     std::vector<VkDescriptorSetLayoutBinding> bindings = { uniform_buffer_binding, sampler_binding };
 
+    /*
+        - sType        / Defines the type of the structure.
+        - bindingCount / Defines the amount of bindings to pass.
+        - pBindings    / Passes the bindings.
+    */
     const VkDescriptorSetLayoutCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
@@ -79,9 +98,9 @@ VkDescriptorSetLayout Descriptors::create_descriptor_set_layout
     Cleanly destroy a descriptor set layout.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Destroy the descriptor set layout.
-        3) Get rid of the objects memory addresses.
+        3) Set object to null.
 
     Parameters:
         - descriptor_set_layout / VkDescriptorSetLayout / Descriptor set layout to destroy.
@@ -93,7 +112,7 @@ VkDescriptorSetLayout Descriptors::create_descriptor_set_layout
 void Descriptors::destroy_descriptor_set_layout
 (
     VkDescriptorSetLayout &descriptor_set_layout,
-    const VkDevice &logical_device
+    const VkDevice        &logical_device
 )
 {
     Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(descriptor_set_layout) + " descriptor set layout..");
@@ -122,7 +141,7 @@ void Descriptors::destroy_descriptor_set_layout
 
 Descriptors::descriptor_set_layout_handler::descriptor_set_layout_handler
 (
-    const VkDevice &logical_device,
+    const VkDevice                 &logical_device,
     const std::vector<VkImageView> &texture_image_views
 )
     : logical_device(logical_device)
