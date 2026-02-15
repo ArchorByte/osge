@@ -1,6 +1,8 @@
 #include "vulkan.devices.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
+
 #include <vector>
 
 ///////////////////////////////////////////////////
@@ -12,23 +14,23 @@
     Note: You should use the pre-made class to handle the logical device rather than directly using this function for memory safety reasons.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Retrieve all physical device features to enable them for simplicity and compatibility reasons.
         3) Create the logical device.
 
     Parameters:
-        - physical_device     / VkPhysicalDevice                / Physical device used to run Vulkan.
-        - queues_create_info  / vector<VkDeviceQueueCreateInfo> / All create info for the queues we are going to create.
-        - required_extensions / vector<const char *>            / List of extensions that we wish to enable.
+        - physical_device     / VkPhysicalDevice                / Physical device used to run this Vulkan instance.
+        - queues_create_info  / vector<VkDeviceQueueCreateInfo> / Information required for queues creation.
+        - required_extensions / vector<const char *>            / List of extensions to enable.
 
     Returns:
         The created logical device.
 */
 VkDevice Devices::create_logical_device
 (
-    const VkPhysicalDevice &physical_device,
+    const VkPhysicalDevice                     &physical_device,
     const std::vector<VkDeviceQueueCreateInfo> &queues_create_info,
-    const std::vector<const char *> &required_extensions
+    const std::vector<const char *>            &required_extensions
 )
 {
     Utils::Logs::log("Creating a logical device..");
@@ -42,6 +44,14 @@ VkDevice Devices::create_logical_device
     VkPhysicalDeviceFeatures device_features { .sampleRateShading = VK_TRUE };
     vkGetPhysicalDeviceFeatures(physical_device, &device_features);
 
+    /*
+        - sType                   / Defines the type of the structure.
+        - queueCreateInfoCount    / Defines the amount of queues create info we are going to pass.
+        - pQueueCreateInfos       / Passes all information about the queues to create.
+        - enabledExtensionCount   / Defines the amount of extensions to enable.
+        - ppEnabledExtensionNames / Passes the name of all extensions to enable.
+        - pEnabledFeatures        / Defines which physical device we have to enable.
+    */
     const VkDeviceCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
@@ -68,9 +78,9 @@ VkDevice Devices::create_logical_device
     Destroy a logical device.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Destroy the logical device.
-        3) Get rid of the object memory address.
+        3) Set object to null.
 
     Parameters:
         - logical_device / VkDevice / The logical device to destroy.
@@ -103,9 +113,9 @@ void Devices::destroy_logical_device
 
 Devices::logical_device_handler::logical_device_handler
 (
-    const VkPhysicalDevice &physical_device,
+    const VkPhysicalDevice                     &physical_device,
     const std::vector<VkDeviceQueueCreateInfo> &queues_create_info,
-    const std::vector<const char *> &required_extensions
+    const std::vector<const char *>            &required_extensions
 )
 {
     logical_device = Devices::create_logical_device(physical_device, queues_create_info, required_extensions);

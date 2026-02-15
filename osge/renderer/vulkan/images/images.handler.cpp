@@ -1,41 +1,46 @@
 #include "vulkan.images.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/renderer/vulkan/vulkan.renderer.hpp"
 #include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
+
 #include <utility>
 
 /*
-    Create an image.
+    Create a Vulkan image.
     Warning: There is no class that will automatically destroy this image, you have to set one up yourself for memory safety reasons.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
+        2) Create Vulkan image.
+        3) Allocate memory to the created image.
+        4) Bind memory and image.
 
     Parameters:
-        - format          / VkFormat              / Format of the image.
-        - height          / int                   / Height of the image.
-        - image_tiling    / VkImageTiling         / Image tiling.
-        - logical_device  / VkDevice              / Logical device of the Vulkan instance.
-        - mip_levels      / uint32_t              / Mip levels used for LOD.
-        - physical_device / VkPhysicalDevice      / Physical device used to run Vulkan.
-        - samples_count   / VkSampleCountFlagBits / Amount of samples to render at the same time for multisampling.
-        - usage_flags     / VkImageUsageFlags     / Usage flags.
-        - width           / int                   / Width of the image.
+        - format          / VkFormat              / Defines the format to use for the image to create.
+        - height          / int                   / Defines the height of the image.
+        - image_tiling    / VkImageTiling         / Defines the tiling arrangement of data for the image.
+        - logical_device  / VkDevice              / Logical device of this Vulkan instance.
+        - mip_levels      / uint32_t              / Mip levels used for Level Of Details (LOD).
+        - physical_device / VkPhysicalDevice      / Physical device used to run this Vulkan instance.
+        - samples_count   / VkSampleCountFlagBits / Amount of samples to use for multisampling.
+        - usage_flags     / VkImageUsageFlags     / Defines to Vulkan what we are going to do with this image.
+        - width           / int                   / Defines the width of the image.
 
     Returns:
         A pair containing the created image and its memory.
 */
 std::pair<VkImage, VkDeviceMemory> Images::create_image
 (
-    const VkFormat &format,
-    const int &height,
-    const VkImageTiling &image_tiling,
-    const VkDevice &logical_device,
-    const uint32_t &mip_levels,
-    const VkPhysicalDevice &physical_device,
+    const VkFormat              &format,
+    const int                   &height,
+    const VkImageTiling         &image_tiling,
+    const VkDevice              &logical_device,
+    const uint32_t              &mip_levels,
+    const VkPhysicalDevice      &physical_device,
     const VkSampleCountFlagBits &samples_count,
-    const VkImageUsageFlags &usage_flags,
-    const int &width
+    const VkImageUsageFlags     &usage_flags,
+    const int                   &width
 )
 {
     if (height < 1)
@@ -53,6 +58,22 @@ std::pair<VkImage, VkDeviceMemory> Images::create_image
     if (width < 1)
         Utils::Logs::crash_error_log("Image creation failed! The image width provided (" + std::to_string(width) + ") is not valid!");
 
+    /*
+        - sType         / Defines the type of the structure.
+        - imageType     / Defines the type of the image to create.
+        - format        / Defines the format to use for the image to create.
+        - extent        / Defines the resolution of the image.
+            - width     / Defines width.
+            - height    / Defines height.
+            - depth     / Defines depth.
+        - mipLevels     / Mip levels used for Level Of Details (LOD).
+        - arrayLayers   / Defines the amount of array layers in the image.
+        - samples       / Defines the amount of samples in the image.
+        - tiling        / Defines the tiling arrangement of data for the image.
+        - usage         / Defines to Vulkan what we are going to do with this image.
+        - sharingMode   / Defines if whether the image is sharable or not between queue families. Here, disallowed.
+        - initialLayout / Defines the first image layout we use.
+    */
     const VkImageCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -85,6 +106,11 @@ std::pair<VkImage, VkDeviceMemory> Images::create_image
     VkMemoryRequirements memory_requirements;
     vkGetImageMemoryRequirements(logical_device, image, &memory_requirements);
 
+    /*
+        - sType           / Defines the type of the structure.
+        - allocationSize  / Amount of bytes to allocate.
+        - memoryTypeIndex / Index identifying a memory type from the memory properties.
+    */
     const VkMemoryAllocateInfo allocation_info
     {
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,

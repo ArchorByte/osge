@@ -1,7 +1,8 @@
 #ifndef VULKAN_DEVICES_HPP
 #define VULKAN_DEVICES_HPP
 
-#include <libraries/vulkan/vulkan.h>
+#include "libraries/vulkan/vulkan.h"
+
 #include <string>
 #include <vector>
 
@@ -13,9 +14,9 @@ namespace Devices
 
     VkDevice create_logical_device
     (
-        const VkPhysicalDevice &physical_device,
+        const VkPhysicalDevice                     &physical_device,
         const std::vector<VkDeviceQueueCreateInfo> &queues_create_info,
-        const std::vector<const char *> &required_extensions
+        const std::vector<const char *>            &required_extensions
     );
 
     void destroy_logical_device
@@ -39,7 +40,7 @@ namespace Devices
 
     VkPhysicalDevice select_physical_device
     (
-        int &selected_gpu,
+        int              &selected_gpu,
         const VkInstance &vulkan_instance
     );
 
@@ -52,9 +53,9 @@ namespace Devices
         public:
             logical_device_handler
             (
-                const VkPhysicalDevice &physical_device,
+                const VkPhysicalDevice                     &physical_device,
                 const std::vector<VkDeviceQueueCreateInfo> &queues_create_info,
-                const std::vector<const char *> &required_extensions
+                const std::vector<const char *>            &required_extensions
             );
 
             ~logical_device_handler();

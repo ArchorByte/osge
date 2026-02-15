@@ -1,6 +1,8 @@
 #include "vulkan.devices.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
+
 #include <string>
 #include <vector>
 
@@ -8,15 +10,15 @@
     Check if a physical device meets our requirements.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Retrieve device information.
-        3) Check if it meets the requirements.
+        3) Check if it meets our requirements.
 
     Parameters:
-        - physical_device / VkPhysicalDevice / Targeted device.
+        - physical_device / VkPhysicalDevice / Physical device that we need to verify.
 
     Returns:
-        A boolean informing whether the device meets the requirements or not.
+        A boolean informing whether the device meets our requirements or not.
 */
 bool Devices::is_valid_physical_device
 (
@@ -45,11 +47,11 @@ bool Devices::is_valid_physical_device
     Get and return the name of a physical device.
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Retrieve the name of the device through its properties.
 
     Parameters:
-        - physical_device / VkPhysicalDevice / Targeted device.
+        - physical_device / VkPhysicalDevice / Physical device to get the name from.
 
     Returns:
         A string containing the physical device name.
@@ -78,20 +80,20 @@ std::string Devices::get_physical_device_name
     Select a physical device that meets our requirements.
 
     Tasks:
-        1) Verify the parameters.
-        2) Get all available physical devices.
-        3) Select a suitable device that corresponds to our requirements.
+        1) Verify function parameters.
+        2) Get a list of all available physical devices.
+        3) Select a suitable device that corresponds to our requirements, and the index requested.
 
     Parameters:
         - selected_device_index / int        / Index of the desired device.
-        - vulkan_instance       / VkInstance / Vulkan instance.
+        - vulkan_instance       / VkInstance / Current vulkan instance.
 
     Returns:
         The selected physical device.
 */
 VkPhysicalDevice Devices::select_physical_device
 (
-    int &selected_device_index,
+    int              &selected_device_index,
     const VkInstance &vulkan_instance
 )
 {
