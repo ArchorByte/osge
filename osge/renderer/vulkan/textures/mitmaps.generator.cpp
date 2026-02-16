@@ -1,78 +1,75 @@
-#include "mitmaps.generator.hpp"
+#include "vulkan.textures.hpp"
 
-#include "../commands/command.buffer.handler.hpp"
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
+#include "libraries/vulkan/vulkan.h"
+#include "osge/renderer/vulkan/vulkan.renderer.hpp"
+#include "osge/utils/utils.hpp"
 
-#include <vulkan/vulkan.h>
 #include <string>
 
-// Generate mitmaps for an image.
+/*
+    Generate mipmaps for a Vulkan image.
+
+    Tasks:
+        1) 
+*/
 void generate_mipmaps
 (
-    const VkDevice &logical_device,
+    const VkCommandPool    &command_pool,
+    const VkQueue          &graphics_queue,
+    const int              &height,
+    const VkImage          &image,
+    const VkFormat         &image_format,
+    const VkDevice         &logical_device,
+    const uint32_t         &mip_levels,
     const VkPhysicalDevice &physical_device,
-    const VkCommandPool &command_pool,
-    const VkQueue &graphics_queue,
-    const VkImage &image,
-    const VkFormat &image_format,
-    const int &width,
-    const int &height,
-    const uint32_t &mip_levels
+    const int              &width
 )
 {
-    if (logical_device == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Mitmaps generation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
-    }
-
-    if (physical_device == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Mitmaps generation failed! The physical device provided (" + force_string(logical_device) + ") is not valid!");
-    }
+    Utils::Logs::log("Generating mipmaps.. ", false);
 
     if (command_pool == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Mitmaps generation failed! The command pool provided (" + force_string(command_pool) + ") is not valid!");
-    }
+        Utils::Logs::crash_log("Failed! Command pool invalid.");
 
     if (graphics_queue == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Mitmaps generation failed! The graphics queue provided (" + force_string(graphics_queue) + ") is not valid!");
-    }
-
-    if (image == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Mitmaps generation failed! The image provided (" + force_string(image) + ") is not valid!");
-    }
-
-    if (width < 1)
-    {
-        fatal_error_log("Mitmaps generation failed! The width provided (" + std::to_string(width) + ") is not valid!");
-    }
+        Utils::Logs::crash_log("Failed! Graphics queue invalid.");
 
     if (height < 1)
-    {
-        fatal_error_log("Mitmaps generation failed! The height provided (" + std::to_string(height) + ") is not valid!");
-    }
+        Utils::Logs::crash_log("Failed! Image height invalid -> " + std::to_string(height) + ".");
+
+    if (image == VK_NULL_HANDLE)
+        Utils::Logs::crash_log("Failed! Image invalid.");
+
+    if (logical_device == VK_NULL_HANDLE)
+        Utils::Logs::crash_log("Failed! Logical device invalid.");
 
     if (mip_levels < 1)
-    {
-        fatal_error_log("Mitmaps generation failed! The mip levels count provided (" + std::to_string(mip_levels) + ") is not valid!");
-    }
+        Utils::Logs::crash_log("Failed! Mip levels count invalid -> " + std::to_string(mip_levels) + ".");
+
+    if (physical_device == VK_NULL_HANDLE)
+        Utils::Logs::crash_log("Failed! Physical device invalid.");
+
+    if (width < 1)
+        Utils::Logs::crash_log("Failed! Image width invalid -> " + std::to_string(width) + ".");
 
     VkFormatProperties format_properties;
     vkGetPhysicalDeviceFormatProperties(physical_device, image_format, &format_properties);
 
-    // Verify linear filtering support.
     if (!(format_properties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT))
-    {
-        fatal_error_log("Mitmaps generation failed! The texture image format doesn't support linear blitting!");
-    }
+        Utils::Logs::crash_log("Failed! Image format does not support linear sampling.");
 
-    VkCommandBuffer command_buffer = begin_one_time_vulkan_command_buffer(logical_device, command_pool);
+    VkCommandBuffer command_buffer = Vulkan::Buffers::create_one_time_command_buffer(command_pool, logical_device);
 
-    // Used for layout transitions between mip levels.
+    /*
+        - sType               / Defines the type of the structure.
+        - srcQueueFamilyIndex / 
+        - dstQueueFamilyIndex / 
+        - image               / 
+        - subresourceRange    / 
+            - aspectMask      / 
+            - levelCount      / 
+            - baseArrayLayer  / 
+            - layerCount      / 
+    */
     VkImageMemoryBarrier barrier
     {
         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -93,26 +90,16 @@ void generate_mipmaps
 
     for (int i = 1; i < mip_levels; i++)
     {
-        // Transition previous mip level.
+        /*
+            
+        */
         barrier.subresourceRange.baseMipLevel = i - 1;
         barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
         barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
         barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
         barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 
-        vkCmdPipelineBarrier
-        (
-            command_buffer,
-            VK_PIPELINE_STAGE_TRANSFER_BIT,
-            VK_PIPELINE_STAGE_TRANSFER_BIT,
-            0,
-            0,
-            nullptr,
-            0,
-            nullptr,
-            1,
-            &barrier
-        );
+        vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
         // Blit operation between mip levels.
         VkImageBlit blit
@@ -141,17 +128,7 @@ void generate_mipmaps
         blit.dstOffsets[0] = { 0, 0, 0 };
         blit.dstOffsets[1] = { mip_width > 1 ? mip_width / 2 : 1, mip_height > 1 ? mip_height / 2 : 1, 1 };
 
-        vkCmdBlitImage
-        (
-            command_buffer,
-            image,
-            VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-            image,
-            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-            1,
-            &blit,
-            VK_FILTER_LINEAR
-        );
+        vkCmdBlitImage(command_buffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &blit, VK_FILTER_LINEAR);
 
         // Transition previous mip level.
         barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
@@ -159,19 +136,7 @@ void generate_mipmaps
         barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
         barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
-        vkCmdPipelineBarrier
-        (
-            command_buffer,
-            VK_PIPELINE_STAGE_TRANSFER_BIT,
-            VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-            0,
-            0,
-            nullptr,
-            0,
-            nullptr,
-            1,
-            &barrier
-        );
+        vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
         // Reduce resolution for the next mip level.
         if (mip_width > 1) mip_width /= 2;
@@ -185,19 +150,8 @@ void generate_mipmaps
     barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
     barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
-    vkCmdPipelineBarrier
-    (
-        command_buffer,
-        VK_PIPELINE_STAGE_TRANSFER_BIT,
-        VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-        0,
-        0,
-        nullptr,
-        0,
-        nullptr,
-        1,
-        &barrier
-    );
+    vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
-    end_command_buffer(logical_device, command_pool, graphics_queue, command_buffer);
+    Vulkan::Buffers::destroy_command_buffer(command_buffer, command_pool, graphics_queue, logical_device);
+    Utils::Logs::log("Done!", true);
 }

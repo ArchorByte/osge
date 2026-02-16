@@ -24,10 +24,10 @@ VkFormat Depth::find_depth_format
     const VkPhysicalDevice &physical_device
 )
 {
-    Utils::Logs::log("Looking for the depth format..");
+    Utils::Logs::log("Looking for depth format.. ", false);
 
     if (physical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Failed to find such format! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Physical device invalid.");
 
     const std::vector<VkFormat> candidate_formats =
     {
@@ -43,11 +43,11 @@ VkFormat Depth::find_depth_format
 
         if ((properties.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) == VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
         {
-            Utils::Logs::log("Supported depth format found: " + std::to_string(format) + "!");
+            Utils::Logs::log("Done! Format -> " + std::to_string(format) + ".", true);
             return format;
         }
     }
 
-    Utils::Logs::crash_error_log("Failed to find the depth format!");
+    Utils::Logs::crash_log("Failed! No depth format found.");
     return candidate_formats[0]; // Avoid compiler warnings.
 }

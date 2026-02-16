@@ -34,7 +34,7 @@ VkInstance Core::create_vulkan_instance
     const std::vector<const char*> &layers
 )
 {
-    Utils::Logs::log("Creating a Vulkan instance..");
+    Utils::Logs::log("Creating Vulkan instance.. ", true);
     std::string game_name = std::string(GameConfig::GAME_TITLE);
 
     if constexpr (EngineConfig::DEBUG_MODE)
@@ -72,7 +72,7 @@ VkInstance Core::create_vulkan_instance
     const char* const* extensions_list = SDL_Vulkan_GetInstanceExtensions(&extensions_count);
 
     if (!extensions_list || !extensions_count)
-        Utils::Logs::crash_error_log("Vulkan instance creation failed! Failed to retrieve the required SDL3 extensions!");
+        Utils::Logs::crash_log("Failed! Required SDL3 extensions listing failed.");
 
     /*
         - sType                   / Defines the type of the structure.
@@ -96,9 +96,9 @@ VkInstance Core::create_vulkan_instance
     const VkResult instance_creation = vkCreateInstance(&create_info, nullptr, &vulkan_instance);
 
     if (instance_creation != VK_SUCCESS)
-        Utils::Logs::crash_error_log("Vulkan instance creation returned error code " + std::to_string(instance_creation) + ".");
+        Utils::Logs::crash_log("Failed! Creation returned error code -> " + std::to_string(instance_creation) + ".");
 
-    Utils::Logs::log("Vulkan instance " + Utils::Text::get_memory_address(vulkan_instance) + " created successfully!");
+    Utils::Logs::log("Done! Memory address -> " + Utils::Text::get_memory_address(vulkan_instance) + ".", true);
     return vulkan_instance;
 }
 
@@ -123,18 +123,18 @@ void Core::destroy_vulkan_instance
     VkInstance &vulkan_instance
 )
 {
-    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(vulkan_instance) + " Vulkan instance..");
+    Utils::Logs::log("Destroying Vulkan instance (" + Utils::Text::get_memory_address(vulkan_instance) + ").. ", false);
 
     if (vulkan_instance == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Vulkan instance destruction failed! The Vulkan instance provided (" + Utils::Text::get_memory_address(vulkan_instance) + ") is not valid!");
+        Utils::Logs::log("Failed! Instance invalid.", true);
         return;
     }
 
     vkDestroyInstance(vulkan_instance, nullptr);
     vulkan_instance = VK_NULL_HANDLE;
 
-    Utils::Logs::log("Vulkan instance destroyed successfully!");
+    Utils::Logs::log("Done!", true);
 }
 
 ///////////////////////////////////////////////

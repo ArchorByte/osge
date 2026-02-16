@@ -1,7 +1,9 @@
 #include "vulkan.core.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
+
 #include <cstring>
-#include <libraries/vulkan/vulkan.h>
 #include <string>
 #include <vector>
 
@@ -24,11 +26,11 @@ bool Core::check_layers_support
     const std::vector<const char*> &layers
 )
 {
-    Utils::Logs::log("Verifying layers support..");
+    Utils::Logs::log("Verifying layers support.. ", false);
 
     if (layers.size() < 1)
     {
-        Utils::Logs::log("The layers support verification succeeded! No layers to verify, skipped!");
+        Utils::Logs::log("Done!", true);
         return true;
     }
 
@@ -37,7 +39,7 @@ bool Core::check_layers_support
 
     if (layers_count < 1)
     {
-        Utils::Logs::error_log("The layers support verification has failed! No layers found!");
+        Utils::Logs::log("Failed! No layers were found.", true);
         return false;
     }
 
@@ -59,13 +61,11 @@ bool Core::check_layers_support
 
         if (!layer_found)
         {
-            Utils::Logs::error_log("The layers support verification has failed! The layer " + std::string(layer_name) + " is not supported by this device!");
+            Utils::Logs::log("Failed! Layer " + std::string(layer_name) + " not supported.", true);
             return false;
         }
-
-        Utils::Logs::log("- Layer \"" + std::string(layer_name) + "\" supported!");
     }
 
-    Utils::Logs::log("The layers support verification succeeded!");
+    Utils::Logs::log("Done!", true);
     return true;
 }

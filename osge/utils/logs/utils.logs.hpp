@@ -21,15 +21,11 @@ namespace Logs
 
     void log
     (
-        const std::string &message
+        const std::string &message,
+        const bool        &end_line
     );
 
-    void error_log
-    (
-        const std::string &message
-    );
-
-    void crash_error_log
+    void crash_log
     (
         const std::string &message
     );

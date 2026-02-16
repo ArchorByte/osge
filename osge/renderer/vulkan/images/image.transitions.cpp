@@ -39,22 +39,22 @@ void Images::transition_image_layout
     const VkImageLayout &old_layout
 )
 {
-    Utils::Logs::log("Transitioning an image layout from " + std::to_string(old_layout) + " to " + std::to_string(new_layout) + "..");
+    Utils::Logs::log("Transitioning image layout from " + std::to_string(old_layout) + " to " + std::to_string(new_layout) + ".. ", false);
 
     if (command_pool == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Image layout transition failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Command pool invalid.");
 
     if (graphics_queue == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Image layout transition failed! The graphics queue provided (" + Utils::Text::get_memory_address(graphics_queue) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Graphics queue invalid.");
 
     if (image == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Image layout transition failed! The image provided (" + Utils::Text::get_memory_address(image) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Image invalid.");
 
     if (logical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Image layout transition failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Logical device invalid.");
 
     if (mip_levels < 1)
-        Utils::Logs::crash_error_log("Image layout transition failed! The mip levels count provided (" + std::to_string(mip_levels) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Mip levels count invalid -> " + std::to_string(mip_levels) + ".");
 
     VkCommandBuffer command_buffer = Vulkan::Buffers::create_one_time_command_buffer(command_pool, logical_device);
     VkPipelineStageFlags source_stage;
@@ -141,10 +141,10 @@ void Images::transition_image_layout
         source_stage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         destination_stage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
     }
-    else Utils::Logs::crash_error_log("Image layout transition failed! The layout transition requested is not supported!");
+    else Utils::Logs::crash_log("Failed! Layout transition requested not supported.");
 
     vkCmdPipelineBarrier(command_buffer, source_stage, destination_stage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     Vulkan::Buffers::destroy_command_buffer(command_buffer, command_pool, graphics_queue, logical_device);
 
-    Utils::Logs::log("Image layout transition done successfully!");
+    Utils::Logs::log("Done!", true);
 }

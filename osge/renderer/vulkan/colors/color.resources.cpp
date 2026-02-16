@@ -38,13 +38,13 @@ ColorResources Colors::create_color_resources
     const VkFormat              &swapchain_image_format
 )
 {
-    Utils::Logs::log("Creating color resources..");
+    Utils::Logs::log("Creating color resources.. ", false);
 
     if (logical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Color resources creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Logical device invalid.");
 
     if (physical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Color resources creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Physical device invalid.");
 
     const std::pair<VkImage, VkDeviceMemory> color_image_data = Vulkan::Images::create_image
     (
@@ -56,7 +56,7 @@ ColorResources Colors::create_color_resources
     const VkDeviceMemory color_image_memory = color_image_data.second;
     const VkImageView color_image_view = Vulkan::Images::create_image_view(VK_IMAGE_ASPECT_COLOR_BIT, swapchain_image_format, color_image, logical_device, 1);
 
-    Utils::Logs::log("Color resources created successfully!");
+    Utils::Logs::log("Done!", true);
     return { color_image, color_image_memory, color_image_view };
 }
 
@@ -83,39 +83,42 @@ void Colors::destroy_color_resources
     const VkDevice &logical_device
 )
 {
-    Utils::Logs::log("Destroying color resources..");
+    Utils::Logs::log("Destroying color resources.. ", false);
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Color resources destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::log("Failed! Logical device invalid.", true);
         return;
     }
 
     if (color_resources.color_image_view == VK_NULL_HANDLE)
-        Utils::Logs::error_log("Warning: Color image view destruction failed! The image view provided (" + Utils::Text::get_memory_address(color_resources.color_image_view) + ") is not valid!");
-    else
     {
-        vkDestroyImageView(logical_device, color_resources.color_image_view, VK_NULL_HANDLE);
-        color_resources.color_image_view = VK_NULL_HANDLE;
+        Utils::Logs::log("Failed! Color image view invalid.", true);
+        return;
     }
+
+    vkDestroyImageView(logical_device, color_resources.color_image_view, VK_NULL_HANDLE);
+    color_resources.color_image_view = VK_NULL_HANDLE;
 
     if (color_resources.color_image == VK_NULL_HANDLE)
-        Utils::Logs::error_log("Warning: Color image destruction failed! The image provided (" + Utils::Text::get_memory_address(color_resources.color_image) + ") is not valid!");
-    else
     {
-        vkDestroyImage(logical_device, color_resources.color_image, VK_NULL_HANDLE);
-        color_resources.color_image = VK_NULL_HANDLE;
+        Utils::Logs::log("Failed! Color image invalid.", true);
+        return;
     }
+
+    vkDestroyImage(logical_device, color_resources.color_image, VK_NULL_HANDLE);
+    color_resources.color_image = VK_NULL_HANDLE;
 
     if (color_resources.color_image_memory == VK_NULL_HANDLE)
-        Utils::Logs::error_log("Warning: Color image memory destruction failed! The image memory provided (" + Utils::Text::get_memory_address(color_resources.color_image_memory) + ") is not valid!");
-    else
     {
-        vkFreeMemory(logical_device, color_resources.color_image_memory, VK_NULL_HANDLE);
-        color_resources.color_image_memory = VK_NULL_HANDLE;
+        Utils::Logs::log("Failed! Color image memory invalid.", true);
+        return;
     }
 
-    Utils::Logs::log("Color resources destroyed successfully!");
+    vkFreeMemory(logical_device, color_resources.color_image_memory, VK_NULL_HANDLE);
+    color_resources.color_image_memory = VK_NULL_HANDLE;
+
+    Utils::Logs::log("Done!", true);
 }
 
 ///////////////////////////////////////////////

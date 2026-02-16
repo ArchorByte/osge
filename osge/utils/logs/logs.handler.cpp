@@ -10,7 +10,7 @@
     Send a message in the terminal (if enabled) and write it into the logs file (if enabled).
 
     Tasks:
-        1) Verify the engine configuration.
+        1) Verify engine configuration.
         2) Depending on it, we either send a message in the terminal, or write it into the logs file, or both.
 
     Parameters:
@@ -21,11 +21,17 @@
 */
 void Logs::log
 (
-    const std::string &message
+    const std::string &message,
+    const bool        &end_line
 )
 {
     if constexpr (EngineConfig::DEBUG_MODE)
-        std::cout << "[log] " << message << "\n";
+    {
+        std::cout << "[log] " << message;
+
+        if (end_line)
+            std::cout << "\n";
+    }
 
     if constexpr (EngineConfig::ENABLE_LOGS_FILE)
         Logs::write_log_file("log", message);
@@ -34,37 +40,10 @@ void Logs::log
 
 
 /*
-    Send a message as an error in the terminal (if enabled) and write it into the logs file (if enabled).
-
-    Tasks:
-        1) Verify the engine configuration.
-        2) Depending on it, we either send a message in the terminal, or write it into the logs file, or both.
-
-    Parameters:
-        - message / string / Message to log as an error.
-
-    Returns:
-        No object returned.
-*/
-void Logs::error_log
-(
-    const std::string &message
-)
-{
-    if constexpr (EngineConfig::DEBUG_MODE)
-        std::cout << "[error] " << message << "\n";
-
-    if constexpr (EngineConfig::ENABLE_LOGS_FILE)
-        Logs::write_log_file("error", message);
-}
-
-
-
-/*
     Send a message as a crash in the terminal (if enabled) and write it into the logs file (if enabled).
 
     Tasks:
-        1) Verify the engine configuration.
+        1) Verify engine configuration.
         2) Depending on it, we either send a message in the terminal, or write it into the logs file, or both.
         3) Trigger the crash handler with a runtime error.
 
@@ -74,7 +53,7 @@ void Logs::error_log
     Returns:
         No object returned.
 */
-void Logs::crash_error_log
+void Logs::crash_log
 (
     const std::string &message
 )

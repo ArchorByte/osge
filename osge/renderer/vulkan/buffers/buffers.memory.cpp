@@ -29,7 +29,7 @@ uint32_t Buffers::find_memory_type
         if ((type_filter & (1 << i)) && (memory_properties.memoryTypes[i].propertyFlags & property_flags))
             return i;
 
-    Utils::Logs::crash_error_log("Failed to get the memory type index! Failed to find any suitable memory type!");
+    Utils::Logs::crash_log("Failed! No suitable memory type found.");
     return -1; // Unnecessary but avoids compiler warnings.
 }
 
@@ -60,16 +60,16 @@ VkDeviceMemory Buffers::allocate_buffer_memory
     const VkPhysicalDevice &physical_device
 )
 {
-    Utils::Logs::log("Allocating memory to the " + Utils::Text::get_memory_address(buffer) + " buffer..");
+    Utils::Logs::log("Allocating memory to buffer (" + Utils::Text::get_memory_address(buffer) + ").. ", false);
 
     if (logical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Buffer memory allocation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Logical device invalid -> " + Utils::Text::get_memory_address(logical_device) + ".");
 
     if (physical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Buffer memory allocation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Physical device invalid -> " + Utils::Text::get_memory_address(physical_device) + ".");
 
     if (buffer == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Buffer memory allocation failed! The buffer provided (" + Utils::Text::get_memory_address(buffer) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Buffer invalid -> " + Utils::Text::get_memory_address(buffer) + ".");
 
     VkMemoryRequirements memory_requirements;
     vkGetBufferMemoryRequirements(logical_device, buffer, &memory_requirements);
@@ -93,13 +93,13 @@ VkDeviceMemory Buffers::allocate_buffer_memory
     const VkResult memory_allocation = vkAllocateMemory(logical_device, &allocation_info, nullptr, &buffer_memory);
 
     if (memory_allocation != VK_SUCCESS)
-        Utils::Logs::crash_error_log("Buffer memory allocation returned error code " + std::to_string(memory_allocation) + ".");
+        Utils::Logs::crash_log("Failed! Memory allocation returned error code -> " + std::to_string(memory_allocation) + ".");
 
     const VkResult memory_binding = vkBindBufferMemory(logical_device, buffer, buffer_memory, 0);
 
     if (memory_binding != VK_SUCCESS)
-        Utils::Logs::crash_error_log("Buffer memory allocation failed! The memory binding returned error code " + std::to_string(memory_binding) + ".");
+        Utils::Logs::crash_log("Failed! Memory binding returned error code -> " + std::to_string(memory_binding) + ".");
 
-    Utils::Logs::log("Memory " + Utils::Text::get_memory_address(buffer_memory) + " allocated successfully!");
+    Utils::Logs::log("Done! Memory address -> " + Utils::Text::get_memory_address(buffer_memory) + ".", true);
     return buffer_memory;
 }

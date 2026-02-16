@@ -43,22 +43,22 @@ std::vector<UniformBufferInfo> Buffers::create_uniform_buffers
     const VkPhysicalDevice &physical_device
 )
 {
-    Utils::Logs::log("Creating " + std::to_string(image_count) + " uniform buffers..");
+    Utils::Logs::log("Creating " + std::to_string(image_count) + " uniform buffers.. ", false);
 
     if (command_pool == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Uniform buffers creation failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Command pool invalid!");
 
     if (graphics_queue == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Uniform buffers creation failed! The graphics queue provided (" + Utils::Text::get_memory_address(graphics_queue) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Graphics queue invalid!");
 
     if (image_count < 1)
-        Utils::Logs::crash_error_log("Uniform buffers creation failed! The images count provided (" + std::to_string(image_count) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Images count invalid -> " + std::to_string(image_count) + ".");
 
     if (logical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Uniform buffers creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Logical device invalid.");
 
     if (physical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Uniform buffers creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Physical device invalid.");
 
     std::vector<UniformBufferInfo> output;
     output.reserve(image_count);
@@ -75,11 +75,9 @@ std::vector<UniformBufferInfo> Buffers::create_uniform_buffers
 
         const UniformBufferInfo info = { buffer, buffer_memory, data };
         output.emplace_back(info);
-
-        Utils::Logs::log("- Uniform buffer #" + std::to_string(i + 1) + "/" + std::to_string(image_count) + " (" + Utils::Text::get_memory_address(buffer) + ") created successfully!");
     }
 
-    Utils::Logs::log(std::to_string(output.size()) + " uniform buffers created successfully!");
+    Utils::Logs::log("Done!", true);
     return output;
 }
 
@@ -143,17 +141,17 @@ void Buffers::destroy_uniform_buffers
     std::vector<UniformBufferInfo> &uniform_buffers
 )
 {
-    Utils::Logs::log("Destroying " + std::to_string(uniform_buffers.size()) + " uniform buffers..");
+    Utils::Logs::log("Destroying " + std::to_string(uniform_buffers.size()) + " uniform buffers.. ", false);
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Uniform buffers destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::log("Failed! Logical device invalid.", true);
         return;
     }
 
     if (uniform_buffers.size() < 1)
     {
-        Utils::Logs::error_log("Uniform buffers destruction failed! No uniform buffers provided!");
+        Utils::Logs::log("Done!", true);
         return;
     }
 
@@ -170,14 +168,12 @@ void Buffers::destroy_uniform_buffers
 
         if (buffer == VK_NULL_HANDLE)
         {
-            Utils::Logs::error_log("- Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer provided (" + Utils::Text::get_memory_address(buffer) + ") is not valid!");
             failed++;
             continue;
         }
 
         if (buffer_memory == VK_NULL_HANDLE)
         {
-            Utils::Logs::error_log("- Failed to destroy the uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + "! The uniform buffer memory provided (" + Utils::Text::get_memory_address(buffer_memory) + ") is not valid!");
             failed++;
             continue;
         }
@@ -188,14 +184,13 @@ void Buffers::destroy_uniform_buffers
         buffer = VK_NULL_HANDLE;
         buffer_memory = VK_NULL_HANDLE;
         buffer_data = nullptr;
-
-        Utils::Logs::log("- Uniform buffer #" + std::to_string(i) + "/" + std::to_string(uniform_buffers.size()) + " destroyed successfully!");
     }
 
     if (failed > 0)
-        Utils::Logs::error_log("Warning: " + std::to_string(failed) + " uniform buffers failed to destroy! This might lead to some memory leaks or memory overload.");
+        Utils::Logs::log("Done! Warning: " + std::to_string(failed) + " destructions failed.", true);
+    else
+        Utils::Logs::log("Done!", true);
 
-    Utils::Logs::log(std::to_string(uniform_buffers.size() - failed) + "/" + std::to_string(uniform_buffers.size()) + " uniform buffers destroyed successfully!");
     uniform_buffers.clear();
 }
 

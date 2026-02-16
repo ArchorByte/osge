@@ -29,17 +29,17 @@ bool Core::check_extensions_support
     const std::vector<const char *> &required_extensions
 )
 {
-    Utils::Logs::log("Verifying Vulkan extensions support for " + std::to_string(required_extensions.size()) + " extensions..");
+    Utils::Logs::log("Verifying support for " + std::to_string(required_extensions.size()) + " extensions.. ", false);
 
     if (physical_device == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Vulkan extensions support verification failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
+        Utils::Logs::log("Failed! Physical device invalid.", true);
         return false;
     }
 
     if (required_extensions.size() < 1)
     {
-        Utils::Logs::log("Vulkan extensions support verification succeeded! No extensions to verify, skipped!");
+        Utils::Logs::log("Done!", true);
         return true;
     }
 
@@ -48,7 +48,7 @@ bool Core::check_extensions_support
 
     if (extensions_count < 1)
     {
-        Utils::Logs::error_log("Vulkan extensions support verification failed! No extensions found!");
+        Utils::Logs::log("Failed! No extensions found on this device.", true);
         return false;
     }
 
@@ -57,32 +57,25 @@ bool Core::check_extensions_support
 
     if (available_extensions.size() < 1)
     {
-        Utils::Logs::error_log("Vulkan extensions support verification failed! No extensions retrieved!");
+        Utils::Logs::log("Failed! No extensions retrieved.", true);
         return false;
     }
 
     std::set<std::string> required_extensions_list;
 
-    for (const char* extension_name : required_extensions)
-        required_extensions_list.insert(std::string(extension_name));
-
     for (const VkExtensionProperties &extension : available_extensions)
-    {
-        const bool succeeded = required_extensions_list.erase(extension.extensionName);
-
-        if (succeeded)
-            Utils::Logs::log("- Extension \"" + std::string(extension.extensionName) + "\" supported!");
-    }
+        required_extensions_list.erase(extension.extensionName);
 
     if (!required_extensions_list.empty())
     {
-        for (const std::string &extension : required_extensions_list)
-            Utils::Logs::error_log("- Extension \"" + extension + "\" NOT supported!");
+        Utils::Logs::log("Failed! " + std::to_string(required_extensions_list.size()) + " extensions are not supported.", true);
 
-        Utils::Logs::error_log("Vulkan extensions support verification failed! " + std::to_string(required_extensions_list.size()) + " extensions aren't supported by the device!");
+        for (const std::string &extension : required_extensions_list)
+            Utils::Logs::log("- Extension \"" + extension + "\" NOT supported.", true);
+
         return false;
     }
 
-    Utils::Logs::log("Vulkan extensions support verification succeeded!");
+    Utils::Logs::log("Done!", true);
     return true;
 }

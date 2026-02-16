@@ -10,6 +10,7 @@
 #include "images/vulkan.images.hpp"
 #include "queues/vulkan.queues.hpp"
 #include "shaders/vulkan.shaders.hpp"
+#include "vertex/vulkan.vertex.hpp"
 
 namespace Vulkan
 {
@@ -66,6 +67,12 @@ namespace Vulkan
     //////////////////////////////////////
 
     namespace Shaders = ::Shaders;
+
+    /////////////////////////////////////
+    ///// shaders/vulkan.vertex.hpp /////
+    /////////////////////////////////////
+
+    namespace Vertex = ::Vertex;
 }
 
 #endif

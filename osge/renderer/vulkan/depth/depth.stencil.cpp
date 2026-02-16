@@ -17,7 +17,7 @@
 */
 VkPipelineDepthStencilStateCreateInfo Depth::create_depth_stencil()
 {
-    Utils::Logs::log("Creating depth stencil..");
+    Utils::Logs::log("Creating depth stencil.. ", false);
 
     /*
         - sType                 / Defines the type of the structure.
@@ -37,6 +37,6 @@ VkPipelineDepthStencilStateCreateInfo Depth::create_depth_stencil()
         .stencilTestEnable = VK_FALSE
     };
 
-    Utils::Logs::log("Depth stencil created successfully!");
+    Utils::Logs::log("Done!", true);
     return depth_stencil;
 }

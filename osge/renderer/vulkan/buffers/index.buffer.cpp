@@ -23,45 +23,45 @@
         6) End the staging buffer.
 
     Parameters:
-        - command_pool    / VkCommandPool    / Handles memory allocation of command buffers.
-        - graphics_queue  / VkQueue          / Handles all graphics commands and calls.
-        - logical_device  / VkDevice         / Logical device of the Vulkan instance.
-        - physical_device / VkPhysicalDevice / Physical device used to run this Vulkan instance.
-        - vertex_indices  / vector<uint32_t> / References vertices stored in the vertex buffer.
-        - vertices        / vector<Vertex>   / Contails all vertex data.
+        - command_pool    / VkCommandPool             / Handles memory allocation of command buffers.
+        - graphics_queue  / VkQueue                   / Handles all graphics commands and calls.
+        - logical_device  / VkDevice                  / Logical device of the Vulkan instance.
+        - physical_device / VkPhysicalDevice          / Physical device used to run this Vulkan instance.
+        - vertex_indices  / vector<uint32_t>          / References vertices stored in the vertex buffer.
+        - vertices        / vector<Vertex::VertexObj> / Contails all vertex data.
 
     Returns:
         A pair containing the buffer itself and its memory.
 */
 std::pair<VkBuffer, VkDeviceMemory> Buffers::create_index_buffer
 (
-    const VkCommandPool         &command_pool,
-    const VkQueue               &graphics_queue,
-    const VkDevice              &logical_device,
-    const VkPhysicalDevice      &physical_device,
-    const std::vector<uint32_t> &vertex_indices,
-    const std::vector<Vertex>   &vertices
+    const VkCommandPool                  &command_pool,
+    const VkQueue                        &graphics_queue,
+    const VkDevice                       &logical_device,
+    const VkPhysicalDevice               &physical_device,
+    const std::vector<uint32_t>          &vertex_indices,
+    const std::vector<Vertex::VertexObj> &vertices
 )
 {
-    Utils::Logs::log("Creating an index buffer..");
+    Utils::Logs::log("Creating an index buffer.. ", false);
 
     if (command_pool == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Index buffer creation failed! The command pool provided (" + Utils::Text::get_memory_address(command_pool) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Command pool invalid.");
 
     if (graphics_queue == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Index buffer creation failed! The graphics queue provided (" + Utils::Text::get_memory_address(graphics_queue) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Graphics queue invalid.");
 
     if (vertex_indices.size() < 1)
-        Utils::Logs::crash_error_log("Index buffer creation failed! No vertex indices provided!");
+        Utils::Logs::crash_log("Failed! No vertex indices provided.");
 
     if (logical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Index buffer creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Logical device invalid.");
 
     if (physical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Index buffer creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Physical device invalid.");
 
     if (vertices.size() < 1)
-        Utils::Logs::crash_error_log("Index buffer creation failed! No vertices provided!");
+        Utils::Logs::crash_log("Failed! No vertices provided.");
 
     const VkDeviceSize buffer_size = sizeof(vertices[0]) * vertices.size();
     VkBuffer staging_index_buffer = VK_NULL_HANDLE;
@@ -81,7 +81,7 @@ std::pair<VkBuffer, VkDeviceMemory> Buffers::create_index_buffer
     Buffers::copy_buffer_data(buffer_size, command_pool, index_buffer, graphics_queue, logical_device, staging_index_buffer);
     Buffers::destroy_buffer(staging_index_buffer, staging_buffer_memory, logical_device);
 
-    Utils::Logs::log("Index buffer " + Utils::Text::get_memory_address(index_buffer) + " created successfully!");
+    Utils::Logs::log("Done! Memory address -> " + Utils::Text::get_memory_address(index_buffer) + ".", true);
     return { index_buffer, buffer_memory };
 }
 
@@ -110,23 +110,23 @@ void Buffers::destroy_index_buffer
     const VkDevice &logical_device
 )
 {
-    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(index_buffer) + " index buffer..");
+    Utils::Logs::log("Destroying index buffer (" + Utils::Text::get_memory_address(index_buffer) + ").. ", false);
 
     if (index_buffer == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Index buffer destruction failed! The buffer provided (" + Utils::Text::get_memory_address(index_buffer) + ") is not valid!");
+        Utils::Logs::log("Failed! Buffer invalid.", true);
         return;
     }
 
     if (buffer_memory == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Index buffer destruction failed! The buffer memory provided (" + Utils::Text::get_memory_address(buffer_memory) + ") is not valid!");
+        Utils::Logs::log("Failed! Buffer memory invalid.", true);
         return;
     }
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Index buffer destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::log("Failed! Logical device invalid.", true);
         return;
     }
 
@@ -134,7 +134,7 @@ void Buffers::destroy_index_buffer
     index_buffer = VK_NULL_HANDLE;
     buffer_memory = VK_NULL_HANDLE;
 
-    Utils::Logs::log("Index buffer destroyed successfully!");
+    Utils::Logs::log("Done!", true);
 }
 
 ///////////////////////////////////////////////
@@ -143,12 +143,12 @@ void Buffers::destroy_index_buffer
 
 Buffers::index_buffer_handler::index_buffer_handler
 (
-    const VkCommandPool         &command_pool,
-    const VkQueue               &graphics_queue,
-    const VkDevice              &logical_device,
-    const VkPhysicalDevice      &physical_device,
-    const std::vector<uint32_t> &vertex_indices,
-    const std::vector<Vertex>   &vertices
+    const VkCommandPool                  &command_pool,
+    const VkQueue                        &graphics_queue,
+    const VkDevice                       &logical_device,
+    const VkPhysicalDevice               &physical_device,
+    const std::vector<uint32_t>          &vertex_indices,
+    const std::vector<Vertex::VertexObj> &vertices
 )
     : logical_device(logical_device)
 {

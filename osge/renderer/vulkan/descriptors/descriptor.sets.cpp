@@ -44,28 +44,28 @@ std::vector<VkDescriptorSet> Descriptors::create_descriptor_sets
     const std::vector<UniformBufferInfo> &uniform_buffers
 )
 {
-    Utils::Logs::log("Creating " + std::to_string(image_count) + " descriptor sets..");
+    Utils::Logs::log("Creating " + std::to_string(image_count) + " descriptor sets.. ", false);
 
     if (descriptor_set_layout == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Descriptor sets creation failed! The descriptor set layout provided (" + Utils::Text::get_memory_address(descriptor_set_layout) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Descriptor set layout invalid.");
 
     if (descriptor_pool == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Descriptor sets creation failed! The descriptor pool provided (" + Utils::Text::get_memory_address(descriptor_pool) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Descriptor pool invalid.");
 
     if (image_count < 1)
-        Utils::Logs::crash_error_log("Descriptor sets creation failed! The images count provided (" + std::to_string(image_count) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Images count invalid -> " + std::to_string(image_count) + ".");
 
     if (logical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Descriptor sets creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Logical device invalid.");
 
     if (texture_image_views.size() < 1)
-        Utils::Logs::crash_error_log("Descriptor sets creation failed! No texture image views provided!");
+        Utils::Logs::crash_log("Failed! No texture image views provided.");
 
     if (texture_sampler == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Descriptor sets creation failed! The texture sampler provided (" + Utils::Text::get_memory_address(texture_sampler) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Texture sampler invalid.");
 
     if (uniform_buffers.size() < 1)
-        Utils::Logs::crash_error_log("Descriptor sets creation failed! No uniform buffers provided!");
+        Utils::Logs::crash_log("Failed! No uniform buffers provided.");
 
     std::vector<VkDescriptorSet> descriptor_sets(image_count);
     std::vector<VkDescriptorSetLayout> layouts(image_count, descriptor_set_layout);
@@ -87,7 +87,7 @@ std::vector<VkDescriptorSet> Descriptors::create_descriptor_sets
     const VkResult sets_allocation = vkAllocateDescriptorSets(logical_device, &allocation_info, descriptor_sets.data());
 
     if (sets_allocation != VK_SUCCESS)
-        Utils::Logs::crash_error_log("Descriptor sets creation failed! Descriptor sets allocation returned error code " + std::to_string(sets_allocation) + ".");
+        Utils::Logs::crash_log("Failed! Allocation returned error code -> " + std::to_string(sets_allocation) + ".");
 
     std::vector<VkDescriptorImageInfo> descriptor_image_info(texture_image_views.size());
 
@@ -154,10 +154,9 @@ std::vector<VkDescriptorSet> Descriptors::create_descriptor_sets
         write_sets[1].pImageInfo = descriptor_image_info.data();
 
         vkUpdateDescriptorSets(logical_device, static_cast<uint32_t>(write_sets.size()), write_sets.data(), 0, nullptr);
-        Utils::Logs::log("- Descriptor set #" + std::to_string(i + 1) + "/" + std::to_string(descriptor_sets.size()) + " created successfully!");
     }
 
-    Utils::Logs::log(std::to_string(descriptor_sets.size()) + " descriptor sets created successfully!");
+    Utils::Logs::log("Done!", true);
     return descriptor_sets;
 }
 
@@ -186,24 +185,24 @@ void Descriptors::destroy_descriptor_sets
     const VkDevice               &logical_device
 )
 {
-    Utils::Logs::log("Destroying " + std::to_string(descriptor_sets.size()) + " descriptor sets..");
+    Utils::Logs::log("Destroying " + std::to_string(descriptor_sets.size()) + " descriptor sets.. ", false);
 
     if (descriptor_sets.size() < 1)
     {
-        Utils::Logs::error_log("Descriptor sets destruction failed! No descriptor sets provided!");
+        Utils::Logs::log("Done!", true);
         return;
     }
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Descriptor sets destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::log("Failed! Logical device invalid.", true);
         return;
     }
 
     vkFreeDescriptorSets(logical_device, descriptor_pool, descriptor_sets.size(), descriptor_sets.data());
     descriptor_sets.clear();
 
-    Utils::Logs::log("Descriptor sets destroyed successfully!");
+    Utils::Logs::log("Done!", true);
 }
 
 ///////////////////////////////////////////////

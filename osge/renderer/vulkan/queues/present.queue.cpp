@@ -1,40 +1,42 @@
 #include "vulkan.queues.hpp"
+
+#include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
+
 #include <vector>
 
 /*
     Get the present queue family index.
 
     Tasks:
-        1) Verify the parameters.
-        2) Check all queue families until we found the present one.
+        1) Verify function parameters.
+        2) Check all queue families until we find it.
 
     Parameters:
-        - physical_device / VkPhysicalDevice                / Physical device used to run Vulkan.
+        - physical_device / VkPhysicalDevice                / Physical device used to run this Vulkan instance.
         - queue_families  / vector<VkQueueFamilyProperties> / List of all available queue families.
-        - vulkan_surface  / VkSurfaceKHR                    / Vulkan surface of the Vulkan instance and SDL3 window.
+        - vulkan_surface  / VkSurfaceKHR                    / Link between this Vulkan instance and the SDL3 game window.
 
     Returns:
         The index of the present queue family.
 */
 uint32_t Queues::get_present_queue_family_index
 (
-    const VkPhysicalDevice &physical_device,
+    const VkPhysicalDevice                     &physical_device,
     const std::vector<VkQueueFamilyProperties> &queue_families,
-    const VkSurfaceKHR &vulkan_surface
+    const VkSurfaceKHR                         &vulkan_surface
 )
 {
-    Utils::Logs::log("Fetching the present queue family index..");
+    Utils::Logs::log("Fetching present queue family index.. ", false);
 
     if (physical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Present queue family index query failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Physical device invalid.");
 
     if (queue_families.size() < 1)
-        Utils::Logs::crash_error_log("Present queue family index query failed! No queue families provided!");
+        Utils::Logs::crash_log("Failed! No queue families provided.");
 
     if (vulkan_surface == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Present queue family index query failed! The Vulkan surface provided (" + Utils::Text::get_memory_address(vulkan_surface) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Vulkan surface invalid.");
 
     uint32_t output = -1;
     int i = 0;
@@ -45,7 +47,7 @@ uint32_t Queues::get_present_queue_family_index
         const VkResult query_result = vkGetPhysicalDeviceSurfaceSupportKHR(physical_device, i, vulkan_surface, &supported);
 
         if (query_result != VK_SUCCESS)
-            Utils::Logs::crash_error_log("Present queue family index query failed! Physical device surface support query returned error code " + std::to_string(query_result) + ".");
+            continue;
 
         if (supported)
         {
@@ -57,8 +59,8 @@ uint32_t Queues::get_present_queue_family_index
     }
 
     if (output == -1)
-        Utils::Logs::crash_error_log("Present queue family index query failed! Failed to find any present queue!");
+        Utils::Logs::crash_log("Failed! No present queue found.");
 
-    Utils::Logs::log("Present queue family index found: " + std::to_string(output) + ".");
+    Utils::Logs::log("Done! Index -> " + std::to_string(output) + ".", true);
     return output;
 }

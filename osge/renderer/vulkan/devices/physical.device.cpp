@@ -26,10 +26,7 @@ bool Devices::is_valid_physical_device
 )
 {
     if (physical_device == VK_NULL_HANDLE)
-    {
-        Utils::Logs::error_log("Physical device validation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
         return false;
-    }
 
     VkPhysicalDeviceProperties device_properties;
     vkGetPhysicalDeviceProperties(physical_device, &device_properties);
@@ -62,10 +59,7 @@ std::string Devices::get_physical_device_name
 )
 {
     if (physical_device == VK_NULL_HANDLE)
-    {
-        Utils::Logs::error_log("Invalid physical device provided (" + Utils::Text::get_memory_address(physical_device) + ")! Defaulted to \"Unknown GPU\".");
         return "Unknown GPU";
-    }
 
     VkPhysicalDeviceProperties device_properties;
     vkGetPhysicalDeviceProperties(physical_device, &device_properties);
@@ -97,23 +91,23 @@ VkPhysicalDevice Devices::select_physical_device
     const VkInstance &vulkan_instance
 )
 {
-    Utils::Logs::log("Looking for a usable physical device..");
+    Utils::Logs::log("Looking for a suitable physical device.. ", false);
 
     if (vulkan_instance == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Physical device selection failed! The Vulkan instance provided (" + Utils::Text::get_memory_address(vulkan_instance) + ") is not valid!");
+        Utils::Logs::crash_log("Physical device selection failed! The Vulkan instance provided (" + Utils::Text::get_memory_address(vulkan_instance) + ") is not valid!");
 
     uint32_t devices_count = 0;
     const VkResult first_query = vkEnumeratePhysicalDevices(vulkan_instance, &devices_count, nullptr);
 
     if (first_query != VK_SUCCESS)
-        Utils::Logs::crash_error_log("Physical device selection failed! The physical device query 1/2 returned error code " + std::to_string(first_query) + ".");
+        Utils::Logs::crash_log("Failed! Query 1/2 returned error code -> " + std::to_string(first_query) + ".");
 
     if (devices_count == 0)
-        Utils::Logs::crash_error_log("Physical device selection failed! Failed to find any physical device supporting Vulkan!");
+        Utils::Logs::crash_log("Failed! No physical device supporting Vulkan found.");
 
     if (selected_device_index > devices_count)
     {
-        Utils::Logs::error_log("Warning: The selected device (" + std::to_string(selected_device_index) + ") is out of bounds! Defaulted to the first valid physical device found!");
+        Utils::Logs::log("[Warning: Selected device out of bounds -> " + std::to_string(selected_device_index) + ".] ", false);
         selected_device_index = 1;
     }
 
@@ -121,10 +115,10 @@ VkPhysicalDevice Devices::select_physical_device
     const VkResult second_query = vkEnumeratePhysicalDevices(vulkan_instance, &devices_count, devices_list.data());
 
     if (second_query != VK_SUCCESS)
-        Utils::Logs::crash_error_log("Physical device selection failed! Physical device query 2/2 returned error code " + std::to_string(second_query) + ".");
+        Utils::Logs::crash_log("Failed! Query 2/2 returned error code -> " + std::to_string(second_query) + ".");
 
     if (devices_list.size() < 1)
-        Utils::Logs::crash_error_log("Physical device selection failed! No physical devices available!");
+        Utils::Logs::crash_log("Failed! No physical devices available.");
 
     VkPhysicalDevice physical_device = VK_NULL_HANDLE;
     int i = 0;
@@ -141,8 +135,8 @@ VkPhysicalDevice Devices::select_physical_device
     }
 
     if (physical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Physical device selection failed! Failed to find any suitable physical device!");
+        Utils::Logs::crash_log("Failed! No suitable physical device found.");
 
-    Utils::Logs::log("Physical device selected successfully! Selected device: " + get_physical_device_name(physical_device) + ".");
+    Utils::Logs::log("Done! Selected device -> " + get_physical_device_name(physical_device) + ".", true);
     return physical_device;
 }

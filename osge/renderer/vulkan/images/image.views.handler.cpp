@@ -30,17 +30,19 @@ VkImageView Images::create_image_view
     const uint32_t           &mip_levels
 )
 {
+    Utils::Logs::log("Creating image view.. ", false);
+
     if (!format)
-        Utils::Logs::crash_error_log("Image view creation failed! The format provided (" + std::to_string(format) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Format invalid -> " + std::to_string(format) + ".");
 
     if (image == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Image view creation failed! The image provided (" + Utils::Text::get_memory_address(image) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Image invalid.");
 
     if (logical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Image view creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Logical device invalid.");
 
     if (mip_levels < 1)
-        Utils::Logs::crash_error_log("Image view creation failed! The mip levels count provided (" + std::to_string(mip_levels) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Mip levels invalid.");
 
     /*
         - sType              / Defines the type of the structure.
@@ -86,7 +88,8 @@ VkImageView Images::create_image_view
     const VkResult view_creation = vkCreateImageView(logical_device, &create_info, nullptr, &image_view);
 
     if (view_creation != VK_SUCCESS)
-        Utils::Logs::crash_error_log("Image view creation returned error code " + std::to_string(view_creation) + ".");
+        Utils::Logs::crash_log("Failed! Creation returned error code -> " + std::to_string(view_creation) + ".");
 
+    Utils::Logs::log("Done!", true);
     return image_view;
 }

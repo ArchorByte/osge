@@ -40,22 +40,22 @@ std::vector<VkFramebuffer> Buffers::create_frame_buffers
     const VkRenderPass             &render_pass
 )
 {
-    Utils::Logs::log("Creating " + std::to_string(image_views.size()) + " frame buffers..");
+    Utils::Logs::log("Creating " + std::to_string(image_views.size()) + " frame buffers.. ", false);
 
     if (color_image_view == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Frame buffers creation failed! The color image view provided (" + Utils::Text::get_memory_address(color_image_view) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Color image view invalid.");
 
     if (depth_image_view == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Frame buffers creation failed! The depth image view provided (" + Utils::Text::get_memory_address(depth_image_view) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Depth image view invalid.");
 
     if (image_views.size() < 1)
-        Utils::Logs::crash_error_log("Frame buffers creation failed! No image views provided!");
+        Utils::Logs::crash_log("Failed! No image views provided.");
 
     if (logical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Frame buffers creation failed! The logical device provided (" + Utils::Text::get_memory_address(render_pass) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Logical device invalid.");
 
     if (render_pass == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Frame buffers creation failed! The render pass provided (" + Utils::Text::get_memory_address(render_pass) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Render pass invalid.");
 
     std::vector<VkFramebuffer> framebuffers;
     framebuffers.reserve(image_views.size());
@@ -88,13 +88,12 @@ std::vector<VkFramebuffer> Buffers::create_frame_buffers
         const VkResult framebuffer_creation = vkCreateFramebuffer(logical_device, &create_info, nullptr, &framebuffer);
 
         if (framebuffer_creation != VK_SUCCESS)
-            Utils::Logs::crash_error_log("Frame buffer #" + std::to_string(i + 1) + "/" + std::to_string(framebuffers.size()) + " creation returned error code " + std::to_string(framebuffer_creation));
+            Utils::Logs::crash_log("Failed! Creation #" + std::to_string(i + 1) + " returned error code -> " + std::to_string(framebuffer_creation));
 
         framebuffers.emplace_back(framebuffer);
-        Utils::Logs::log("- Frame buffer #" + std::to_string(i + 1) + "/" + std::to_string(image_views.size()) + " (" + Utils::Text::get_memory_address(framebuffer) + ") created successfully.");
     }
 
-    Utils::Logs::log(std::to_string(framebuffers.size()) + " frame buffers created successfully!");
+    Utils::Logs::log("Done!", true);
     return framebuffers;
 }
 
@@ -121,17 +120,17 @@ void Buffers::destroy_frame_buffers
     const VkDevice             &logical_device
 )
 {
-    Utils::Logs::log("Destroying " + std::to_string(frame_buffers.size()) + " frame buffers..");
+    Utils::Logs::log("Destroying " + std::to_string(frame_buffers.size()) + " frame buffers.. ", false);
 
     if (frame_buffers.size() < 1)
     {
-        Utils::Logs::error_log("Frame buffers destruction failed! No frame buffers provided!");
+        Utils::Logs::log("Done!", true);
         return;
     }
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Frame buffers destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::log("Failed! Logical device invalid.", true);
         return;
     }
 
@@ -144,21 +143,19 @@ void Buffers::destroy_frame_buffers
 
         if (frame_buffer == VK_NULL_HANDLE)
         {
-            Utils::Logs::error_log("- Failed to destroy the frame buffer #" + std::to_string(i) + "/" + std::to_string(frame_buffers.size()) + "! The frame buffer provided (" + Utils::Text::get_memory_address(frame_buffer) + ") is not valid!");
             failed++;
             continue;
         }
 
         vkDestroyFramebuffer(logical_device, frame_buffer, nullptr);
         frame_buffer = VK_NULL_HANDLE;
-
-        Utils::Logs::log("- Frame buffer #" + std::to_string(i) + "/" + std::to_string(frame_buffers.size()) + " destroyed successfully!");
     }
 
     if (failed > 0)
-        Utils::Logs::error_log("Warning: " + std::to_string(failed) + " frame buffers failed to destroy! This might leads to some memory leaks!");
+        Utils::Logs::log("Done! Warning: " + std::to_string(failed) + " destructions failed.", true);
+    else
+        Utils::Logs::log("Done!", true);
 
-    Utils::Logs::log(std::to_string(frame_buffers.size() - failed) + "/" + std::to_string(frame_buffers.size()) + " frame buffers destroyed successfully!");
     frame_buffers.clear();
 }
 

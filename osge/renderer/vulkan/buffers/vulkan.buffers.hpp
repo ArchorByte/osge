@@ -3,6 +3,7 @@
 
 #include "libraries/glm/glm.hpp"
 #include "libraries/vulkan/vulkan.h"
+#include "osge/renderer/vulkan/vulkan.renderer.hpp"
 
 #include <utility>
 #include <vector>
@@ -174,12 +175,12 @@ namespace Buffers
 
     std::pair<VkBuffer, VkDeviceMemory> Buffers::create_index_buffer
     (
-        const VkCommandPool         &command_pool,
-        const VkQueue               &graphics_queue,
-        const VkDevice              &logical_device,
-        const VkPhysicalDevice      &physical_device,
-        const std::vector<uint32_t> &vertex_indices,
-        const std::vector<Vertex>   &vertices
+        const VkCommandPool                  &command_pool,
+        const VkQueue                        &graphics_queue,
+        const VkDevice                       &logical_device,
+        const VkPhysicalDevice               &physical_device,
+        const std::vector<uint32_t>          &vertex_indices,
+        const std::vector<Vertex::VertexObj> &vertices
     );
 
     void destroy_index_buffer
@@ -238,11 +239,11 @@ namespace Buffers
 
     std::pair<VkBuffer, VkDeviceMemory> create_vertex_buffer
     (
-        const VkCommandPool    &command_pool,
-        const VkQueue          &graphics_queue,
-        const VkDevice         &logical_device,
-        const VkPhysicalDevice &physical_device,
-        std::vector<Vertex>    &vertices
+        const VkCommandPool            &command_pool,
+        const VkQueue                  &graphics_queue,
+        const VkDevice                 &logical_device,
+        const VkPhysicalDevice         &physical_device,
+        std::vector<Vertex::VertexObj> &vertices
     );
 
     void destroy_vertex_buffer
@@ -293,12 +294,12 @@ namespace Buffers
         public:
             index_buffer_handler
             (
-                const VkCommandPool         &command_pool,
-                const VkQueue               &graphics_queue,
-                const VkDevice              &logical_device,
-                const VkPhysicalDevice      &physical_device,
-                const std::vector<uint32_t> &vertex_indices,
-                const std::vector<Vertex>   &vertices
+                const VkCommandPool                  &command_pool,
+                const VkQueue                        &graphics_queue,
+                const VkDevice                       &logical_device,
+                const VkPhysicalDevice               &physical_device,
+                const std::vector<uint32_t>          &vertex_indices,
+                const std::vector<Vertex::VertexObj> &vertices
             );
 
             ~index_buffer_handler();
@@ -374,11 +375,11 @@ namespace Buffers
         public:
             vertex_buffer_handler
             (
-                const VkCommandPool    &command_pool,
-                const VkQueue          &graphics_queue,
-                const VkDevice         &logical_device,
-                const VkPhysicalDevice &physical_device,
-                std::vector<Vertex>    &vertices
+                const VkCommandPool            &command_pool,
+                const VkQueue                  &graphics_queue,
+                const VkDevice                 &logical_device,
+                const VkPhysicalDevice         &physical_device,
+                std::vector<Vertex::VertexObj> &vertices
             );
 
             ~vertex_buffer_handler();

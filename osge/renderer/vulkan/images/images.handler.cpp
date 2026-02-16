@@ -43,20 +43,22 @@ std::pair<VkImage, VkDeviceMemory> Images::create_image
     const int                   &width
 )
 {
+    Utils::Logs::log("Creating Vulkan image.. ", false);
+
     if (height < 1)
-        Utils::Logs::crash_error_log("Image creation failed! The image height provided (" + std::to_string(height) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Image height invalid -> " + std::to_string(height) + ".");
 
     if (logical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Image creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Logical device invalid.");
 
     if (mip_levels < 1)
-        Utils::Logs::crash_error_log("Image creation failed! The mip levels count provided (" + std::to_string(mip_levels) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Mip levels count invalid -> " + std::to_string(mip_levels) + ".");
 
     if (physical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Image creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Physical device invalid.");
 
     if (width < 1)
-        Utils::Logs::crash_error_log("Image creation failed! The image width provided (" + std::to_string(width) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Image width invalid -> " + std::to_string(width) + ".");
 
     /*
         - sType         / Defines the type of the structure.
@@ -98,7 +100,7 @@ std::pair<VkImage, VkDeviceMemory> Images::create_image
     const VkResult image_creation = vkCreateImage(logical_device, &create_info, nullptr, &image);
 
     if (image_creation != VK_SUCCESS)
-        Utils::Logs::crash_error_log("Image creation returned error code " + std::to_string(image_creation) + ".");
+        Utils::Logs::crash_log("Failed! Creation returned error code -> " + std::to_string(image_creation) + ".");
 
     VkPhysicalDeviceMemoryProperties memory_properties;
     vkGetPhysicalDeviceMemoryProperties(physical_device, &memory_properties);
@@ -122,8 +124,10 @@ std::pair<VkImage, VkDeviceMemory> Images::create_image
     const VkResult memory_allocation = vkAllocateMemory(logical_device, &allocation_info, nullptr, &image_memory);
 
     if (memory_allocation != VK_SUCCESS)
-        Utils::Logs::crash_error_log("Image creation failed! The memory allocation returned error code " + std::to_string(memory_allocation) + ".");
+        Utils::Logs::crash_log("Failed! Memory allocation returned error code -> " + std::to_string(memory_allocation) + ".");
 
     vkBindImageMemory(logical_device, image, image_memory, 0);
+    Utils::Logs::log("Done!", true);
+
     return { image, image_memory };
 }

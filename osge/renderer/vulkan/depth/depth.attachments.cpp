@@ -23,13 +23,13 @@ VkAttachmentDescription Depth::create_depth_attachment
     const VkSampleCountFlagBits &samples_count
 )
 {
-    Utils::Logs::log("Creating a depth attachment..");
+    Utils::Logs::log("Creating depth attachment..", false);
 
     if (physical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Depth attachment creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Physical device invalid.");
 
     if (samples_count < 1)
-        Utils::Logs::crash_error_log("Depth attachment creation failed! The samples count provided (" + std::to_string(samples_count) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Samples count invalid -> " + std::to_string(samples_count) + ".");
 
     /*
         - format         / Defines the format of the image view for the attachment.
@@ -53,6 +53,6 @@ VkAttachmentDescription Depth::create_depth_attachment
         .finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
     };
 
-    Utils::Logs::log("Depth attachment created successfully!");
+    Utils::Logs::log("Done!", true);
     return depth_attachment;
 }

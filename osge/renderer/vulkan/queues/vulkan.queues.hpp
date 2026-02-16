@@ -1,7 +1,7 @@
 #ifndef VULKAN_QUEUES_HPP
 #define VULKAN_QUEUES_HPP
 
-#include <libraries/vulkan/vulkan.h>
+#include "libraries/vulkan/vulkan.h"
 #include <vector>
 
 namespace Queues
@@ -18,7 +18,7 @@ namespace Queues
 
     void destroy_command_pool
     (
-        VkCommandPool &command_pool,
+        VkCommandPool  &command_pool,
         const VkDevice &logical_device
     );
 
@@ -37,9 +37,9 @@ namespace Queues
 
     uint32_t get_present_queue_family_index
     (
-        const VkPhysicalDevice &physical_device,
+        const VkPhysicalDevice                     &physical_device,
         const std::vector<VkQueueFamilyProperties> &queue_families,
-        const VkSurfaceKHR &vulkan_surface
+        const VkSurfaceKHR                         &vulkan_surface
     );
 
     //////////////////////////////
@@ -53,9 +53,8 @@ namespace Queues
 
     std::vector<VkDeviceQueueCreateInfo> make_queues_create_info
     (
-        const VkPhysicalDevice &physical_device,
-        const float &queue_priority,
-        const std::vector<uint32_t> &required_queue_indexes
+        const VkPhysicalDevice      &physical_device,
+        const std::vector<uint32_t> &queue_indexes
     );
 
     ///////////////////////////////////////////////

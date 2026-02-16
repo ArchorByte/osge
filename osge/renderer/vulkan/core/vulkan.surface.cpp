@@ -31,21 +31,21 @@ VkSurfaceKHR Core::create_vulkan_surface
     SDL_Window* &window
 )
 {
-    Utils::Logs::log("Creating a Vulkan surface..");
+    Utils::Logs::log("Creating Vulkan surface.. ", false);
 
     if (vulkan_instance == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Vulkan surface creation failed! The Vulkan instance provided (" + Utils::Text::get_memory_address(vulkan_instance) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Vulkan instance invalid.");
 
     if (!window)
-        Utils::Logs::crash_error_log("Vulkan surface creation failed! The SDL3 window provided (" + Utils::Text::get_memory_address(window) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! SDL3 window invalid -> " + Utils::Text::get_memory_address(window) + ".");
 
     VkSurfaceKHR vulkan_surface = VK_NULL_HANDLE;
     const bool surface_creation = SDL_Vulkan_CreateSurface(window, vulkan_instance, nullptr, &vulkan_surface);
 
     if (!surface_creation)
-        Utils::Logs::crash_error_log("Vulkan surface creation returned error code " + std::string(SDL_GetError()) + ".");
+        Utils::Logs::crash_log("Failed! Creation returned error code -> " + std::string(SDL_GetError()) + ".");
 
-    Utils::Logs::log("Vulkan surface " + Utils::Text::get_memory_address(vulkan_surface) + " created successfully!");
+    Utils::Logs::log("Done! Memory address -> " + Utils::Text::get_memory_address(vulkan_surface) + ".", true);
     return vulkan_surface;
 }
 
@@ -72,24 +72,24 @@ void Core::destroy_vulkan_surface
     VkSurfaceKHR &vulkan_surface
 )
 {
-    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(vulkan_surface) + " Vulkan surface..");
+    Utils::Logs::log("Destroying Vulkan surface (" + Utils::Text::get_memory_address(vulkan_surface) + ").. ", false);
 
     if (vulkan_instance == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Vulkan surface destruction failed! The Vulkan instance provided (" + Utils::Text::get_memory_address(vulkan_instance) + ") is not valid!");
+        Utils::Logs::log("Failed! Vulkan instance invalid.", true);
         return;
     }
 
     if (vulkan_surface == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Vulkan surface destruction failed! The Vulkan surface provided (" + Utils::Text::get_memory_address(vulkan_surface) + ") is not valid!");
+        Utils::Logs::log("Failed! Vulkan surface invalid.", true);
         return;
     }
 
     vkDestroySurfaceKHR(vulkan_instance, vulkan_surface, nullptr);
     vulkan_surface = VK_NULL_HANDLE;
 
-    Utils::Logs::log("Vulkan surface destroyed successfully!");
+    Utils::Logs::log("Done!", true);
 }
 
 ///////////////////////////////////////////////

@@ -32,13 +32,13 @@ VkDescriptorSetLayout Descriptors::create_descriptor_set_layout
     const std::vector<VkImageView> &texture_image_views
 )
 {
-    Utils::Logs::log("Creating a descriptor set layout..");
+    Utils::Logs::log("Creating descriptor set layout.. ", false);
 
     if (logical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Descriptor set layout creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Logical device invalid.");
 
     if (texture_image_views.size() < 1)
-        Utils::Logs::crash_error_log("Descriptor set layout creation failed! No texture image views provided!");
+        Utils::Logs::crash_log("Failed! No texture image views provided!");
 
     /*
         - binding         / Defines the number identifying this binding.
@@ -86,9 +86,9 @@ VkDescriptorSetLayout Descriptors::create_descriptor_set_layout
     const VkResult layout_creation = vkCreateDescriptorSetLayout(logical_device, &create_info, nullptr, &descriptor_set_layout);
 
     if (layout_creation != VK_SUCCESS)
-        Utils::Logs::crash_error_log("Descriptor set layout creation returned error code " + std::to_string(layout_creation) + ".");
+        Utils::Logs::crash_log("Descriptor set layout creation returned error code " + std::to_string(layout_creation) + ".");
 
-    Utils::Logs::log("Descriptor set layout " + Utils::Text::get_memory_address(descriptor_set_layout) + " created successfully!");
+    Utils::Logs::log("Done! Memory address -> " + Utils::Text::get_memory_address(descriptor_set_layout) + ".", true);
     return descriptor_set_layout;
 }
 
@@ -115,24 +115,24 @@ void Descriptors::destroy_descriptor_set_layout
     const VkDevice        &logical_device
 )
 {
-    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(descriptor_set_layout) + " descriptor set layout..");
+    Utils::Logs::log("Destroying descriptor set layout (" + Utils::Text::get_memory_address(descriptor_set_layout) + ").. ", false);
 
     if (descriptor_set_layout == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Descriptor set layout destruction failed! The descriptor set layout provided (" + Utils::Text::get_memory_address(descriptor_set_layout) + ") is not valid!");
+        Utils::Logs::log("Failed! Descriptor set layout invalid.", true);
         return;
     }
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Descriptor set layout destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::log("Failed! Logical device invalid.", true);
         return;
     }
 
     vkDestroyDescriptorSetLayout(logical_device, descriptor_set_layout, nullptr);
     descriptor_set_layout = VK_NULL_HANDLE;
 
-    Utils::Logs::log("Descriptor set layout destroyed successfully!");
+    Utils::Logs::log("Done!", true);
 }
 
 ///////////////////////////////////////////////

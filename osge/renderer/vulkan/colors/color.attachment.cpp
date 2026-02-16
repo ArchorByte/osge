@@ -22,7 +22,7 @@ VkAttachmentDescription Colors::create_color_attachment
     const VkFormat              &surface_format
 )
 {
-    Utils::Logs::log("Creating a color attachment description..");
+    Utils::Logs::log("Creating a color attachment description.. ", false);
 
     /*
         - format         / Defines the format of the image view that will be used for the attachment.
@@ -46,6 +46,6 @@ VkAttachmentDescription Colors::create_color_attachment
         .finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     };
 
-    Utils::Logs::log("Color attachment description created successfully!");
+    Utils::Logs::log("Done!", true);
     return attachment;
 }

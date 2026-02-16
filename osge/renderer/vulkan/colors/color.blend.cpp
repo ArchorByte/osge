@@ -18,7 +18,7 @@
 */
 VkPipelineColorBlendStateCreateInfo Colors::create_color_blend_state()
 {
-    Utils::Logs::log("Creating a color blend state..");
+    Utils::Logs::log("Creating a color blend state.. ", false);
 
     /*
         - blendEnable    / Set color blending status.
@@ -44,6 +44,6 @@ VkPipelineColorBlendStateCreateInfo Colors::create_color_blend_state()
         .pAttachments = &attachment
     };
 
-    Utils::Logs::log("Color blend state created successfully!");
+    Utils::Logs::log("Done!", true);
     return create_info;
 }

@@ -34,16 +34,16 @@ VkDescriptorPool Descriptors::create_descriptor_pool
     const uint32_t &texture_image_count
 )
 {
-    Utils::Logs::log("Creating a descriptor pool..");
+    Utils::Logs::log("Creating descriptor pool.. ", false);
 
     if (image_count < 1)
-        Utils::Logs::crash_error_log("Descriptor pool creation failed! The images count provided (" + std::to_string(image_count) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Images count invalid -> " + std::to_string(image_count) + ".");
 
     if (logical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Descriptor pool creation failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Logical device invalid.");
 
     if (texture_image_count < 1)
-        Utils::Logs::crash_error_log("Descriptor pool creation failed! The texture images count provided (" + std::to_string(texture_image_count) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Texture images count invalid -> " + std::to_string(texture_image_count) + ".");
 
     /*
         - type            / Defines the type of the structure.
@@ -73,16 +73,16 @@ VkDescriptorPool Descriptors::create_descriptor_pool
     const VkResult pool_creation = vkCreateDescriptorPool(logical_device, &create_info, nullptr, &descriptor_pool);
 
     if (pool_creation != VK_SUCCESS)
-        Utils::Logs::crash_error_log("Descriptor pool creation returned error code " + std::to_string(pool_creation) + ".");
+        Utils::Logs::crash_log("Failed! Creation returned error code -> " + std::to_string(pool_creation) + ".");
 
-    Utils::Logs::log("Descriptor pool " + Utils::Text::get_memory_address(descriptor_pool) + " created successfully!");
+    Utils::Logs::log("Done! Memory address -> " + Utils::Text::get_memory_address(descriptor_pool) + ".", true);
     return descriptor_pool;
 }
 
 
 
 /*
-    Cleanly destroy a descriptor pool.
+    Destroy a descriptor pool.
 
     Tasks:
         1) Verify function parameters.
@@ -102,24 +102,24 @@ void Descriptors::destroy_descriptor_pool
     const VkDevice   &logical_device
 )
 {
-    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(descriptor_pool) + " descriptor pool..");
+    Utils::Logs::log("Destroying descriptor pool (" + Utils::Text::get_memory_address(descriptor_pool) + ").. ", false);
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Descriptor pool destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::log("Failed! Logical device invalid.", true);
         return;
     }
 
     if (descriptor_pool == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Descriptor pool destruction failed! The descriptor pool provided (" + Utils::Text::get_memory_address(descriptor_pool) + ") is not valid!");
+        Utils::Logs::log("Failed! Descriptor pool invalid.", true);
         return;
     }
 
     vkDestroyDescriptorPool(logical_device, descriptor_pool, nullptr);
     descriptor_pool = VK_NULL_HANDLE;
 
-    Utils::Logs::log("Descriptor pool destroyed successfully!");
+    Utils::Logs::log("Done!", true);
 }
 
 ///////////////////////////////////////////////

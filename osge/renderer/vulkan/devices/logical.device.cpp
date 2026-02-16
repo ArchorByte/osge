@@ -33,13 +33,13 @@ VkDevice Devices::create_logical_device
     const std::vector<const char *>            &required_extensions
 )
 {
-    Utils::Logs::log("Creating a logical device..");
+    Utils::Logs::log("Creating logical device.. ", false);
 
     if (physical_device == VK_NULL_HANDLE)
-        Utils::Logs::crash_error_log("Logical device creation failed! The physical device provided (" + Utils::Text::get_memory_address(physical_device) + ") is not valid!");
+        Utils::Logs::crash_log("Failed! Physical device invalid.");
 
     if (queues_create_info.size() < 1)
-        Utils::Logs::crash_error_log("Logical device creation failed! No queues create info provided!");
+        Utils::Logs::crash_log("Failed! No queues create info provided.");
 
     VkPhysicalDeviceFeatures device_features { .sampleRateShading = VK_TRUE };
     vkGetPhysicalDeviceFeatures(physical_device, &device_features);
@@ -66,9 +66,9 @@ VkDevice Devices::create_logical_device
     const VkResult device_creation = vkCreateDevice(physical_device, &create_info, nullptr, &logical_device);
 
     if (device_creation != VK_SUCCESS)
-        Utils::Logs::crash_error_log("Logical device creation returned error code " + std::to_string(device_creation) + ".");
+        Utils::Logs::crash_log("Failed! Creation returned error code -> " + std::to_string(device_creation) + ".");
 
-    Utils::Logs::log("Logical device " + Utils::Text::get_memory_address(logical_device) + " created successfully!");
+    Utils::Logs::log("Done! Memory address -> " + Utils::Text::get_memory_address(logical_device) + ".", true);
     return logical_device;
 }
 
@@ -93,18 +93,18 @@ void Devices::destroy_logical_device
     VkDevice &logical_device
 )
 {
-    Utils::Logs::log("Destroying the " + Utils::Text::get_memory_address(logical_device) + " logical device..");
+    Utils::Logs::log("Destroying logical device (" + Utils::Text::get_memory_address(logical_device) + ").. ", false);
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        Utils::Logs::error_log("Logical device destruction failed! The logical device provided (" + Utils::Text::get_memory_address(logical_device) + ") is not valid!");
+        Utils::Logs::log("Failed! Logical device invalid.", true);
         return;
     }
 
     vkDestroyDevice(logical_device, nullptr);
     logical_device = VK_NULL_HANDLE;
 
-    Utils::Logs::log("Logical device destroyed successfully!");
+    Utils::Logs::log("Done!", true);
 }
 
 ///////////////////////////////////////////////

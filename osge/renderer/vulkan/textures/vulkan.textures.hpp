@@ -1,0 +1,6 @@
+#ifndef VULKAN_TEXTURES_HPP
+#define VULKAN_TEXTURES_HPP
+
+
+
+#endif
