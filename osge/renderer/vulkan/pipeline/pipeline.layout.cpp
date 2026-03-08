@@ -93,17 +93,16 @@ void destroy_vulkan_pipeline_layout
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-// Constructor.
 Vulkan_PipelineLayout::Vulkan_PipelineLayout
 (
     const VkDevice &logical_device,
     const VkDescriptorSetLayout &descriptor_set_layout
-) : logical_device(logical_device)
+)
+    : logical_device(logical_device)
 {
     pipeline_layout = create_vulkan_pipeline_layout(logical_device, descriptor_set_layout);
 }
 
-// Destructor.
 Vulkan_PipelineLayout::~Vulkan_PipelineLayout()
 {
     destroy_vulkan_pipeline_layout(logical_device, pipeline_layout);

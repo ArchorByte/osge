@@ -1,37 +1,52 @@
-#include "models.obj.handler.hpp"
-
-#include "../vertex.handler.hpp"
-#include "../../logs/logs.handler.hpp"
+#include "vulkan.models.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION
-#include <tinyobjloader/tiny_obj_loader.h>
-#include <vector>
+
+#include "../vertex/vulkan.vertex.hpp"
+#include "../../../utils/utils.hpp"
+#include "../../../../libraries/tinyobjloader/tiny_obj_loader.h"
+
 #include <filesystem>
 #include <unordered_map>
+#include <vector>
 
-// Return vertices and indices from an OBJ model.
-std::pair<std::vector<Vertex>, std::vector<uint32_t>> load_obj_model
+/*
+    Load .obj models' vertices and indices into the engine.
+
+    Tasks:
+        1) Verify function parameters.
+        2) Try to load the model using tinyobjloader.
+        3) Retrieve output data, sort the information, and add it to the engine definitions.
+
+    Parameters:
+        - file_path / path              / Path to the .obj file to load.
+        - indices   / vector<uint32_t>  / Separates all vertices by shapes.
+        - vertices  / vector<VertexObj> / Engines' 3D shape definitions.
+
+    Returns:
+        No object returned.
+*/
+void Models::load_obj_model
 (
-    const std::filesystem::path &file_path,
-    std::vector<Vertex> &vertices,
-    std::vector<uint32_t> &indices
+    const std::filesystem::path    &file_path,
+    std::vector<uint32_t>          &indices,
+    std::vector<Vertex::VertexObj> &vertices
 )
 {
     const bool file_exists = std::filesystem::exists(file_path);
-
-    if (!file_exists)
-    {
-        error_log("- The loading of the OBJ model \"" + file_path.string() + "\" failed! No such file or directory!");
-        return { vertices, indices };
-    }
-
     const std::string file_name = file_path.filename().string();
     const std::string file_extension = file_path.extension().string();
 
+    if (!file_exists)
+    {
+        Utils::Logs::log("- Loading of .obj model \"" + file_path.string() + "\" failed! No such file or directory.", true);
+        return;
+    }
+
     if (file_extension != ".obj")
     {
-        error_log("- The loading of the OBJ model \"" + file_name + "\" failed ! The file extension is not valid!");
-        return { vertices, indices };
+        Utils::Logs::log("- Loading of .obj model \"" + file_name + "\" failed! Invalid file extension.", true);
+        return;
     }
 
     tinyobj::attrib_t attrib;
@@ -43,23 +58,24 @@ std::pair<std::vector<Vertex>, std::vector<uint32_t>> load_obj_model
 
     if (!loaded)
     {
-        error_log("- The loading of the OBJ model \"" + file_name + "\" failed with error: " + error + "!");
-        return { vertices, indices };
+        Utils::Logs::log("- Loading of .obj model \"" + file_name + "\" failed with error: \"" + error + "\"!", true);
+        return;
     }
 
     if (warning.size() > 0)
-    {
-        error_log("Warning while loading the OBJ model \"" + file_name + "\": " + warning + ".");
-    }
+        Utils::Logs::log("Warning while loading .obj model \"" + file_name + "\": " + warning + ".", true);
 
-    std::unordered_map<Vertex, uint32_t> unique_vertices {};
+    std::unordered_map<Vertex::VertexObj, uint32_t> unique_vertices {};
 
-    for (const auto &shape : shapes)
+    for (const tinyobj::shape_t &shape : shapes)
     {
-        for (const auto &index : shape.mesh.indices)
+        for (const tinyobj::index_t &index : shape.mesh.indices)
         {
-            Vertex vertex {};
+            Vertex::VertexObj vertex {};
 
+            /*
+                - position       / Position of the object.
+            */
             vertex.position =
             {
                 attrib.vertices[3 * index.vertex_index + 0],
@@ -67,12 +83,18 @@ std::pair<std::vector<Vertex>, std::vector<uint32_t>> load_obj_model
                 attrib.vertices[3 * index.vertex_index + 2]
             };
 
+            /*
+                - texture_coordinates / Position of the texture to apply.
+            */
             vertex.texture_coordinates =
             {
                 attrib.texcoords[2 * index.texcoord_index + 0],
                 attrib.texcoords[2 * index.texcoord_index + 1]
             };
 
+            /*
+                - Set the color of the object by default.
+            */
             vertex.color = { 1.0f, 1.0f, 1.0f };
 
             if (unique_vertices.count(vertex) == 0)
@@ -84,6 +106,4 @@ std::pair<std::vector<Vertex>, std::vector<uint32_t>> load_obj_model
             indices.push_back(unique_vertices[vertex]);
         }
     }
-
-    return { vertices, indices };
 }

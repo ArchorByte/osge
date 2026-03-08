@@ -10,15 +10,37 @@
     Generate mipmaps for a Vulkan image.
 
     Tasks:
-        1) 
+        1) Verify function parameters.
+        2) Verify linear support.
+        3) For each mip level:
+            - Transition previous mip level to TRANSFER_SRC_OPTIMAL.
+            - Transition current mip level to TRANSFER_DST_OPTIMAL.
+            - Perform blit from previous level to current level with linear filtering.
+            - Transition previous level to SHADER_READ_ONLY_OPTIMAL.
+        4) Transition the last mip level.
+        5) Free temporary command buffer.
+
+    Parameters:
+        - command_pool    / VkCommandPool    / Handles memory allocation of command buffers.
+        - format          / VkFormat         / Defines the format of the image.
+        - graphics_queue  / VkQueue          / Handles all graphics commands and calls.
+        - height          / int              / Defines the initial height of the image.
+        - image           / VkImage          / Image targeted by the mip maps generation.
+        - logical_device  / VkDevice         / Logical device of the Vulkan instance.
+        - mip_levels      / uint32_t         / Mip levels used for Level Of Details (LOD).
+        - physical_device / VkPhysicalDevice / Physical device used to run this Vulkan instance.
+        - width           / int              / Defines the initial width of the image.
+
+    Returns:
+        No object returned.
 */
-void generate_mipmaps
+void Textures::generate_mipmaps
 (
     const VkCommandPool    &command_pool,
+    const VkFormat         &format,
     const VkQueue          &graphics_queue,
     const int              &height,
     const VkImage          &image,
-    const VkFormat         &image_format,
     const VkDevice         &logical_device,
     const uint32_t         &mip_levels,
     const VkPhysicalDevice &physical_device,
@@ -52,23 +74,23 @@ void generate_mipmaps
         Utils::Logs::crash_log("Failed! Image width invalid -> " + std::to_string(width) + ".");
 
     VkFormatProperties format_properties;
-    vkGetPhysicalDeviceFormatProperties(physical_device, image_format, &format_properties);
+    vkGetPhysicalDeviceFormatProperties(physical_device, format, &format_properties);
 
     if (!(format_properties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT))
         Utils::Logs::crash_log("Failed! Image format does not support linear sampling.");
 
-    VkCommandBuffer command_buffer = Vulkan::Buffers::create_one_time_command_buffer(command_pool, logical_device);
+    VkCommandBuffer command_buffer = Buffers::create_one_time_command_buffer(command_pool, logical_device);
 
     /*
         - sType               / Defines the type of the structure.
-        - srcQueueFamilyIndex / 
-        - dstQueueFamilyIndex / 
-        - image               / 
-        - subresourceRange    / 
-            - aspectMask      / 
-            - levelCount      / 
-            - baseArrayLayer  / 
-            - layerCount      / 
+        - srcQueueFamilyIndex / Index of the source queue to transfer ownership from. Ignored here.
+        - dstQueueFamilyIndex / Index of the destination queue to transfer ownership to. Ignored here.
+        - image               / Image affected by the mip maps generation.
+        - subresourceRange    / Describes the range of the image subresource.
+            - aspectMask      / Defines which aspect of the image is affected.
+            - levelCount      / Defines the amount of mip map levels we are going to make.
+            - baseArrayLayer  / Defines the first array layer.
+            - layerCount      / Defines the amount of layers accessible.
     */
     VkImageMemoryBarrier barrier
     {
@@ -91,7 +113,12 @@ void generate_mipmaps
     for (int i = 1; i < mip_levels; i++)
     {
         /*
-            
+            - subresourceRange / Describes the range of the image subresource.
+                - baseMipLevel / Defines the first mip level.
+            - oldLayout        / Defines the layout we transition from.
+            - newLayout        / Defines the layout we transition to.
+            - srcAccessMask    / Defines the initial aspect mask.
+            - dstAccessMask    / Defines the final aspect mask.
         */
         barrier.subresourceRange.baseMipLevel = i - 1;
         barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
@@ -101,7 +128,18 @@ void generate_mipmaps
 
         vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
-        // Blit operation between mip levels.
+        /*
+            - srcSubresource     / Subresource to blit from.
+                - aspectMask     / Define which aspects of the image are going to be affected.
+                - mipLevel       / Mip level which is going to be affected.
+                - baseArrayLayer / Defines the starting layer.
+                - layerCount     / Defines the amount of layers affected.
+            - dstSubresource     / Subresource to blit to.
+                - aspectMask     / Define which aspects of the image are going to be affected.
+                - mipLevel       / Mip level which is going to be affected.
+                - baseArrayLayer / Defines the starting layer.
+                - layerCount     / Defines the amount of layers affected.
+        */
         VkImageBlit blit
         {
             .srcSubresource
@@ -120,17 +158,26 @@ void generate_mipmaps
             }
         };
 
-        // Source mip.
+        /*
+            - srcOffsets / Defines the bounds of the source region.
+        */
         blit.srcOffsets[0] = { 0, 0, 0 };
         blit.srcOffsets[1] = { mip_width, mip_height, 1 };
 
-        // Destination mip.
+        /*
+            - dstOffsets / Defines the bounds of the destination region.
+        */
         blit.dstOffsets[0] = { 0, 0, 0 };
         blit.dstOffsets[1] = { mip_width > 1 ? mip_width / 2 : 1, mip_height > 1 ? mip_height / 2 : 1, 1 };
 
         vkCmdBlitImage(command_buffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &blit, VK_FILTER_LINEAR);
 
-        // Transition previous mip level.
+        /*
+            - oldLayout        / Defines the layout we transition from.
+            - newLayout        / Defines the layout we transition to.
+            - srcAccessMask    / Defines the initial aspect mask.
+            - dstAccessMask    / Defines the final aspect mask.
+        */
         barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
         barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
@@ -138,12 +185,21 @@ void generate_mipmaps
 
         vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
-        // Reduce resolution for the next mip level.
-        if (mip_width > 1) mip_width /= 2;
-        if (mip_height > 1) mip_height /= 2;
+        if (mip_width > 1)
+            mip_width /= 2;
+
+        if (mip_height > 1)
+            mip_height /= 2;
     }
 
-    // Transition the last mip level.
+    /*
+        - subresourceRange / Describes the range of the image subresource.
+            - baseMipLevel / Defines the first mip level.
+        - oldLayout        / Defines the layout we transition from.
+        - newLayout        / Defines the layout we transition to.
+        - srcAccessMask    / Defines the initial aspect mask.
+        - dstAccessMask    / Defines the final aspect mask.
+    */
     barrier.subresourceRange.baseMipLevel = mip_levels - 1;
     barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
     barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -152,6 +208,6 @@ void generate_mipmaps
 
     vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
-    Vulkan::Buffers::destroy_command_buffer(command_buffer, command_pool, graphics_queue, logical_device);
+    Buffers::destroy_command_buffer(command_buffer, command_pool, graphics_queue, logical_device);
     Utils::Logs::log("Done!", true);
 }

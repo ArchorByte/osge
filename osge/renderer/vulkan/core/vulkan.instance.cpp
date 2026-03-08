@@ -16,7 +16,7 @@
 
 /*
     Create a Vulkan instance.
-    Note: You should use the pre-made class to handle the Vulkan instance rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify function parameters.
@@ -146,12 +146,12 @@ Core::instance_handler::instance_handler
     const std::vector<const char*> &layers
 )
 {
-    vulkan_instance = Core::create_vulkan_instance(layers);
+    vulkan_instance = create_vulkan_instance(layers);
 }
 
 Core::instance_handler::~instance_handler()
 {
-    Core::destroy_vulkan_instance(vulkan_instance);
+    destroy_vulkan_instance(vulkan_instance);
 }
 
 VkInstance Core::instance_handler::get() const

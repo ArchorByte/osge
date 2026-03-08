@@ -13,7 +13,7 @@
 
 /*
     Create a descriptor set for each swap chain image.
-    Note: You should use the pre-made class to handle the descriptor sets rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify function parameters.
@@ -221,12 +221,12 @@ Descriptors::descriptor_sets_handler::descriptor_sets_handler
 )
     : descriptor_pool(descriptor_pool), logical_device(logical_device)
 {
-    descriptor_sets = Descriptors::create_descriptor_sets(descriptor_set_layout, descriptor_pool, image_count, logical_device, texture_image_views, texture_sampler, uniform_buffers);
+    descriptor_sets = create_descriptor_sets(descriptor_set_layout, descriptor_pool, image_count, logical_device, texture_image_views, texture_sampler, uniform_buffers);
 }
 
 Descriptors::descriptor_sets_handler::~descriptor_sets_handler()
 {
-    Descriptors::destroy_descriptor_sets(descriptor_pool, descriptor_sets, logical_device);
+    destroy_descriptor_sets(descriptor_pool, descriptor_sets, logical_device);
 }
 
 std::vector<VkDescriptorSet> Descriptors::descriptor_sets_handler::get() const

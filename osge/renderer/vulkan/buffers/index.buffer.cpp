@@ -12,7 +12,7 @@
 
 /*
     Create an index buffer.
-    Note: You should use the pre-made class to handle the index buffer rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify the function parameters.
@@ -152,7 +152,7 @@ Buffers::index_buffer_handler::index_buffer_handler
 )
     : logical_device(logical_device)
 {
-    const std::pair buffer_data = Buffers::create_index_buffer(command_pool, graphics_queue, logical_device, physical_device, vertex_indices, vertices);
+    const std::pair buffer_data = create_index_buffer(command_pool, graphics_queue, logical_device, physical_device, vertex_indices, vertices);
 
     index_buffer = buffer_data.first;
     buffer_memory = buffer_data.second;
@@ -160,7 +160,7 @@ Buffers::index_buffer_handler::index_buffer_handler
 
 Buffers::index_buffer_handler::~index_buffer_handler()
 {
-    Buffers::destroy_index_buffer(buffer_memory, index_buffer, logical_device);
+    destroy_index_buffer(buffer_memory, index_buffer, logical_device);
 }
 
 VkBuffer Buffers::index_buffer_handler::get() const

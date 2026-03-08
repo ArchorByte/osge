@@ -12,7 +12,7 @@
 
 /*
     Create a Vulkan surface.
-    Note: You should use the pre-made class to handle the Vulkan surface rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify function parameters.
@@ -103,12 +103,12 @@ Core::vulkan_surface_handler::vulkan_surface_handler
 )
     : vulkan_instance(vulkan_instance)
 {
-    vulkan_surface = Core::create_vulkan_surface(vulkan_instance, window);
+    vulkan_surface = create_vulkan_surface(vulkan_instance, window);
 }
 
 Core::vulkan_surface_handler::~vulkan_surface_handler()
 {
-    Core::destroy_vulkan_surface(vulkan_instance, vulkan_surface);
+    destroy_vulkan_surface(vulkan_instance, vulkan_surface);
 }
 
 VkSurfaceKHR Core::vulkan_surface_handler::get() const

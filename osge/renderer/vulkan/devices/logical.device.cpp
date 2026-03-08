@@ -11,7 +11,7 @@
 
 /*
     Create a logical device.
-    Note: You should use the pre-made class to handle the logical device rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify function parameters.
@@ -118,12 +118,12 @@ Devices::logical_device_handler::logical_device_handler
     const std::vector<const char *>            &required_extensions
 )
 {
-    logical_device = Devices::create_logical_device(physical_device, queues_create_info, required_extensions);
+    logical_device = create_logical_device(physical_device, queues_create_info, required_extensions);
 }
 
 Devices::logical_device_handler::~logical_device_handler()
 {
-    Devices::destroy_logical_device(logical_device);
+    destroy_logical_device(logical_device);
 }
 
 VkDevice Devices::logical_device_handler::get() const

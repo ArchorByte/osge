@@ -12,7 +12,7 @@
 
 /*
     Create a vertex buffer.
-    Note: You should use the pre-made class to handle the vertex buffer rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify function parameters.
@@ -146,7 +146,7 @@ Buffers::vertex_buffer_handler::vertex_buffer_handler
 )
     : logical_device(logical_device)
 {
-    const std::pair buffer_data = Buffers::create_vertex_buffer(command_pool, graphics_queue, logical_device, physical_device, vertices);
+    const std::pair buffer_data = create_vertex_buffer(command_pool, graphics_queue, logical_device, physical_device, vertices);
 
     vertex_buffer = buffer_data.first;
     vertex_buffer_memory = buffer_data.second;
@@ -154,7 +154,7 @@ Buffers::vertex_buffer_handler::vertex_buffer_handler
 
 Buffers::vertex_buffer_handler::~vertex_buffer_handler()
 {
-    Buffers::destroy_buffer(vertex_buffer, vertex_buffer_memory, logical_device);
+    destroy_buffer(vertex_buffer, vertex_buffer_memory, logical_device);
 }
 
 VkBuffer Buffers::vertex_buffer_handler::get() const

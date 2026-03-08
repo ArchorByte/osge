@@ -12,7 +12,7 @@
 
 /*
     Create a command pool.
-    Note: You should use the pre-made class to handle the command pool rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify function parameters.
@@ -115,12 +115,12 @@ Queues::command_pool_handler::command_pool_handler
 )
     : logical_device(logical_device)
 {
-    command_pool = Queues::create_command_pool(graphics_family_index, logical_device);
+    command_pool = create_command_pool(graphics_family_index, logical_device);
 }
 
 Queues::command_pool_handler::~command_pool_handler()
 {
-    Queues::destroy_command_pool(command_pool, logical_device);
+    destroy_command_pool(command_pool, logical_device);
 }
 
 VkCommandPool Queues::command_pool_handler::get() const

@@ -14,7 +14,7 @@
 
 /*
     Create a buffer for each texture image.
-    Note: You should use the pre-made class to handle the texture image buffers rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify function parameters.
@@ -108,7 +108,7 @@ std::vector<Buffer> Buffers::create_texture_image_buffers
 */
 void Buffers::destroy_texture_image_buffers
 (
-    const VkDevice      &logical_device,+
+    const VkDevice      &logical_device,
     std::vector<Buffer> &texture_image_buffers
 )
 {
@@ -173,12 +173,12 @@ Buffers::texture_image_buffers_handler::texture_image_buffers_handler
 )
     : logical_device(logical_device)
 {
-    texture_image_buffers = Buffers::create_texture_image_buffers(logical_device, physical_device, texture_image_info);
+    texture_image_buffers = create_texture_image_buffers(logical_device, physical_device, texture_image_info);
 }
 
 Buffers::texture_image_buffers_handler::~texture_image_buffers_handler()
 {
-    Buffers::destroy_texture_image_buffers(logical_device, texture_image_buffers);
+    destroy_texture_image_buffers(logical_device, texture_image_buffers);
 }
 
 std::vector<Buffer> Buffers::texture_image_buffers_handler::get() const

@@ -17,7 +17,7 @@
 
 /*
     Create the uniform buffers.
-    Note: You should use the pre-made class to handle the uniform buffers rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify function parameters.
@@ -208,12 +208,12 @@ Buffers::uniform_buffers_handler::uniform_buffers_handler
 )
     : logical_device(logical_device)
 {
-    uniform_buffers = Buffers::create_uniform_buffers(command_pool, graphics_queue, image_count, logical_device, physical_device);
+    uniform_buffers = create_uniform_buffers(command_pool, graphics_queue, image_count, logical_device, physical_device);
 }
 
 Buffers::uniform_buffers_handler::~uniform_buffers_handler()
 {
-    Buffers::destroy_uniform_buffers(logical_device, uniform_buffers);
+    destroy_uniform_buffers(logical_device, uniform_buffers);
 }
 
 std::vector<UniformBufferInfo> Buffers::uniform_buffers_handler::get() const

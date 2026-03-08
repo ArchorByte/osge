@@ -12,7 +12,7 @@
 
 /*
     Create a descriptor pool.
-    Note: You should use the pre-made class to handle the descriptor pool rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify function parameters.
@@ -134,12 +134,12 @@ Descriptors::descriptor_pool_handler::descriptor_pool_handler
 )
     : logical_device(logical_device)
 {
-    descriptor_pool = Descriptors::create_descriptor_pool(image_count, logical_device, texture_image_count);
+    descriptor_pool = create_descriptor_pool(image_count, logical_device, texture_image_count);
 }
 
 Descriptors::descriptor_pool_handler::~descriptor_pool_handler()
 {
-    Descriptors::destroy_descriptor_pool(descriptor_pool, logical_device);
+    destroy_descriptor_pool(descriptor_pool, logical_device);
 }
 
 VkDescriptorPool Descriptors::descriptor_pool_handler::get() const

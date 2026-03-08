@@ -12,7 +12,7 @@
 
 /*
     Create a descriptor set layout.
-    Note: You should use the pre-made class to handle the descriptor set layout rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify function parameters.
@@ -146,12 +146,12 @@ Descriptors::descriptor_set_layout_handler::descriptor_set_layout_handler
 )
     : logical_device(logical_device)
 {
-    descriptor_set_layout = Descriptors::create_descriptor_set_layout(logical_device, texture_image_views);
+    descriptor_set_layout = create_descriptor_set_layout(logical_device, texture_image_views);
 }
 
 Descriptors::descriptor_set_layout_handler::~descriptor_set_layout_handler()
 {
-    Descriptors::destroy_descriptor_set_layout(descriptor_set_layout, logical_device);
+    destroy_descriptor_set_layout(descriptor_set_layout, logical_device);
 }
 
 VkDescriptorSetLayout Descriptors::descriptor_set_layout_handler::get() const

@@ -13,7 +13,7 @@
 
 /*
     Create a frame buffer for each swap chain image view.
-    Note: You should use the pre-made class to handle the frame buffers rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify function parameters.
@@ -174,12 +174,12 @@ Buffers::frame_buffers_handler::frame_buffers_handler
 )
     : logical_device(logical_device)
 {
-    frame_buffers = Buffers::create_frame_buffers(color_image_view, depth_image_view, extent, image_views, logical_device, render_pass);
+    frame_buffers = create_frame_buffers(color_image_view, depth_image_view, extent, image_views, logical_device, render_pass);
 }
 
 Buffers::frame_buffers_handler::~frame_buffers_handler()
 {
-    Buffers::destroy_frame_buffers(frame_buffers, logical_device);
+    destroy_frame_buffers(frame_buffers, logical_device);
 }
 
 std::vector<VkFramebuffer> Buffers::frame_buffers_handler::get() const

@@ -12,7 +12,7 @@
 
 /*
     Create depth image, depth image memory and depth image view.
-    Note: You should use the pre-made class to handle the depth resources rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify function parameters.
@@ -144,12 +144,12 @@ Depth::depth_resources_handler::depth_resources_handler
 )
     : logical_device(logical_device)
 {
-    depth_resources = Depth::create_depth_resources(command_pool, extent, graphics_queue, logical_device, physical_device, samples_count);
+    depth_resources = create_depth_resources(command_pool, extent, graphics_queue, logical_device, physical_device, samples_count);
 }
 
 Depth::depth_resources_handler::~depth_resources_handler()
 {
-    Depth::destroy_depth_resources(depth_resources, logical_device);
+    destroy_depth_resources(depth_resources, logical_device);
 }
 
 DepthResources Depth::depth_resources_handler::get() const

@@ -12,7 +12,7 @@
 
 /*
     Create the color image, the color image memory, and the color image view.
-    Note: You should use the pre-made class to handle the color resources rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify the parameters.
@@ -135,12 +135,12 @@ Colors::color_resources_handler::color_resources_handler
 )
     : logical_device(logical_device)
 {
-    color_resources = Colors::create_color_resources(logical_device, physical_device, samples_count, swapchain_extent, swapchain_image_format);
+    color_resources = create_color_resources(logical_device, physical_device, samples_count, swapchain_extent, swapchain_image_format);
 }
 
 Colors::color_resources_handler::~color_resources_handler()
 {
-    Colors::destroy_color_resources(color_resources, logical_device);
+    destroy_color_resources(color_resources, logical_device);
 }
 
 ColorResources Colors::color_resources_handler::get() const

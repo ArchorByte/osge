@@ -8,8 +8,10 @@
 #include "descriptors/vulkan.descriptors.hpp"
 #include "devices/vulkan.devices.hpp"
 #include "images/vulkan.images.hpp"
+#include "models/vulkan.models.hpp"
 #include "queues/vulkan.queues.hpp"
 #include "shaders/vulkan.shaders.hpp"
+#include "textures/vulkan.textures.hpp"
 #include "vertex/vulkan.vertex.hpp"
 
 namespace Vulkan
@@ -57,6 +59,12 @@ namespace Vulkan
     namespace Images = ::Images;
 
     ////////////////////////////////////
+    ///// models/vulkan.models.hpp /////
+    ////////////////////////////////////
+
+    namespace Models = ::Models;
+
+    ////////////////////////////////////
     ///// queues/vulkan.queues.hpp /////
     ////////////////////////////////////
 
@@ -67,6 +75,12 @@ namespace Vulkan
     //////////////////////////////////////
 
     namespace Shaders = ::Shaders;
+
+    ////////////////////////////////////////
+    ///// textures/vulkan.textures.hpp /////
+    ////////////////////////////////////////
+
+    namespace Textures = ::Textures;
 
     /////////////////////////////////////
     ///// shaders/vulkan.vertex.hpp /////

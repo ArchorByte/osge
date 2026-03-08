@@ -64,7 +64,7 @@ VkShaderModule Shaders::create_shader_module
 
 /*
     Create a shader module for each valid shader found in the shaders folder.
-    Note: You should use the pre-made class to handle the shader modules rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify the parameters.

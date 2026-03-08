@@ -9,7 +9,7 @@
 
 /*
     Create a graphics pipeline.
-    Note: You should use the pre-made class to handle the graphics pipeline rather than directly using this function for memory safety reasons.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
 
     Tasks:
         1) Verify the parameters.
@@ -143,14 +143,15 @@ Pipeline::graphics_pipeline_handler::graphics_pipeline_handler
     const VkRenderPass &render_pass,
     const VkPipelineVertexInputStateCreateInfo &vertex_input_state,
     const VkPipelineViewportStateCreateInfo &viewport_state
-) : logical_device(logical_device)
+)
+    : logical_device(logical_device)
 {
-    graphics_pipeline = Pipeline::create_graphics_pipeline(assembly_input_state, dynamic_state, logical_device, multisampling_state, pipeline_layout, pipeline_shaders_stages, rasterization_state, render_pass, vertex_input_state, viewport_state);
+    graphics_pipeline = create_graphics_pipeline(assembly_input_state, dynamic_state, logical_device, multisampling_state, pipeline_layout, pipeline_shaders_stages, rasterization_state, render_pass, vertex_input_state, viewport_state);
 }
 
 Pipeline::graphics_pipeline_handler::~graphics_pipeline_handler()
 {
-    Pipeline::destroy_graphics_pipeline(graphics_pipeline, logical_device);
+    destroy_graphics_pipeline(graphics_pipeline, logical_device);
 }
 
 VkPipeline Pipeline::graphics_pipeline_handler::get() const

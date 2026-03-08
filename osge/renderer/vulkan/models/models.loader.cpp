@@ -1,24 +1,39 @@
-#include "models.loader.hpp"
+#include "vulkan.models.hpp"
 
-#include "models.obj.handler.hpp"
-#include "../vertex.handler.hpp"
-#include "../../logs/logs.handler.hpp"
+#include "../vertex/vulkan.vertex.hpp"
+#include "../../../utils/utils.hpp"
 
-#include <vector>
-#include <string>
 #include <filesystem>
+#include <string>
+#include <vector>
 
-// Load all 3D models as vertices and indices into the engine.
-void load_3d_models
+/*
+    Load all 3D models' vertices and indices into the engine.
+
+    Tasks:
+        1) Get all files in the local models folder.
+        2) For each file:
+            - Get basic information about it (path, name and extension).
+            - Verify it's a valid file.
+            - Try to load it using the proper loading method depending on its extension.
+
+    Parameters:
+        - indices  / uint32_t  / Separates all vertices by shapes.
+        - vertices / VertexObj / Engines' 3D shape definitions.
+
+    Returns:
+        No object returned.
+*/
+void Models::load_3d_models
 (
-    std::vector<Vertex> &vertices,
-    std::vector<uint32_t> &indices
+    std::vector<uint32_t>          &indices,
+    std::vector<Vertex::VertexObj> &vertices
 )
 {
-    log("Loading 3D models..");
+    Utils::Logs::log("Loading 3D models..", true);
 
     int total = 0;
-    int succeeded = 0;
+    int failed = 0;
 
     for (const auto &file : std::filesystem::directory_iterator("./models"))
     {
@@ -30,28 +45,23 @@ void load_3d_models
 
         if (!std::filesystem::is_regular_file(file.status()))
         {
-            error_log("- The loading of the model \"" + file_name + "\" failed! It's not a valid file!");
+            Utils::Logs::log("- Loading of model \"" + file_name + "\" failed! Not a valid file.", true);
+            failed++;
             continue;
         }
 
         if (file_extension == ".obj")
         {
-            load_obj_model(file_path, vertices, indices);
-        }
-        else
-        {
-            error_log("- The loading of the model \"" + file_name + "\" failed! The file extension (\"" + file_extension + "\") is not supported by the engine! Supported extension: .obj.");
+            Models::load_obj_model(file_path, indices, vertices);
             continue;
         }
 
-        succeeded++;
-        log("- Model \"" + file_name + "\" loaded successfully!");
+        Utils::Logs::log("- Loading of model \"" + file_name + "\" failed! File extension (\"" + file_extension + "\") not supported by the engine. Supported extensions: .obj.", true);
+        failed++;
     }
 
-    if (succeeded < total)
-    {
-        error_log("Warning: " + std::to_string(total - succeeded) + " models failed to load!");
-    }
-
-    log(std::to_string(succeeded) + "/" + std::to_string(total) + " models loaded successfully!");
+    if (failed > 0)
+        Utils::Logs::log("Models loading completed! Warning: " + std::to_string(failed) + "/" + std::to_string(total) + " models failed to load.", true);
+    else
+        Utils::Logs::log("Models loading completed! " + std::to_string(total) + " models loaded.", true);
 }

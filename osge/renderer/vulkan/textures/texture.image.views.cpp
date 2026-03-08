@@ -1,70 +1,92 @@
-#include "texture.image.views.hpp"
+#include "vulkan.textures.hpp"
 
-#include "texture.images.handler.hpp"
-#include "../images/image.views.handler.hpp"
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
+#include "libraries/vulkan/vulkan.h"
+#include "../images/vulkan.images.hpp"
+#include "../../../utils/utils.hpp"
 
-#include <vulkan/vulkan.h>
-#include <vector>
 #include <string>
+#include <vector>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
 ///////////////////////////////////////////////////
 
-// Create views for the texture images.
-std::vector<VkImageView> create_vulkan_texture_image_views
+/*
+    Create views for texture images.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
+
+    Tasks:
+        1) Verify function parameters.
+        2) Reserve memory for the vector list.
+        3) Create a view for each texture image.
+
+    Parameters:
+        - logical_device / VkDevice                 / Logical device of the Vulkan instance.
+        - texture_images / vector<TextureImageData> / Texture images that are used for the views creation.
+
+    Returns:
+        A vector list containing all create texture image views.
+*/
+std::vector<VkImageView> Textures::create_texture_image_views
 (
-    const VkDevice &logical_device,
-    const std::vector<TextureImage> &texture_images
+    const VkDevice                      &logical_device,
+    const std::vector<TextureImageData> &texture_images
 )
 {
-    log("Creating " + std::to_string(texture_images.size()) + " texture image views..");
+    Utils::Logs::log("Creating " + std::to_string(texture_images.size()) + " texture image views.. ", false);
 
     if (logical_device == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Texture image views creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
-    }
+        Utils::Logs::crash_log("Failed! Logical device invalid.");
 
     if (texture_images.size() < 1)
-    {
-        fatal_error_log("Texture image views creation failed! No texture images were provided!");
-    }
+        Utils::Logs::crash_log("Failed! No texture images provided.");
 
     std::vector<VkImageView> image_views;
     image_views.reserve(texture_images.size());
 
     for (int i = 0; i < texture_images.size(); i++)
     {
-        const VkImageView image_view = create_image_view(logical_device, texture_images[i].texture_image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, texture_images[i].mip_levels);
-
+        const VkImageView image_view = Images::create_image_view(VK_IMAGE_ASPECT_COLOR_BIT, VK_FORMAT_R8G8B8A8_SRGB, texture_images[i].texture_image, logical_device, texture_images[i].mip_levels);
         image_views.emplace_back(image_view);
-        log("- Texture image view #" + std::to_string(i + 1) + "/" + std::to_string(texture_images.size()) + " (" + force_string(image_view) + ") created successfully!");
     }
 
-    log(std::to_string(texture_images.size()) + " texture image views created successfully!");
+    Utils::Logs::log("Done! " + std::to_string(texture_images.size()) + " texture image views created.", true);
     return image_views;
 }
 
-// Destroy some texture image views.
-void destroy_vulkan_texture_image_views
+
+
+/*
+    Destroy texture image views.
+
+    Tasks:
+        1) Verify function parameters.
+        2) Destroy each texture image view.
+
+    Parameters:
+        - logical_device      / VkDevice            / Logical device of the Vulkan instance.
+        - texture_image_views / vector<VkImageView> / Texture image views to destroy.
+
+    Returns:
+        No object returned.
+*/
+void Textures::destroy_texture_image_views
 (
-    const VkDevice &logical_device,
+    const VkDevice           &logical_device,
     std::vector<VkImageView> &texture_image_views
 )
 {
-    log("Destroying " + std::to_string(texture_image_views.size()) + " texture image views..");
+    Utils::Logs::log("Destroying " + std::to_string(texture_image_views.size()) + " texture image views.. ", false);
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Texture image views destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::log("Failed! Logical device invalid.", true);
         return;
     }
 
     if (texture_image_views.size() < 1)
     {
-        error_log("Texture image views destruction failed! No texture image views were provided!");
+        Utils::Logs::log("Done!", true);
         return;
     }
 
@@ -77,23 +99,19 @@ void destroy_vulkan_texture_image_views
 
         if (texture_image_view == VK_NULL_HANDLE)
         {
-            error_log("- Failed to destroy the texture image view #" + std::to_string(i) + "/" + std::to_string(texture_image_views.size()) + "! The image view provided (" + force_string(texture_image_view) + ") is not valid!");
             failed++;
             continue;
         }
 
         vkDestroyImageView(logical_device, texture_image_view, nullptr);
         texture_image_view = VK_NULL_HANDLE;
-
-        log("- Texture image view #" + std::to_string(i) + "/" + std::to_string(texture_image_views.size()) + " destroyed successfully!");
     }
 
     if (failed > 0)
-    {
-        error_log("Warning: " + std::to_string(failed) + " texture image views failed to destroy! This might lead to some memory leaks or memory overload.");
-    }
+        Utils::Logs::log("Done! Warning: " + std::to_string(failed) + " destructions failed.", true);
+    else
+        Utils::Logs::log("Done!", true);
 
-    log(std::to_string(texture_image_views.size() - failed) + "/" + std::to_string(texture_image_views.size()) + " texture image views destroyed successfully!");
     texture_image_views.clear();
 }
 
@@ -101,23 +119,22 @@ void destroy_vulkan_texture_image_views
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-// Constructor.
-Vulkan_TextureImageViews::Vulkan_TextureImageViews
+Textures::texture_image_views_handler::texture_image_views_handler
 (
-    const VkDevice &logical_device,
-    const std::vector<TextureImage> &texture_images
-) : logical_device(logical_device)
+    const VkDevice                      &logical_device,
+    const std::vector<TextureImageData> &texture_images
+)
+    : logical_device(logical_device)
 {
-    texture_image_views = create_vulkan_texture_image_views(logical_device, texture_images);
+    texture_image_views = create_texture_image_views(logical_device, texture_images);
 }
 
-// Destructor.
-Vulkan_TextureImageViews::~Vulkan_TextureImageViews()
+Textures::texture_image_views_handler::~texture_image_views_handler()
 {
-    destroy_vulkan_texture_image_views(logical_device, texture_image_views);
+    destroy_texture_image_views(logical_device, texture_image_views);
 }
 
-std::vector<VkImageView> Vulkan_TextureImageViews::get() const
+std::vector<VkImageView> Textures::texture_image_views_handler::get() const
 {
     return texture_image_views;
 }
