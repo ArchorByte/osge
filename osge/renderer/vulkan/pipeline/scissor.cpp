@@ -1,23 +1,38 @@
-#include "rect2d.scissor.hpp"
+#include "vulkan.pipeline.hpp"
 
-#include "../../logs/logs.handler.hpp"
+#include "../../../utils/utils.hpp"
+#include "libraries/vulkan/vulkan.h"
 
-#include <vulkan/vulkan.h>
+/*
+    Create a scissor for a pipeline.
 
-// Create a scissor for a graphics pipeline.
-VkRect2D create_vulkan_scissor
+    Tasks:
+        1) Make scissor.
+        2) Return it.
+
+    Parameters:
+        - extent / VkExtent2D / Resolution of the swap chain.
+
+    Returns:
+        The created scissor.
+*/
+VkRect2D Pipeline::create_scissor
 (
     const VkExtent2D &extent
 )
 {
-    log("Creating a scissor..");
+    Utils::Logs::log("Creating scissor.. ", false);
 
-    VkRect2D scissor
+    /*
+        - offset / Defines the starting position of the scissor.
+        - extent / Defines the area affected.
+    */
+    const VkRect2D scissor
     {
-        .offset = { 0, 0 }, // Select the starting position.
+        .offset = { 0, 0 },
         .extent = extent
     };
 
-    log("Scissor created successfully!");
+    Utils::Logs::log("Done!", true);
     return scissor;
 }
