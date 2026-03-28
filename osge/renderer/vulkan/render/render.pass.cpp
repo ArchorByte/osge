@@ -1,31 +1,56 @@
-#include "render.pass.hpp"
+#include "vulkan.render.hpp"
 
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
+#include "../../../utils/utils.hpp"
+#include "libraries/vulkan/vulkan.h"
 
-#include <vulkan/vulkan.h>
 #include <array>
 
 ///////////////////////////////////////////////////
 //////////////////// Functions ////////////////////
 ///////////////////////////////////////////////////
 
-// Create a render pass.
-VkRenderPass create_vulkan_render_pass
+/*
+    Create a render pass.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
+
+    Tasks:
+        1) Verify function parameters.
+        2) Make attachment references.
+        3) Make subpass.
+        4) Create render pass.
+
+    Parameters:
+        - color_attachment / VkAttachmentDescription / Describes color attachment for rendering output.
+        - depth_attachment / VkAttachmentDescription / Describes depth/stencil attachment.
+        - logical_device   / VkDevice                / Logical device of the Vulkan instance.
+        - surface_format   / VkSurfaceFormatKHR      / Format of swap chain images.
+
+    Returns:
+        The created render pass.
+*/
+VkRenderPass Render::create_render_pass
 (
-    const VkDevice &logical_device,
     const VkAttachmentDescription &color_attachment,
     const VkAttachmentDescription &depth_attachment,
-    const VkSurfaceFormatKHR &surface_format
+    const VkDevice                &logical_device,
+    const VkSurfaceFormatKHR      &surface_format
 )
 {
-    log("Creating a render pass..");
+    Utils::Logs::log("Creating render pass.. ", false);
 
     if (logical_device == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Render pass creation failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
-    }
+        Utils::Logs::crash_log("Failed! Logical device invalid.");
 
+    /*
+        - format         / Defines the format of the image view that will be used for the attachment.
+        - samples        / Amount of samples of the image.
+        - loadOp         / Defines how the content of the attachment will be used by the subpass. Here, we forces the render area to be cleared.
+        - storeOp        / Defines what happens to the content of the attachment once the subpass ended. Here, we just ignore the content.
+        - stencilLoadOp  / Defines how the content of the stencil components will be used by the subpass. Here, we just ignore the previous data and overwrite it.
+        - stencilStoreOp / Defines what happens to the content of the stencil components once the subpass ended. Here, we just ignore the content.
+        - initialLayout  / Defines the initial layout of the attachment.
+        - finalLayout    / Defines the layout to transition to once the render pass ended.
+    */
     VkAttachmentDescription resolve
     {
         .format = surface_format.format,
@@ -36,6 +61,16 @@ VkRenderPass create_vulkan_render_pass
         .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
         .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
         .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+    };
+
+    /*
+        - attachment / Integer identifying the attachment.
+        - layout     / Defines which layout is used for the attachment.
+    */
+    const VkAttachmentReference color_attachment_reference
+    {
+        .attachment = 0,
+        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     };
 
     VkAttachmentReference depth_attachment_reference
@@ -50,21 +85,30 @@ VkRenderPass create_vulkan_render_pass
         .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     };
 
-    const VkAttachmentReference color_attachment_reference
-    {
-        .attachment = 0,
-        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL // Select the reference layout.
-    };
-
+    /*
+        - pipelineBindPoint       / Defines which pipeline type is supported by this subpass.
+        - colorAttachmentCount    / Amount of color attachments to pass.
+        - pColorAttachments       / Passes color attachments.
+        - pResolveAttachments     / Passes attachment references.
+        - pDepthStencilAttachment / Passes depth stencil attachments.
+    */
     const VkSubpassDescription subpass
     {
-        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS, // This subpass will be used for a graphics pipeline.
+        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
         .colorAttachmentCount = 1,
         .pColorAttachments = &color_attachment_reference,
         .pResolveAttachments = &resolve_attachment_reference,
         .pDepthStencilAttachment = &depth_attachment_reference
     };
 
+    /*
+        - srcSubpass    / Source subpass we make data from.
+        - dstSubpass    / Destination subpass.
+        - srcStageMask  / Pipeline stages to wait on .
+        - dstStageMask  / Pipeline stages that wait for the dependency.
+        - srcAccessMask / Access mask that must be completed before continuing.
+        - dstAccessMask / Access mask that wait on the dependency.
+    */
     const VkSubpassDependency dependency
     {
         .srcSubpass = VK_SUBPASS_EXTERNAL,
@@ -77,6 +121,15 @@ VkRenderPass create_vulkan_render_pass
 
     const std::array<VkAttachmentDescription, 3> attachments = { color_attachment, depth_attachment, resolve };
 
+    /*
+        - sType           / Defines the type of the structure.
+        - attachmentCount / Amount of attachments to pass.
+        - pAttachments    / Passes the attachments.
+        - subpassCount    / Amount of subpasses to pass.
+        - pSubpasses      / Passes the subpasses.
+        - dependencyCount / Amount of dependencies to pass.
+        - pDependencies   / Passes the dependencies.
+    */
     const VkRenderPassCreateInfo create_info
     {
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
@@ -92,69 +145,77 @@ VkRenderPass create_vulkan_render_pass
     const VkResult pass_creation = vkCreateRenderPass(logical_device, &create_info, nullptr, &render_pass);
 
     if (pass_creation != VK_SUCCESS)
-    {
-        fatal_error_log("Render pass creation returned error code " + std::to_string(pass_creation) + ".");
-    }
+        Utils::Logs::crash_log("Failed! Creation returned error code -> " + std::to_string(pass_creation) + ".");
 
-    if (render_pass == VK_NULL_HANDLE)
-    {
-        fatal_error_log("Render pass creation output (" + force_string(render_pass) + ") is not valid!");
-    }
-
-    log("Render pass " + force_string(render_pass) + " created successfully!");
+    Utils::Logs::log("Done! Memory address -> " + Utils::Text::get_memory_address(render_pass) + ".", true);
     return render_pass;
 }
 
-// Destroy a render pass.
-void destroy_vulkan_render_pass
+
+
+/*
+    Destroy a render pass.
+
+    Tasks:
+        1) Verify function parameters.
+        2) Destroy render pass.
+        3) Set object to null.
+
+    Parameters:
+        - logical_device / VkDevice     / Logical device of the Vulkan instance.
+        - render_pass    / VkRenderPass / Render pass to destroy.
+
+    Returns:
+        No object returned.
+*/
+void Render::destroy_render_pass
 (
     const VkDevice &logical_device,
-    VkRenderPass &render_pass
+    VkRenderPass   &render_pass
 )
 {
-    log("Destroying the " + force_string(render_pass) + " render pass..");
+    Utils::Logs::log("Destroying " + Utils::Text::get_memory_address(render_pass) + " render pass.. ", false);
 
     if (logical_device == VK_NULL_HANDLE)
     {
-        error_log("Render pass destruction failed! The logical device provided (" + force_string(logical_device) + ") is not valid!");
+        Utils::Logs::log("Failed! Logical device invalid.", true);
         return;
     }
 
     if (render_pass == VK_NULL_HANDLE)
     {
-        error_log("Render pass destruction failed! The render pass provided (" + force_string(render_pass) + ") is not valid!");
+        Utils::Logs::log("Failed! Render pass invalid.", true);
+        return;
     }
 
     vkDestroyRenderPass(logical_device, render_pass, nullptr);
     render_pass = VK_NULL_HANDLE;
 
-    log("Render pass destroyed successfully!");
+    Utils::Logs::log("Done!", true);
 }
 
 ///////////////////////////////////////////////
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-// Constructor.
-Vulkan_RenderPass::Vulkan_RenderPass
+Render::render_pass_handler::render_pass_handler
 (
-    const VkDevice &logical_device,
     const VkAttachmentDescription &color_attachment,
     const VkAttachmentDescription &depth_attachment,
-    const VkAttachmentReference &depth_attachment_reference,
-    const VkSurfaceFormatKHR &surface_format
-) : logical_device(logical_device)
+    const VkDevice                &logical_device,
+    const VkSurfaceFormatKHR      &surface_format
+)
+    : logical_device(logical_device)
 {
-    render_pass = create_vulkan_render_pass(logical_device, color_attachment, depth_attachment, depth_attachment_reference, surface_format);
+    render_pass = create_render_pass(color_attachment, depth_attachment, logical_device, surface_format);
 }
 
-// Destructor.
-Vulkan_RenderPass::~Vulkan_RenderPass()
+Render::render_pass_handler::~render_pass_handler()
 {
-    destroy_vulkan_render_pass(logical_device, render_pass);
+    destroy_render_pass(logical_device, render_pass);
 }
 
-VkRenderPass Vulkan_RenderPass::get() const
+VkRenderPass Render::render_pass_handler::get() const
 {
     return render_pass;
 }

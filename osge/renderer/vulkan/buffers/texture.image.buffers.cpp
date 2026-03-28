@@ -97,7 +97,8 @@ std::vector<Buffer> Buffers::create_texture_image_buffers
     Tasks:
         1) Verify function parameters.
         2) Destroy all valid texture image buffers.
-        3) Set objects to null.
+        3) Set all objects to null.
+        4) Empty vector list.
 
     Parameters:
         - logical_device        / VkDevice       / Logical device of the Vulkan instance.
@@ -126,38 +127,23 @@ void Buffers::destroy_texture_image_buffers
         return;
     }
 
-    int failed = 0;
-    int i = 0;
-
     for (Buffer &buffer_data : texture_image_buffers)
     {
-        i++;
-
         VkBuffer buffer = buffer_data.buffer;
         VkDeviceMemory buffer_memory = buffer_data.buffer_memory;
 
         if (buffer == VK_NULL_HANDLE)
-        {
-            failed++;
             continue;
-        }
 
         if (buffer_memory == VK_NULL_HANDLE)
-        {
-            failed++;
             continue;
-        }
 
         Buffers::destroy_buffer(buffer, buffer_memory, logical_device);
         buffer_data.buffer = VK_NULL_HANDLE;
         buffer_data.buffer_memory = VK_NULL_HANDLE;
     }
 
-    if (failed > 0)
-        Utils::Logs::log("Done! Warning: " + std::to_string(failed) + " destructions failed.", true);
-    else
-        Utils::Logs::log("Done!", true);
-
+    Utils::Logs::log("Done!", true);
     texture_image_buffers.clear();
 }
 

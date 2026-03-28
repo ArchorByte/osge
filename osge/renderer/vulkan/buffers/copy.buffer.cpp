@@ -3,8 +3,6 @@
 #include "libraries/vulkan/vulkan.h"
 #include "osge/utils/utils.hpp"
 
-#include "../textures/texture.images.loader.hpp"
-
 /*
     Copy the data of a buffer to another one.
 

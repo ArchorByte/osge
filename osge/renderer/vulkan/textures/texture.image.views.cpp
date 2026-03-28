@@ -61,7 +61,9 @@ std::vector<VkImageView> Textures::create_texture_image_views
 
     Tasks:
         1) Verify function parameters.
-        2) Destroy each texture image view.
+        2) Destroy all texture image views.
+        3) Set all objects to null.
+        4) Empty vector list.
 
     Parameters:
         - logical_device      / VkDevice            / Logical device of the Vulkan instance.
@@ -90,28 +92,16 @@ void Textures::destroy_texture_image_views
         return;
     }
 
-    int failed = 0;
-    int i = 0;
-
     for (VkImageView &texture_image_view : texture_image_views)
     {
-        i++;
-
         if (texture_image_view == VK_NULL_HANDLE)
-        {
-            failed++;
             continue;
-        }
 
         vkDestroyImageView(logical_device, texture_image_view, nullptr);
         texture_image_view = VK_NULL_HANDLE;
     }
 
-    if (failed > 0)
-        Utils::Logs::log("Done! Warning: " + std::to_string(failed) + " destructions failed.", true);
-    else
-        Utils::Logs::log("Done!", true);
-
+    Utils::Logs::log("Done!", true);
     texture_image_views.clear();
 }
 

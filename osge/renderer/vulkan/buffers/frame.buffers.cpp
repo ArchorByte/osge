@@ -105,7 +105,8 @@ std::vector<VkFramebuffer> Buffers::create_frame_buffers
     Tasks:
         1) Verify function parameters.
         2) Destroy all valid frame buffers.
-        3) Set objects to null.
+        3) Set all objects to null.
+        4) Empty vector list.
 
     Parameters:
         - frame_buffers  / vector<VkFramebuffer> / Frame buffers to destroy.
@@ -134,28 +135,16 @@ void Buffers::destroy_frame_buffers
         return;
     }
 
-    int i = 0;
-    int failed = 0;
-
     for (VkFramebuffer &frame_buffer : frame_buffers)
     {
-        i++;
-
         if (frame_buffer == VK_NULL_HANDLE)
-        {
-            failed++;
             continue;
-        }
 
         vkDestroyFramebuffer(logical_device, frame_buffer, nullptr);
         frame_buffer = VK_NULL_HANDLE;
     }
 
-    if (failed > 0)
-        Utils::Logs::log("Done! Warning: " + std::to_string(failed) + " destructions failed.", true);
-    else
-        Utils::Logs::log("Done!", true);
-
+    Utils::Logs::log("Done!", true);
     frame_buffers.clear();
 }
 

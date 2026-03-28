@@ -126,7 +126,8 @@ void Buffers::update_uniform_buffer_data
     Tasks:
         1) Verify function parameters.
         2) Destroy all valid uniform buffers and free their allocated memory.
-        3) Set objects to null.
+        3) Set all objects to null.
+        4) Empty vector list.
 
     Parameters:
         - logical_device  / VkDevice                  / Logical device of the Vulkan instance.
@@ -155,28 +156,17 @@ void Buffers::destroy_uniform_buffers
         return;
     }
 
-    int failed = 0;
-    int i = 0;
-
     for (UniformBufferInfo &uniform_buffer : uniform_buffers)
     {
-        i++;
-
         VkBuffer buffer = uniform_buffer.buffer;
         VkDeviceMemory buffer_memory = uniform_buffer.buffer_memory;
         void* buffer_data = uniform_buffer.data;
 
         if (buffer == VK_NULL_HANDLE)
-        {
-            failed++;
             continue;
-        }
 
         if (buffer_memory == VK_NULL_HANDLE)
-        {
-            failed++;
             continue;
-        }
 
         vkDestroyBuffer(logical_device, buffer, nullptr);
         vkFreeMemory(logical_device, buffer_memory, nullptr);
@@ -186,11 +176,7 @@ void Buffers::destroy_uniform_buffers
         buffer_data = nullptr;
     }
 
-    if (failed > 0)
-        Utils::Logs::log("Done! Warning: " + std::to_string(failed) + " destructions failed.", true);
-    else
-        Utils::Logs::log("Done!", true);
-
+    Utils::Logs::log("Done!", true);
     uniform_buffers.clear();
 }
 
