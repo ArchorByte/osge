@@ -1,7 +1,8 @@
 #ifndef VULKAN_SHADERS_HPP
 #define VULKAN_SHADERS_HPP
 
-#include <libraries/vulkan/vulkan.h>
+#include "libraries/vulkan/vulkan.h"
+
 #include <string>
 #include <vector>
 
@@ -27,8 +28,8 @@ namespace Shaders
 
     VkShaderModule create_shader_module
     (
-        const std::string &file_name,
-        const VkDevice &logical_device,
+        const std::string       &file_name,
+        const VkDevice          &logical_device,
         const std::vector<char> &shader_binaries
     );
 
@@ -39,7 +40,7 @@ namespace Shaders
 
     void destroy_shader_modules
     (
-        const VkDevice &logical_device,
+        const VkDevice          &logical_device,
         std::vector<ShaderInfo> &shaders_modules
     );
 

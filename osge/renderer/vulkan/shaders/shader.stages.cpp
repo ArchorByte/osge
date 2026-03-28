@@ -1,6 +1,8 @@
 #include "vulkan.shaders.hpp"
-#include "osge/utils/utils.hpp"
-#include <libraries/vulkan/vulkan.h>
+
+#include "../../../osge/utils/utils.hpp"
+#include "libraries/vulkan/vulkan.h"
+
 #include <map>
 #include <vector>
 
@@ -9,7 +11,7 @@
     Warning: Any invalid shader module won't be loaded into the graphics pipeline!
 
     Tasks:
-        1) Verify the parameters.
+        1) Verify function parameters.
         2) Create a shader stage for each valid shader module.
 
     Parameters:
@@ -23,28 +25,28 @@ std::vector<VkPipelineShaderStageCreateInfo> Shaders::create_shader_stages
     const std::vector<ShaderInfo> &shader_modules
 )
 {
-    Utils::Logs::log("Creating " + std::to_string(shader_modules.size()) + " shader stages..");
+    Utils::Logs::log("Creating " + std::to_string(shader_modules.size()) + " shader stages.. ", false);
 
     if (shader_modules.size() < 1)
-        Utils::Logs::crash_error_log("Shader stages creation failed! No shaders modules provided!");
+        Utils::Logs::crash_log("Failed! No shaders modules provided.");
 
     std::vector<VkPipelineShaderStageCreateInfo> shader_stages;
     shader_stages.reserve(shader_modules.size());
-    int i = 0;
 
     for (const ShaderInfo &shader : shader_modules)
     {
-        i++;
-
         const std::string shader_type = shader.shader_type;
         const VkShaderModule shader_module = shader.shader_module;
 
         if (shader_module == VK_NULL_HANDLE)
-        {
-            Utils::Logs::error_log("- Failed to create the shader stage #" + std::to_string(i) + "/" + std::to_string(shader_modules.size()) + "! The shader module provided (" + Utils::Text::get_memory_address(shader_module) + ") is not valid!");
             continue;
-        }
 
+        /*
+            - sType  / Defines the type of the structure.
+            - stage  / Defines the shader type.
+            - module / Passes the shader module.
+            - pName  / Defines the entry point name of the shader for this stage.
+        */
         const VkPipelineShaderStageCreateInfo create_info
         {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
@@ -54,9 +56,8 @@ std::vector<VkPipelineShaderStageCreateInfo> Shaders::create_shader_stages
         };
 
         shader_stages.emplace_back(create_info);
-        Utils::Logs::log("- Shader stage #" + std::to_string(i) + "/" + std::to_string(shader_stages.size()) + " created successfully!");
     }
 
-    Utils::Logs::log(std::to_string(shader_stages.size()) + "/" + std::to_string(shader_modules.size()) + " shader stages created successfully!");
+    Utils::Logs::log("Done! " + std::to_string(shader_stages.size()) + " shader stages created.", true);
     return shader_stages;
 }
