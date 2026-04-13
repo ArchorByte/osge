@@ -1,88 +1,127 @@
-#include "swapchain.data.selection.hpp"
+#include "vulkan.swapchain.hpp"
 
-#include "../../logs/logs.handler.hpp"
-#include "../../utils/tool.text.format.hpp"
+#include "../../../utils/utils.hpp"
+#include "libraries/vulkan/vulkan.h"
+#include "libraries/sdl/SDL3/SDL.h"
+#include "libraries/sdl/SDL3/SDL_vulkan.h"
 
-#include <vulkan/vulkan.h>
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_vulkan.h>
-#include <vector>
+#include <algorithm>
 #include <cstdint>
 #include <limits>
-#include <algorithm>
+#include <vector>
 
-// Return the best swap chain surface format available, according to our requirements.
-VkSurfaceFormatKHR select_best_vulkan_swapchain_surface_format
+/*
+    Get the best swap chain surface format.
+
+    Tasks:
+        1) Verify function parameters.
+        2) Browse the formats list and get the best format according to our requirements.
+        3) Default to the first format in the list if none found.
+
+    Parameters:
+        - available_formats / vector<VkSurfaceFormatKHR> / Surface formats supported by the swap chain.
+
+    Returns:
+        The selected surface format.
+*/
+VkSurfaceFormatKHR Swapchain::select_best_swapchain_surface_format
 (
-    const std::vector<VkSurfaceFormatKHR> &available_formats
+    const std::vector<VkSurfaceFormatKHR> &formats
 )
 {
-    log("Selecting the best swap chain surface format..");
+    Utils::Logs::log("Selecting best swap chain surface format.. ", false);
 
-    for (const VkSurfaceFormatKHR &format : available_formats)
+    if (formats.size() < 1)
+        Utils::Logs::crash_log("Failed! No surface formats provided.");
+
+    for (const VkSurfaceFormatKHR &format : formats)
     {
-        // Try to find a format meeting our requirements.
         if (format.format == VK_FORMAT_B8G8R8A8_SRGB && format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
         {
-            log("Best swap chain surface format selected successfully!");
+            Utils::Logs::log("Done!", true);
             return format;
         }
     }
 
-    error_log("Warning: We had to select the first result because not any better format was found! This might provokes some unexpected results!");
-    return available_formats[0]; // We return the first format available if we didn't find any format meeting our requirements.
+    Utils::Logs::log("Done! Warning: First format selected as nothing better was found -> It might provokes some issues.", true);
+    return formats[0];
 }
 
-// Select the best swap chain present mode available, according to our requirements.
-VkPresentModeKHR select_best_vulkan_swapchain_present_mode
+
+
+/*
+    Get the best swap chain present mode.
+
+    Tasks:
+        1) Verify function parameters.
+        2) Browse the formats list and get the best mode according to our requirements.
+        3) Default to VK_PRESENT_MODE_FIFO_KHR if none found.
+
+    Parameters:
+        - present_modes / vector<VkPresentModeKHR> / Present modes supported by the swap chain.
+
+    Returns:
+        The selected present mode.
+*/
+VkPresentModeKHR Swapchain::select_best_swapchain_present_mode
 (
-    const std::vector<VkPresentModeKHR> &available_present_modes
+    const std::vector<VkPresentModeKHR> &present_modes
 )
 {
-    log("Selecting the best swap chain present mode..");
+    Utils::Logs::log("Selecting best swap chain present mode.. ", false);
 
-    for (const VkPresentModeKHR present_mode : available_present_modes)
+    for (const VkPresentModeKHR present_mode : present_modes)
     {
-        // Try to find a mode with the "VK_PRESENT_MODE_MAILBOX_KHR" or "VK_PRESENT_MODE_IMMEDIATE_KHR" flag.
         if (present_mode == VK_PRESENT_MODE_MAILBOX_KHR || present_mode == VK_PRESENT_MODE_IMMEDIATE_KHR)
         {
-            log("Best swap chain present mode selected successfully!");
+            Utils::Logs::log("Done!", true);
             return present_mode;
         }
     }
 
-    log("Warning: We had to select the \"VK_PRESENT_MODE_FIFO_KHR\" present mode because not any better mode was found! That means the vsync is forced to be turned on!");
-    return VK_PRESENT_MODE_FIFO_KHR; // Return this flag (which always exists), if we didn't find any usable mode with our requirements.
+    Utils::Logs::log("Done! Warning: VK_PRESENT_MODE_FIFO_KHR present mode selected as nothing better was found -> Vsync is forced on.", true);
+    return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-// Select the resolution for the swap chain extent.
-VkExtent2D select_vulkan_swapchain_extent_resolution
+
+
+/*
+    Set the swap chain resolution.
+
+    Tasks:
+        1) Verify function parameters.
+        2) Get resolution of the game window.
+        3) Set the swap chain resolution to game window resolution, checking it is supported by the swap chain.
+
+    Parameters:
+        - capabilities / VkSurfaceCapabilitiesKHR / Capabilities of the swap chain.
+        - window       / SDL_Window*              / Window of the game.
+
+    Returns:
+        The swap chain extent.
+*/
+VkExtent2D Swapchain::select_swapchain_extent
 (
     const VkSurfaceCapabilitiesKHR &capabilities,
-    SDL_Window* window
+    SDL_Window                     *window
 )
 {
-    log("Selecting swap chain extent resolution..");
+    Utils::Logs::log("Selecting swap chain extent.. ", false);
 
     if (!window)
-    {
-        fatal_error_log("Swap chain resolution selection failed! The SDL3 window provided (" + force_string(window) + ") is not valid!");
-    }
+        Utils::Logs::crash_log("Failed! SDL3 window invalid.");
 
     int width;
     int height;
+
     SDL_GetWindowSizeInPixels(window, &width, &height);
 
     VkExtent2D extent =
     {
-        static_cast<uint32_t>(width),
-        static_cast<uint32_t>(height)
+        std::clamp(static_cast<uint32_t>(width), capabilities.minImageExtent.width, capabilities.maxImageExtent.width),
+        std::clamp(static_cast<uint32_t>(height), capabilities.minImageExtent.height, capabilities.maxImageExtent.height)
     };
 
-    // Ensure that the extent resolution is within the swap chain capabilities bounds.
-    extent.width = std::clamp(extent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
-    extent.height = std::clamp(extent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
-
-    log("Swap chain extent resolution selected: " + std::to_string(extent.width) + "x" + std::to_string(extent.height) + ".");
+    Utils::Logs::log("Done! Selected resolution -> " + std::to_string(extent.width) + "x" + std::to_string(extent.height) + ".", true);
     return extent;
 }

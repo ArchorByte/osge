@@ -10,7 +10,9 @@
 #include "images/vulkan.images.hpp"
 #include "models/vulkan.models.hpp"
 #include "queues/vulkan.queues.hpp"
+#include "render/vulkan.render.hpp"
 #include "shaders/vulkan.shaders.hpp"
+#include "swapchain/vulkan.swapchain.hpp"
 #include "textures/vulkan.textures.hpp"
 #include "vertex/vulkan.vertex.hpp"
 
@@ -70,11 +72,23 @@ namespace Vulkan
 
     namespace Queues = ::Queues;
 
+    /////////////////////////////////////////
+    ///// render/swapchain.recreate.hpp /////
+    /////////////////////////////////////////
+
+    namespace Render = ::Render;
+
     //////////////////////////////////////
     ///// shaders/vulkan.shaders.hpp /////
     //////////////////////////////////////
 
     namespace Shaders = ::Shaders;
+
+    //////////////////////////////////////////
+    ///// swapchain/vulkan.swapchain.hpp /////
+    //////////////////////////////////////////
+
+    namespace Swapchain = ::Swapchain;
 
     ////////////////////////////////////////
     ///// textures/vulkan.textures.hpp /////
