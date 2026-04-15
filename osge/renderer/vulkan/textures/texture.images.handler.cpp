@@ -338,17 +338,17 @@ std::vector<TextureImageData> Textures::texture_images_handler::get() const
 
 
 
-Textures::loader_textures_handler::loader_textures_handler()
+Textures::loaded_textures_handler::loaded_textures_handler()
 {
     texture_image_information = load_textures();
 }
 
-Textures::loader_textures_handler::~loader_textures_handler()
+Textures::loaded_textures_handler::~loaded_textures_handler()
 {
     free_textures(texture_image_information);
 }
 
-std::vector<TextureImageInfo> Textures::loader_textures_handler::get() const
+std::vector<TextureImageInfo> Textures::loaded_textures_handler::get() const
 {
     return texture_image_information;
 }

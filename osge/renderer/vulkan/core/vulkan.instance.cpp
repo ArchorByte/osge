@@ -141,7 +141,7 @@ void Core::destroy_vulkan_instance
 //////////////////// Class ////////////////////
 ///////////////////////////////////////////////
 
-Core::instance_handler::instance_handler
+Core::vulkan_instance_handler::vulkan_instance_handler
 (
     const std::vector<const char*> &layers
 )
@@ -149,12 +149,12 @@ Core::instance_handler::instance_handler
     vulkan_instance = create_vulkan_instance(layers);
 }
 
-Core::instance_handler::~instance_handler()
+Core::vulkan_instance_handler::~vulkan_instance_handler()
 {
     destroy_vulkan_instance(vulkan_instance);
 }
 
-VkInstance Core::instance_handler::get() const
+VkInstance Core::vulkan_instance_handler::get() const
 {
     return vulkan_instance;
 }

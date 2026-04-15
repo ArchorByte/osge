@@ -49,8 +49,13 @@ namespace Render
 
     VkSampleCountFlagBits get_max_sample_count
     (
-        const VkPhysicalDevice &physical_device,
-        const int              &custom_count
+        const VkSampleCountFlagBits &custom_count,
+        const VkPhysicalDevice      &physical_device
+    );
+
+    VkSampleCountFlagBits to_sample_count_flags_bit
+    (
+        const int &sample_count
     );
 
     ///////////////////////////

@@ -1,6 +1,9 @@
 #include "vulkan.swapchain.hpp"
 
-#include "../vulkan.renderer.hpp"
+#include "../buffers/vulkan.buffers.hpp"
+#include "../colors/vulkan.colors.hpp"
+#include "../depth/vulkan.depth.hpp"
+#include "../render/vulkan.render.hpp"
 #include "../../../utils/utils.hpp"
 #include "libraries/vulkan/vulkan.h"
 #include "libraries/sdl/SDL3/SDL.h"
@@ -52,11 +55,11 @@
 */
 std::string Swapchain::recreate_swapchain
 (
-    Vulkan::Colors::color_resources_handler  &color_resources,
+    Colors::color_resources_handler  &color_resources,
     const VkCommandPool                      &command_pool,
-    Vulkan::Depth::depth_resources_handler   &depth_resources,
+    Depth::depth_resources_handler   &depth_resources,
     VkExtent2D                               &extent,
-    Vulkan::Buffers::frame_buffers_handler   &framebuffers,
+    Buffers::frame_buffers_handler   &framebuffers,
     const uint32_t                           &graphics_family_index,
     const VkQueue                            &graphics_queue,
     std::vector<VkSemaphore>                 &image_available_semaphores,
@@ -67,7 +70,7 @@ std::string Swapchain::recreate_swapchain
     std::vector<VkSemaphore>                 &render_finished_semaphores,
     const VkRenderPass                       &render_pass,
     const VkSampleCountFlagBits              &samples_count,
-    Vulkan::Render::sync_semaphores_handler  &semaphores,
+    Render::sync_semaphores_handler  &semaphores,
     const VkSurfaceFormatKHR                 &surface_format,
     Swapchain::swapchain_handler             &swapchain,
     Swapchain::swapchain_image_views_handler &swapchain_image_views,
@@ -148,12 +151,16 @@ std::string Swapchain::recreate_swapchain
 
     const std::vector<VkImage> new_images = Swapchain::get_swapchain_images(logical_device, swapchain.get());
     new (&swapchain_image_views) Swapchain::swapchain_image_views_handler(surface_format.format, logical_device, new_images);
-    new (&depth_resources) Vulkan::Depth::depth_resources_handler(command_pool, extent, graphics_queue, logical_device, physical_device, samples_count);
-    new (&semaphores) Vulkan::Render::sync_semaphores_handler(images_count * 2, logical_device);
-    new (&color_resources) Vulkan::Colors::color_resources_handler(logical_device, physical_device, samples_count, extent, surface_format.format);
-    new (&framebuffers) Vulkan::Buffers::frame_buffers_handler(color_resources.get().color_image_view, depth_resources.get().image_view, extent, swapchain_image_views.get(), logical_device, render_pass);
+    new (&depth_resources) Depth::depth_resources_handler(command_pool, extent, graphics_queue, logical_device, physical_device, samples_count);
+    new (&semaphores) Render::sync_semaphores_handler(images_count * 2, logical_device);
+    new (&color_resources) Colors::color_resources_handler(logical_device, physical_device, samples_count, extent, surface_format.format);
+    new (&framebuffers) Buffers::frame_buffers_handler(color_resources.get().color_image_view, depth_resources.get().image_view, extent, swapchain_image_views.get(), logical_device, render_pass);
 
+    const int semaphores_count = semaphores.get().size();
     int i = 0;
+
+    if (semaphores_count % 2 != 0)
+        Utils::Logs::crash_log("Amount of semaphores (" + std::to_string(semaphores_count) + ") not even.");
 
     for (const VkSemaphore &semaphore : semaphores.get())
     {

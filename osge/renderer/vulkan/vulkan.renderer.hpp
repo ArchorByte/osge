@@ -9,6 +9,7 @@
 #include "devices/vulkan.devices.hpp"
 #include "images/vulkan.images.hpp"
 #include "models/vulkan.models.hpp"
+#include "pipeline/vulkan.pipeline.hpp"
 #include "queues/vulkan.queues.hpp"
 #include "render/vulkan.render.hpp"
 #include "shaders/vulkan.shaders.hpp"
@@ -65,6 +66,12 @@ namespace Vulkan
     ////////////////////////////////////
 
     namespace Models = ::Models;
+
+    ////////////////////////////////////////
+    ///// pipeline/vulkan.pipeline.hpp /////
+    ////////////////////////////////////////
+
+    namespace Pipeline = ::Pipeline;
 
     ////////////////////////////////////
     ///// queues/vulkan.queues.hpp /////

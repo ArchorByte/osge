@@ -3,7 +3,10 @@
 
 #include "libraries/vulkan/vulkan.h"
 #include "libraries/sdl/SDL3/SDL.h"
-#include "../vulkan.renderer.hpp"
+#include "../buffers/vulkan.buffers.hpp"
+#include "../colors/vulkan.colors.hpp"
+#include "../depth/vulkan.depth.hpp"
+#include "../render/vulkan.render.hpp"
 
 #include <string>
 #include <vector>
@@ -168,11 +171,11 @@ namespace Swapchain
 
     std::string recreate_swapchain
     (
-        Vulkan::Colors::color_resources_handler &color_resources,
+        Colors::color_resources_handler &color_resources,
         const VkCommandPool                     &command_pool,
-        Vulkan::Depth::depth_resources_handler  &depth_resources,
+        Depth::depth_resources_handler  &depth_resources,
         VkExtent2D                              &extent,
-        Vulkan::Buffers::frame_buffers_handler  &framebuffers,
+        Buffers::frame_buffers_handler  &framebuffers,
         const uint32_t                          &graphics_family_index,
         const VkQueue                           &graphics_queue,
         std::vector<VkSemaphore>                &image_available_semaphores,
@@ -183,7 +186,7 @@ namespace Swapchain
         std::vector<VkSemaphore>                &render_finished_semaphores,
         const VkRenderPass                      &render_pass,
         const VkSampleCountFlagBits             &samples_count,
-        Vulkan::Render::sync_semaphores_handler &semaphores,
+        Render::sync_semaphores_handler &semaphores,
         const VkSurfaceFormatKHR                &surface_format,
         swapchain_handler                       &swapchain,
         swapchain_image_views_handler           &swapchain_image_views,

@@ -11,6 +11,12 @@ namespace Pipeline
     ///////////////////////////////////////////////////
 
     //////////////////////////////
+    ///// assembly.state.cpp /////
+    //////////////////////////////
+
+    VkPipelineInputAssemblyStateCreateInfo create_assembly_state();
+
+    //////////////////////////////
     ///// dynamic.states.cpp /////
     //////////////////////////////
 
@@ -22,7 +28,7 @@ namespace Pipeline
 
     VkPipeline create_graphics_pipeline
     (
-        const VkPipelineInputAssemblyStateCreateInfo       &assembly_input_state,
+        const VkPipelineInputAssemblyStateCreateInfo       &assembly_state,
         const VkPipelineColorBlendStateCreateInfo          &color_blend_state,
         const VkPipelineDepthStencilStateCreateInfo        &depth_stencil_state,
         const VkPipelineDynamicStateCreateInfo             &dynamic_state,
@@ -106,7 +112,7 @@ namespace Pipeline
         public:
             graphics_pipeline_handler
             (
-                const VkPipelineInputAssemblyStateCreateInfo       &assembly_input_state,
+                const VkPipelineInputAssemblyStateCreateInfo       &assembly_state,
                 const VkPipelineColorBlendStateCreateInfo          &color_blend_state,
                 const VkPipelineDepthStencilStateCreateInfo        &depth_stencil_state,
                 const VkPipelineDynamicStateCreateInfo             &dynamic_state,

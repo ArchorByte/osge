@@ -18,7 +18,7 @@
         2) Create graphics pipeline.
 
     Parameters:
-        - assembly_input_state    / VkPipelineInputAssemblyStateCreateInfo  / Determines input assembly behavior for vertex shading.
+        - assembly_state          / VkPipelineInputAssemblyStateCreateInfo  / Determines input assembly behavior for vertex shading.
         - color_blend_state       / VkPipelineColorBlendStateCreateInfo     / Defines color blend state for color attachments during rendering.
         - depth_stencil_state     / VkPipelineDepthStencilStateCreateInfo   / Defines depth/stencil state for depth/stencil attachments during rendering.
         - dynamic_state           / VkPipelineDynamicStateCreateInfo        / Defines which properties of the pipeline will be dynamic.
@@ -36,7 +36,7 @@
 */
 VkPipeline Pipeline::create_graphics_pipeline
 (
-    const VkPipelineInputAssemblyStateCreateInfo       &assembly_input_state,
+    const VkPipelineInputAssemblyStateCreateInfo       &assembly_state,
     const VkPipelineColorBlendStateCreateInfo          &color_blend_state,
     const VkPipelineDepthStencilStateCreateInfo        &depth_stencil_state,
     const VkPipelineDynamicStateCreateInfo             &dynamic_state,
@@ -85,7 +85,7 @@ VkPipeline Pipeline::create_graphics_pipeline
         .stageCount = static_cast<uint32_t>(pipeline_shader_stages.size()),
         .pStages = pipeline_shader_stages.data(),
         .pVertexInputState = &vertex_input_state,
-        .pInputAssemblyState = &assembly_input_state,
+        .pInputAssemblyState = &assembly_state,
         .pViewportState = &viewport_state,
         .pRasterizationState = &rasterization_state,
         .pMultisampleState = &multisampling_state,
@@ -155,7 +155,7 @@ void Pipeline::destroy_graphics_pipeline
 
 Pipeline::graphics_pipeline_handler::graphics_pipeline_handler
 (
-    const VkPipelineInputAssemblyStateCreateInfo       &assembly_input_state,
+    const VkPipelineInputAssemblyStateCreateInfo       &assembly_state,
     const VkPipelineColorBlendStateCreateInfo          &color_blend_state,
     const VkPipelineDepthStencilStateCreateInfo        &depth_stencil_state,
     const VkPipelineDynamicStateCreateInfo             &dynamic_state,
@@ -170,7 +170,7 @@ Pipeline::graphics_pipeline_handler::graphics_pipeline_handler
 )
     : logical_device(logical_device)
 {
-    graphics_pipeline = create_graphics_pipeline(assembly_input_state, color_blend_state, depth_stencil_state, dynamic_state, logical_device, multisampling_state, pipeline_layout, pipeline_shader_stages, rasterization_state, render_pass, vertex_input_state, viewport_state);
+    graphics_pipeline = create_graphics_pipeline(assembly_state, color_blend_state, depth_stencil_state, dynamic_state, logical_device, multisampling_state, pipeline_layout, pipeline_shader_stages, rasterization_state, render_pass, vertex_input_state, viewport_state);
 }
 
 Pipeline::graphics_pipeline_handler::~graphics_pipeline_handler()

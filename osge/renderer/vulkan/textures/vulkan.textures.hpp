@@ -173,16 +173,16 @@ namespace Textures
             std::vector<TextureImageData> texture_images;
     };
 
-    class loader_textures_handler
+    class loaded_textures_handler
     {
         public:
-            loader_textures_handler();
-            ~loader_textures_handler();
+            loaded_textures_handler();
+            ~loaded_textures_handler();
             std::vector<TextureImageInfo> get() const;
 
             // Prevent data duplication.
-            loader_textures_handler (const loader_textures_handler&) = delete;
-            loader_textures_handler &operator = (const loader_textures_handler&) = delete;
+            loaded_textures_handler (const loaded_textures_handler&) = delete;
+            loaded_textures_handler &operator = (const loaded_textures_handler&) = delete;
         private:
             std::vector<TextureImageInfo> texture_image_information;
     };

@@ -65,20 +65,20 @@ namespace Core
     ///// vulkan.instance.cpp /////
     ///////////////////////////////
 
-    class instance_handler
+    class vulkan_instance_handler
     {
         public:
-            instance_handler
+            vulkan_instance_handler
             (
                 const std::vector<const char*> &layers
             );
 
-            ~instance_handler();
+            ~vulkan_instance_handler();
             VkInstance get() const;
 
             // Prevent data duplication.
-            instance_handler(const instance_handler&) = delete;
-            instance_handler &operator = (const instance_handler&) = delete;
+            vulkan_instance_handler(const vulkan_instance_handler&) = delete;
+            vulkan_instance_handler &operator = (const vulkan_instance_handler&) = delete;
         private:
             VkInstance vulkan_instance = VK_NULL_HANDLE;
     };
