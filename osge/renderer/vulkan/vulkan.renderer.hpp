@@ -17,8 +17,21 @@
 #include "textures/vulkan.textures.hpp"
 #include "vertex/vulkan.vertex.hpp"
 
+#include "libraries/sdl/SDL3/SDL.h"
+
 namespace Vulkan
 {
+    ///////////////////////////////
+    ///// vulkan.renderer.cpp /////
+    ///////////////////////////////
+
+    void run_game
+    (
+        const int  &custom_samples_count,
+        int        &gpu_index,
+        SDL_Window *window
+    );
+
     //////////////////////////////////////
     ///// buffers/vulkan.buffers.hpp /////
     //////////////////////////////////////
