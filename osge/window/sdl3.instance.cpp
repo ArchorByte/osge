@@ -1,27 +1,68 @@
-#include "sdl3.instance.hpp"
+#include "window.hpp"
 
-#include "../logs/logs.handler.hpp"
+#include "../utils/utils.hpp"
+#include "libraries/sdl/SDL3/SDL.h"
 
-#include <SDL3/SDL.h>
+///////////////////////////////////////////////////
+//////////////////// Functions ////////////////////
+///////////////////////////////////////////////////
 
-// Initialize SDL3.
-void start_sdl3_instance()
+/*
+    Initialize an SDL3 instance.
+    Note: You should use the pre-made class to handle these objects rather than directly using this function for memory safety reasons.
+
+    Tasks:
+        1) Try to initialize SDL3.
+        2) Verify initialization output.
+
+    Parameters:
+        No parameters.
+
+    Returns:
+        No object returned.
+*/
+void Window::create_sdl3_instance()
 {
-    log("Initializing SDL3..");
+    Utils::Logs::log("Initializing SDL3.. ", false);
     const int initialization = SDL_Init(SDL_INIT_VIDEO);
 
     if (initialization == 0)
-    {
-        fatal_error_log("Failed to initialize SDL3! Error: " + std::string(SDL_GetError()));
-    }
+        Utils::Logs::crash_log("Failed! An error occurred -> " + std::string(SDL_GetError()));
 
-    log("SDL3 successfully initialized!");
+    Utils::Logs::log("Done!", true);
 }
 
-// Destroy an SDL3 instance.
-void destroy_sdl3_instance()
+
+
+/*
+    Destroy an SDL3 instance.
+
+    Tasks:
+        1) Close SDL3.
+
+    Parameters:
+        No parameters.
+
+    Returns:
+        No object returned.
+*/
+void Window::destroy_sdl3_instance()
 {
-    log("Destroying the SDL3 instance..");
+    Utils::Logs::log("Destroying SDL3 instance.. ", false);
     SDL_Quit();
-    log("SDL3 instance destroyed successfully!");
+    Utils::Logs::log("Done!", true);
+}
+
+///////////////////////////////////////////////
+//////////////////// Class ////////////////////
+///////////////////////////////////////////////
+
+Window::sdl3_instance_handler::sdl3_instance_handler()
+{
+    create_sdl3_instance();
+}
+
+Window::sdl3_instance_handler::~sdl3_instance_handler()
+{
+    destroy_sdl3_instance();
 }
